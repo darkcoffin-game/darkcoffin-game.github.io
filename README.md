@@ -71,17 +71,36 @@ python serve.py --check    # 不打开浏览器，把整站链接抓一遍并打
 
 ## 更新与发布
 
+本站用 **SSH** 推送。**不需要 token，也不需要切换账号**：
+
 ```powershell
 cd 'E:\黑柩\黑柩游戏'
-powershell -ExecutionPolicy Bypass -File .\push-with-token.ps1
+git add -A
+git commit -m "update site"
+git push
 ```
 
-脚本会：先删掉本机旧的 GitHub 凭据再写入新的（**凭据按主机名存，只有一份**）、
-设好 remote 与提交者、暂存提交，然后推送；它同时禁用交互式认证，避免浏览器授权
-继承成别的账号。加 `-DryRun` 可以不填 token 只检查本地设置。
+本机已经配好：`~/.ssh/config` 里为这个账号单独配了一个 Host 别名，remote 走的是它
+（`git@github-game:darkcoffin-game/darkcoffin-game.github.io.git`）——所以同一台机器上
+共存多个 GitHub 账号也不会互相串。
 
-> `push-with-token.ps1` 刻意写成**纯 ASCII**：Windows PowerShell 5.1 读无 BOM 的脚本
-> 按 ANSI/GBK 解析，中文注释会被搞乱。
+**换机器时**才需要重新配一次：`ssh-keygen -t ed25519` → 把 `.pub` 加到
+GitHub → Settings → SSH and GPG keys，再 `git remote set-url origin <SSH 地址>`。
+
+> **别用 `ssh -T git@github.com` 判断通不通。** 多账号共存的机器上它**必然**报
+> `Permission denied (publickey)`——因为它用的是默认密钥，而本仓库走的是配置里的
+> Host 别名。真正的判据是这两条：
+>
+> ```powershell
+> git ls-remote origin      # 读通了吗
+> git push --dry-run        # 写权限有了吗（不会真的推）
+> ```
+
+> `push-with-token.ps1` 是**改用 SSH 之前的方案**（用 Personal Access Token 推），
+> 现在只在"某台机器上没有 SSH 密钥"时当备用。它记录的两个教训仍然有效：
+> Windows 的凭据**按主机名存、只有一份**（换账号必须先删旧的）；浏览器 OAuth 会继承
+> 已登录的账号，所以认证要走 token 而不是浏览器弹窗。脚本刻意写成**纯 ASCII**——
+> PowerShell 5.1 读无 BOM 的脚本按 ANSI/GBK 解析，中文注释会被搞乱。
 
 ## 目录结构
 
@@ -97,7 +116,7 @@ CNAME                 自定义域名：darkcoffin-game.hubingsf.cn
 .nojekyll             让 GitHub Pages 不跑 Jekyll
 .gitattributes        关掉 Windows 的 LF↔CRLF 自动转换，避免假改动
 .gitignore            排除 serve.py 与系统垃圾文件
-push-with-token.ps1   用 PAT 推送（见上）
+push-with-token.ps1   备用：改用 SSH 之前的 PAT 推送脚本（见上）
 serve.py              本地预览（不入库）
 ```
 

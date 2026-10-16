@@ -1,4 +1,9 @@
-# push-with-token.ps1 -- push this site to GitHub Pages using a Personal Access Token
+# push-with-token.ps1 -- LEGACY / FALLBACK ONLY.
+#
+#   This site now pushes over SSH (see README.md), which needs no token and no
+#   account switching. Keep this script for a machine that has no SSH key set up.
+#
+# push this site to GitHub Pages using a Personal Access Token
 #
 # Adapted from the darkcoffin-wiki repo's script (known to work) for this site.
 #
