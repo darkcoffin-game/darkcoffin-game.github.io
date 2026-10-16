@@ -5,3 +5,7 @@ serve.py
 Thumbs.db
 desktop.ini
 .DS_Store
+
+# 那个嵌套目录（曾经被 git 当成 submodule 记进来，会让 Pages 构建直接失败）
+/黑柩游戏/
+
