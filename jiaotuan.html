@@ -228,6 +228,15 @@ a.btn:active,.opt:active{filter:brightness(.93);}
     background:rgba(142,42,42,.10);font-size:13px;line-height:1.9;color:var(--ink);letter-spacing:.03em}
   .mech .mh{letter-spacing:.16em;color:var(--blood);margin-bottom:5px}
   .mech .mf{margin-top:7px;color:var(--faint);font-size:12px}
+
+  /* ══ 死亡线预警：寿数进入危险区时叠一层斜纹 ＋ 一道细边 ══
+     阈值是量出来的：life ≤ 30 时中位还有 4 回合、0% 悬崖（见 _tests/probe_death.js）。
+     注意覆盖面很小 —— 教团的死亡里只有 0.8% 来自寿数耗尽；
+     12.5% 是每回合掷骰（无值可亮，只能靠身份页的说明提前打招呼），
+     其余 86.8% 是玩家自己走到的结局。 */
+  .f-life.danger{
+    background-image:repeating-linear-gradient(45deg,rgba(232,226,212,.22) 0 3px,transparent 3px 7px);
+    box-shadow:inset 0 0 0 1px var(--blood2)}
 </style>
 </head>
 <body>
@@ -5851,6 +5860,40 @@ window.addEventListener("DOMContentLoaded", function () {
     if (window.MutationObserver && bar) {
       new MutationObserver(sync).observe(bar, { childList: true, subtree: true });
     }
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+  else init();
+})();
+</script>
+<script>
+/* ══ 死亡线预警（方案一：让"贴线"看得见）══
+   教团只有一条看得见的死亡线：寿数。阈值 life ≤ 30 来自实测
+   （中位 4 回合、0% 悬崖）。其余死法没有数值可亮：
+   每回合 0.4%–3% 的随机猝死只能靠身份页的说明提前打招呼。
+   做法与北沙一致：引擎每回合重画这些条，所以在重画之后补 class ——
+   观察 #bars 的子节点变化 ＋ 点击后补一次 ＋ 一秒兜底。 */
+(function () {
+  var RULES = { life: function (v) { return v <= 30; } };
+  function sync() {
+    if (typeof G === "undefined" || !G || G.over) return;
+    for (var k in RULES) {
+      if (!RULES.hasOwnProperty(k)) continue;
+      var el = document.querySelector(".f-" + k);
+      if (!el) continue;
+      var v = G[k];
+      if (typeof v !== "number") continue;
+      if (RULES[k](v)) { el.classList.add("danger"); } else { el.classList.remove("danger"); }
+    }
+  }
+  function init() {
+    sync();
+    window.addEventListener("resize", sync);
+    var bars = document.getElementById("bars");
+    if (window.MutationObserver && bars) {
+      new MutationObserver(sync).observe(bars, { childList: true, subtree: true });
+    }
+    document.addEventListener("click", function () { window.setTimeout(sync, 60); }, true);
+    window.setInterval(sync, 1000);
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
   else init();
