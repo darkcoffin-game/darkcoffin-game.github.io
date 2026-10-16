@@ -1,7 +1,6 @@
 # push-with-token.ps1 -- push this site to GitHub Pages using a Personal Access Token
 #
-# Copied from the darkcoffin-wiki repo's script (which is known to work), adapted
-# for this site. CHANGE THE TWO CONSTANTS BELOW before running.
+# Adapted from the darkcoffin-wiki repo's script (known to work) for this site.
 #
 # WHY A TOKEN (do not skip this):
 #   The browser OAuth popup inherits whichever GitHub account is already signed
@@ -11,31 +10,52 @@
 #
 # CREDENTIALS ARE STORED PER HOST, NOT PER ACCOUNT:
 #   Windows Credential Manager keeps ONE entry for "git:https://github.com".
-#   This machine currently has one belonging to the OLD account (darkcoffin-wiki).
-#   This script deletes it first, then writes the new one -- that order matters.
+#   This script deletes the old one first, then writes the new one.
 #
-# BEFORE RUNNING:
-#   1. Signed in as the NEW account (use a private/incognito window):
-#        https://github.com/settings/tokens  ->  Generate new token (classic)
-#        scope: tick the whole "repo" block. Copy it (starts with ghp_).
-#   2. The repo must already exist on GitHub, empty and PUBLIC, named exactly
-#      "<account>.github.io" (no README / .gitignore / license).
+# POWERSHELL 5.1 PITFALL (this bit the first version of this script):
+#   With $ErrorActionPreference = 'Stop', ANY stderr output from a native
+#   command becomes a terminating error. `git remote remove origin` writes
+#   "No such remote" to stderr when origin does not exist yet, and `git push`
+#   writes its progress to stderr -- so a *successful* push would also abort.
+#   Fix: RunGit below runs git with the preference temporarily set to Continue
+#   and merges stderr into normal output. Never call git directly here.
 #
-# RUN (from the site folder):
-#     powershell -ExecutionPolicy Bypass -File .\push-with-token.ps1
+# USAGE
+#   powershell -ExecutionPolicy Bypass -File .\push-with-token.ps1
+#   powershell -ExecutionPolicy Bypass -File .\push-with-token.ps1 -DryRun
+#       (-DryRun: does everything except reading the token and pushing.
+#        Use it to check the local setup without a token.)
 #
 # NOTE: intentionally ASCII-only. Windows PowerShell 5.1 reads script files as
-# ANSI/GBK unless they carry a UTF-8 BOM, which would mangle any non-ASCII text.
+# ANSI/GBK unless they carry a UTF-8 BOM, which would mangle non-ASCII text.
+
+param([switch]$DryRun)
+
+# --------------------------------------------------------------- CONFIGURE --
+$repo  = 'darkcoffin-game/darkcoffin-game.github.io'   # <account>/<repo>
+$user  = 'darkcoffin-game'                             # the account name
+$mail  = '604926574@qq.com'                            # commit author email
+$domain = 'darkcoffin-game.hubingsf.cn'                # custom domain (CNAME)
+# ------------------------------------------------------------------------------
 
 $ErrorActionPreference = 'Stop'
 
-# ---------------------------------------------------------------- CHANGE ME --
-$repo = 'darkcoffin-game/darkcoffin-game.github.io'   # <account>/<repo>
-$user = 'darkcoffin-game'                             # the NEW account name
-$mail = '604926574@qq.com'                            # commit author email
-# ------------------------------------------------------------------------------
+function RunGit {
+    param([Parameter(ValueFromRemainingArguments = $true)][string[]]$GitArgs)
+    $prev = $ErrorActionPreference
+    $ErrorActionPreference = 'Continue'
+    try {
+        & git @GitArgs 2>&1 | ForEach-Object {
+            $line = "$_"
+            if ($line.Trim()) { Write-Host "    $line" -ForegroundColor DarkGray }
+        }
+        return $LASTEXITCODE
+    } finally {
+        $ErrorActionPreference = $prev
+    }
+}
 
-Write-Host "==== push to $repo with a token ====" -ForegroundColor Cyan
+Write-Host "==== push to $repo ====" -ForegroundColor Cyan
 Write-Host ""
 
 if (-not (Test-Path '.git')) {
@@ -43,59 +63,83 @@ if (-not (Test-Path '.git')) {
     exit 1
 }
 Write-Host "working dir: $((Get-Location).Path)"
-Write-Host "files to be published:"
-Get-ChildItem -File | Where-Object { $_.Name -notlike '.*' } | ForEach-Object { Write-Host ("  {0,-18} {1,8} bytes" -f $_.Name, $_.Length) }
+if ($DryRun) { Write-Host "MODE: -DryRun (no token, no push)" -ForegroundColor Yellow }
 Write-Host ""
 
-Write-Host "Paste the token for account '$user' (starts with ghp_), then Enter." -ForegroundColor Yellow
-Write-Host "Input is hidden and does NOT go into shell history." -ForegroundColor DarkGray
-$sec = Read-Host -AsSecureString
-$token = [System.Net.NetworkCredential]::new('', $sec).Password
-if ([string]::IsNullOrWhiteSpace($token)) {
-    Write-Host "[ERROR] empty token, aborting." -ForegroundColor Red
-    exit 1
-}
-if ($token -notmatch '^(ghp_|github_pat_)') {
-    Write-Host "[WARN] this does not look like a GitHub token; trying anyway." -ForegroundColor Yellow
-}
-
+Write-Host "will be published (tracked files):"
+git ls-files | ForEach-Object { Write-Host ("    $_") }
+Write-Host "  (files listed in .gitignore, e.g. serve.py, are NOT published)" -ForegroundColor DarkGray
 Write-Host ""
-Write-Host "clearing the OLD credential for git:https://github.com ..." -ForegroundColor Cyan
-cmdkey /delete:"LegacyGeneric:target=git:https://github.com" 2>$null | Out-Null
-Write-Host "storing the new one for '$user' ..." -ForegroundColor Cyan
-cmdkey /generic:"LegacyGeneric:target=git:https://github.com" /user:$user /pass:$token | Out-Null
 
-git remote remove origin 2>$null
-git remote add origin "https://github.com/$repo.git"
+# --- token ------------------------------------------------------------------
+if (-not $DryRun) {
+    Write-Host "Paste the token for account '$user' (starts with ghp_), then Enter." -ForegroundColor Yellow
+    Write-Host "Input is hidden and does NOT go into shell history." -ForegroundColor DarkGray
+    $sec = Read-Host -AsSecureString
+    $token = [System.Net.NetworkCredential]::new('', $sec).Password
+    if ([string]::IsNullOrWhiteSpace($token)) {
+        Write-Host "[ERROR] empty token, aborting." -ForegroundColor Red
+        exit 1
+    }
+    if ($token -notmatch '^(ghp_|github_pat_)') {
+        Write-Host "[WARN] this does not look like a GitHub token; trying anyway." -ForegroundColor Yellow
+    }
+    Write-Host ""
+    Write-Host "clearing the OLD credential for git:https://github.com ..." -ForegroundColor Cyan
+    cmdkey /delete:"LegacyGeneric:target=git:https://github.com" 2>$null | Out-Null
+    Write-Host "storing the new one for '$user' ..." -ForegroundColor Cyan
+    cmdkey /generic:"LegacyGeneric:target=git:https://github.com" /user:$user /pass:$token | Out-Null
+}
+
+# --- remote (check first: never call `remote remove` on a missing remote) ----
+$url = "https://github.com/$repo.git"
+$existing = @(git remote) | ForEach-Object { "$_".Trim() }
+if ($existing -contains 'origin') {
+    Write-Host ""
+    Write-Host "origin exists -> updating its URL ..." -ForegroundColor Cyan
+    RunGit remote set-url origin $url | Out-Null
+} else {
+    Write-Host ""
+    Write-Host "no origin yet -> adding it ..." -ForegroundColor Cyan
+    RunGit remote add origin $url | Out-Null
+}
 Write-Host "remote = $(git remote get-url origin)"
 
-git config user.name $user
-git config user.email $mail
-git config core.quotepath false
+RunGit config user.name $user | Out-Null
+RunGit config user.email $mail | Out-Null
+RunGit config core.quotepath false | Out-Null
 
+# --- commit -----------------------------------------------------------------
 Write-Host ""
-Write-Host "staging and committing any changes ..." -ForegroundColor Cyan
-git add -A
-git diff --cached --quiet
+Write-Host "staging ..." -ForegroundColor Cyan
+RunGit add -A | Out-Null
+& git diff --cached --quiet
 if ($LASTEXITCODE -eq 0) {
     Write-Host "  (nothing new to commit)"
 } else {
-    git commit -m "update site" | Out-Null
-    Write-Host "  committed"
+    Write-Host "  committing ..." -ForegroundColor Cyan
+    RunGit commit -m "update site" | Out-Null
 }
 
+if ($DryRun) {
+    Write-Host ""
+    Write-Host "[DRY RUN OK] local setup is fine." -ForegroundColor Green
+    Write-Host "  next: rerun without -DryRun and paste the token."
+    exit 0
+}
+
+# --- push -------------------------------------------------------------------
 Write-Host ""
 Write-Host "pushing ..." -ForegroundColor Cyan
 $env:GIT_TERMINAL_PROMPT = '0'
 $env:GCM_INTERACTIVE = 'never'
-git push -u origin main
-$code = $LASTEXITCODE
+$code = RunGit push -u origin main
 
 Write-Host ""
 if ($code -eq 0) {
     Write-Host "[OK] push succeeded." -ForegroundColor Green
     Write-Host "     site: https://$($repo.Split('/')[0]).github.io/   (live within 1-2 minutes)"
-    Write-Host "     custom domain: darkcoffin-game.hubingsf.cn"
+    Write-Host "     custom domain: $domain"
     Write-Host "       - CNAME file is already in the repo"
     Write-Host "       - DNS: add a CNAME record  darkcoffin-game -> $($repo.Split('/')[0]).github.io"
     Write-Host "       - GitHub: Settings > Pages > Custom domain, then tick Enforce HTTPS"
