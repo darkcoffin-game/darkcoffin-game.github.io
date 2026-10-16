@@ -109,6 +109,30 @@ body[data-layout="wide-short"] .seal{flex:1 1 100%}
 body[data-layout="wide-short"] .plain{flex:1 1 100%}
 body[data-layout="wide-short"] #hint{display:none}
 body[data-layout="desktop"] #paper{max-width:760px;margin:0 auto}
+/* ══ 游戏记录：大屏常驻；小屏一行摘要 ＋ 点开全屏 ══
+   记录属于"偶尔回看"那一层，不该常驻占高度，但任何时候都要能读到全尺寸。 */
+#logbar{display:none;flex:1 1 100%;align-items:center;gap:8px;text-align:left;
+  min-height:44px;padding:6px 10px;font-family:inherit;font-size:13px;line-height:1.4;
+  color:var(--ink2);background:transparent;border:1px dotted var(--line);border-radius:2px;
+  cursor:pointer;letter-spacing:.03em;touch-action:manipulation}
+#logbar .lb-t{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#logbar .lb-n{flex:0 0 auto;color:var(--faint);font-size:11px}
+#logveil{position:fixed;inset:0;z-index:30;display:none;flex-direction:column;
+  background:var(--paper);padding:14px 14px calc(14px + env(safe-area-inset-bottom,0px))}
+#logveil.on{display:flex}
+.lv-head{display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding-bottom:10px;border-bottom:2px solid var(--ink);letter-spacing:.2em;font-size:14px}
+#logclose{min-height:44px;padding:0 16px;font-size:13px;color:var(--ink2);font-family:inherit;
+  background:#f3f1ea;border:1px solid var(--line);border-radius:2px;touch-action:manipulation}
+#logfull{flex:1;min-height:0;overflow:auto;margin-top:10px;font-size:14px;line-height:1.95;
+  color:var(--ink2)}
+#logfull div{padding:5px 0;border-top:1px dotted var(--line)}
+#logfull div:first-child{border-top:0}
+/* 竖屏小屏：常驻列表让位给一行摘要 */
+body[data-layout="tall"] #logbar{display:flex}
+body[data-layout="tall"] #log{display:none}
+/* 横屏矮屏是侧栏，不算"挤正文"，常驻但把字放大到看得清 */
+body[data-layout="wide-short"] #log{font-size:12px;line-height:1.8}
 </style>
 </head>
 <body data-layout="tall">
@@ -136,6 +160,11 @@ body[data-layout="desktop"] #paper{max-width:760px;margin:0 auto}
     </div>
   </main></div>
 
+  <div id="logveil">
+    <div class="lv-head"><span>本局记录</span><button id="logclose" type="button">收起</button></div>
+    <div id="logfull"></div>
+  </div>
+
   <div id="rail">
     <aside id="side">
       <div class="meter"><span>今日额度</span><b id="q">0／4</b></div>
@@ -143,6 +172,9 @@ body[data-layout="desktop"] #paper{max-width:760px;margin:0 auto}
       <div class="meter"><span>退回</span><b id="r">0 份</b></div>
       <div class="meter"><span>连坐</span><b id="hh">0 户</b></div>
       <div id="log"></div>
+      <button id="logbar" type="button" aria-label="展开本局记录">
+        <span class="lb-t" id="logbart">暂无记录</span><span class="lb-n" id="logbarn"></span>
+      </button>
     </aside>
 
     <footer id="ctl">
@@ -251,10 +283,10 @@ var ENDS = {
 
 /* ══════════════ 状态 ══════════════ */
 var S = {d:0, i:0, q:0, dr:0, dhh:0, stamped:0, refused:0, hh:0, miss:0,
-         zhou:true, favor:0, overstep:0, nb:0, seq:97, archive:false};
+         zhou:true, favor:0, overstep:0, nb:0, seq:97, archive:false, recs:[]};
 var busy = false;
 var el = {};
-["date","office","no","link","name","reason","grade","gtxt","eff","ink","q","s","r","hh","log","yes","refuse","hint",
+["date","office","no","link","name","reason","grade","gtxt","eff","ink","q","s","r","hh","log","yes","refuse","hint","logbar","logbart","logbarn","logveil","logfull","logclose",
  "veil","vt","ve","vgo","paper"].forEach(function(k){ el[k] = document.getElementById(k); });
 
 function applyLayout(){
@@ -358,10 +390,27 @@ function drawDoc(){
   clearInk();
   meters();
 }
+/* 记录只存一份（最新的在前），再渲染到两处：
+   常驻列表 #log（大屏／横屏矮屏）与全屏列表 #logfull（小屏点开后）。
+   小屏那一行摘要显示最新一条 + 条数。 */
 function addLog(t){
-  var d = document.createElement("div");
-  d.textContent = t;
-  el.log.insertBefore(d, el.log.firstChild);
+  S.recs.unshift(t);
+  renderRec();
+}
+function fillRec(box){
+  if (!box) return;
+  box.innerHTML = "";
+  for (var i = 0; i < S.recs.length; i++){
+    var d = document.createElement("div");
+    d.textContent = S.recs[i];
+    box.appendChild(d);
+  }
+}
+function renderRec(){
+  fillRec(el.log);
+  fillRec(el.logfull);
+  el.logbart.textContent = S.recs.length ? S.recs[0] : "暂无记录";
+  el.logbarn.textContent = S.recs.length ? "共 " + S.recs.length + " 条" : "";
 }
 function meters(){
   var day = DAYS[S.d], left = day.quota - S.q;
@@ -447,10 +496,12 @@ function act(stamp){
 function bind(btn, fn){ btn.addEventListener("click", fn); }
 function restart(){
   S = {d:0, i:0, q:0, dr:0, dhh:0, stamped:0, refused:0, hh:0, miss:0,
-       zhou:true, favor:0, overstep:0, nb:0, seq:97, archive:false};
+       zhou:true, favor:0, overstep:0, nb:0, seq:97, archive:false, recs:[]};
   busy = false;
   resetDays();
   el.log.innerHTML = "";
+  el.logveil.classList.remove("on");
+  renderRec();
   el.yes.disabled = false; el.refuse.disabled = false;
   el.yes.style.display = "";
   el.refuse.textContent = "退回";
@@ -458,6 +509,9 @@ function restart(){
   el.veil.classList.remove("on");
   drawDoc();
 }
+
+bind(el.logbar, function(){ el.logveil.classList.add("on"); });
+bind(el.logclose, function(){ el.logveil.classList.remove("on"); });
 
 bind(el.yes, function(){ if (el.vgo.dataset.over) return; act(true); });
 bind(el.refuse, function(){ if (el.vgo.dataset.over) return; act(false); });

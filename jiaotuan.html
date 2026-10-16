@@ -215,6 +215,13 @@ a.btn:active,.opt:active{filter:brightness(.93);}
     /* 空隙按「固定底栏高度 ＋ 悬浮按钮高度」一起算，让页底整块停在按钮上方（按钮停在 底栏+14px，高约 42px）*/
 
 
+/* ══ 选项栏可以高，但内容必须让路 ══
+   原来是写死 108–118px 的底边距，而选项栏的高度由内容决定（长选项时远超那个数），
+   于是最后几行正文被压在栏下面、滚到底也露不出来。
+   现在改成跟着量出来的 --ctl-h 走；再给栏一个上限高度并在栏内自己滚动，
+   真遇到超长选项它滚自己，而不是吃掉整屏。 */
+.wrap{padding-bottom:calc(var(--ctl-h, 116px) + 22px)}
+.controls{max-height:56vh;max-height:56dvh;overflow:auto;-webkit-overflow-scrolling:touch}
 </style>
 </head>
 <body>
@@ -5809,6 +5816,30 @@ window.addEventListener("DOMContentLoaded", function () {
       window.setInterval(function () {
         if (log.childNodes.length !== n) { n = log.childNodes.length; schedule(); }
       }, 800);
+    }
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+  else init();
+})();
+</script>
+<script>
+/* ══ 把选项栏的真实高度量进 --ctl-h（内容随之让路）══
+   栏的内容每回合都会变，所以除了 resize 还要在栏上挂观察器重新量。
+   与悬浮按钮那段脚本各管各的，设的是同一个变量、同一个值，不冲突。 */
+(function () {
+  function sync() {
+    var bar = document.querySelector(".controls");
+    if (!bar) return;
+    var h = Math.round(bar.getBoundingClientRect().height);
+    if (h > 0) document.documentElement.style.setProperty("--ctl-h", h + "px");
+  }
+  function init() {
+    var bar = document.querySelector(".controls");
+    sync();
+    window.addEventListener("resize", sync);
+    window.addEventListener("orientationchange", sync);
+    if (window.MutationObserver && bar) {
+      new MutationObserver(sync).observe(bar, { childList: true, subtree: true });
     }
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
