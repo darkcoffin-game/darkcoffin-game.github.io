@@ -243,6 +243,13 @@ a.btn:active,.opt:active{filter:brightness(.93);}
     background:#fbeeec;font-size:13px;line-height:1.9;color:var(--ink2);letter-spacing:.03em}
   .mech .mh{letter-spacing:.16em;color:var(--red);margin-bottom:5px}
   .mech .mf{margin-top:7px;color:var(--faint);font-size:12px}
+
+  /* ══ 死亡线预警：条进入危险区时叠一层斜纹 ＋ 一道细边 ══
+     非文字、不解释机制 —— 只把"快到了"变得看得见。
+     阈值是量出来的（heat≥65 / nerve≤45 / body≤80），见 _tests/probe_death.js。 */
+  .f-heat.danger,.f-nerve.danger,.f-body.danger{
+    background-image:repeating-linear-gradient(45deg,rgba(20,19,18,.26) 0 3px,transparent 3px 7px);
+    box-shadow:inset 0 0 0 1px var(--red)}
 </style>
 </head>
 <body>
@@ -8133,6 +8140,47 @@ window.addEventListener("DOMContentLoaded", function () {
     if (window.MutationObserver && bar) {
       new MutationObserver(sync).observe(bar, { childList: true, subtree: true });
     }
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+  else init();
+})();
+</script>
+<script>
+/* ══ 三条死亡线的预警（方案一：让"贴线"看得见）══
+   阈值来自实测，不是拍脑袋：
+     heat ≥ 65 · nerve ≤ 45 · body ≤ 80
+   —— 这三档能让 91–100% 的死亡在死前至少 3 回合就亮灯（见 _tests/probe_death.js）。
+   heat 还有约 9% 是从线下一步跨到死的，可视化盖不住；那属于单次增减的量级问题。
+
+   做法：引擎每回合会重画这些条（元素被换掉、class 也随之丢失），
+   所以这里在【重画之后】补上 class：观察 #bars 的子节点变化 ＋ 点击后补一次
+   ＋ 一秒钟兜一次底。三种路子都只做一件事：读 G，给条加/去 .danger。 */
+(function () {
+  var RULES = {
+    heat:  function (v) { return v >= 65; },
+    nerve: function (v) { return v <= 45; },
+    body:  function (v) { return v <= 80; }
+  };
+  function sync() {
+    if (typeof G === "undefined" || !G || G.over) return;
+    for (var k in RULES) {
+      if (!RULES.hasOwnProperty(k)) continue;
+      var el = document.querySelector(".f-" + k);
+      if (!el) continue;
+      var v = G[k];
+      if (typeof v !== "number") continue;
+      if (RULES[k](v)) { el.classList.add("danger"); } else { el.classList.remove("danger"); }
+    }
+  }
+  function init() {
+    sync();
+    window.addEventListener("resize", sync);
+    var bars = document.getElementById("bars");
+    if (window.MutationObserver && bars) {
+      new MutationObserver(sync).observe(bars, { childList: true, subtree: true });
+    }
+    document.addEventListener("click", function () { window.setTimeout(sync, 60); }, true);
+    window.setInterval(sync, 1000);
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
   else init();
