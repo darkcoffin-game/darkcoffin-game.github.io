@@ -1,0 +1,7 @@
+# 本地测试脚本：不推上去，保持发布出来的站点只有站点文件
+serve.py
+
+# Windows 的目录垃圾
+Thumbs.db
+desktop.ini
+.DS_Store

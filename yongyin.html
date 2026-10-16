@@ -1,0 +1,472 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>戡乱政府 · 用印五日</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='9' fill='%239c1f1a'/><g stroke='%23f3f1ea' stroke-width='7' fill='none' stroke-linecap='square'><path d='M32 15v34M15 32h34'/></g></svg>">
+<style>
+:root{
+  --paper:#e9e6df; --ink:#141312; --ink2:#4a4640; --red:#9c1f1f;
+  --line:#c9c3b6; --rule:rgba(20,19,18,.055);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  background:var(--paper); color:var(--ink);
+  font-family:"Songti SC","SimSun","Source Han Serif SC","Noto Serif CJK SC",serif;
+  letter-spacing:.06em; overflow:hidden; user-select:none;
+  touch-action:manipulation;
+  height:100vh; height:100dvh;
+}
+#app{display:flex;height:100%;width:100%;flex-wrap:nowrap}
+
+#head{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--line)}
+.mark{width:38px;height:38px;border:1.5px solid var(--red);color:var(--red);border-radius:3px;
+  display:flex;align-items:center;justify-content:center;font-size:11px;line-height:1.05;
+  text-align:center;letter-spacing:0}
+#date{font-size:clamp(13px,3.4vw,17px)}
+#office{font-size:clamp(10px,2.6vw,12px);color:var(--ink2);margin-top:3px}
+
+#paperwrap{flex:1;min-height:0;min-width:0;display:flex;padding:12px;overflow:auto}
+#paper{
+  flex:1;min-height:240px;position:relative;
+  border:1px solid var(--line);border-radius:2px;background:
+    repeating-linear-gradient(0deg,var(--rule) 0 1px,transparent 1px 26px),#f3f1ea;
+  box-shadow:0 1px 0 #fff inset, 0 6px 18px rgba(20,19,18,.06);
+  padding:clamp(14px,4vw,26px);display:flex;flex-direction:column;
+}
+#no{font-size:clamp(10px,2.5vw,12px);color:var(--ink2);letter-spacing:.12em}
+#link{font-size:clamp(10px,2.5vw,12px);color:var(--red);margin-top:5px;min-height:1.2em;letter-spacing:.06em}
+#name{font-size:clamp(26px,8vw,46px);margin:auto 0 0;letter-spacing:.14em}
+#reason{font-size:clamp(14px,3.8vw,21px);margin-top:10px;line-height:1.6}
+#grade{display:inline-flex;align-items:center;gap:7px;margin-top:16px;font-size:clamp(11px,2.8vw,13px);
+  color:var(--ink2)}
+#eff{margin-top:7px;font-size:clamp(11px,2.9vw,13px);color:var(--red);min-height:2.6em;
+  letter-spacing:.04em;line-height:1.6}
+.sq{width:11px;height:11px;border:1px solid var(--ink2)}
+.sq.h{background:#b08a2e;border-color:#b08a2e}
+.sq.l{background:#33507c;border-color:#33507c}
+.sq.r{background:var(--red);border-color:var(--red)}
+.sq.g{border-radius:50%;border-color:var(--ink2)}
+.ink{position:absolute;right:clamp(12px,5vw,30px);bottom:clamp(12px,5vw,26px);
+  width:clamp(70px,20vw,104px);height:clamp(70px,20vw,104px);border:3px solid var(--red);
+  border-radius:50%;color:var(--red);display:flex;align-items:center;justify-content:center;
+  font-size:clamp(15px,4.4vw,22px);letter-spacing:.1em;opacity:0;transform:scale(1.7) rotate(-14deg);
+  transition:opacity .12s,transform .16s;pointer-events:none}
+.ink.on{opacity:.86;transform:scale(1) rotate(-11deg)}
+
+#rail{display:flex;flex-direction:column;min-height:0}
+#side{padding:12px 13px;display:flex;flex-direction:column;gap:8px;flex:1;min-height:0}
+.meter{font-size:clamp(11px,2.9vw,13px);color:var(--ink2);display:flex;justify-content:space-between;gap:6px}
+.meter b{color:var(--ink);font-weight:400;text-align:right}
+#log{margin-top:4px;flex:1;min-height:0;overflow:auto;font-size:clamp(10px,2.6vw,12px);
+  color:var(--ink2);line-height:1.75}
+#log div{border-top:1px dotted var(--line);padding-top:4px;margin-top:4px}
+#log div:first-child{border-top:0}
+
+#ctl{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:10px 13px;
+  padding-bottom:calc(10px + env(safe-area-inset-bottom,0px));
+  border-top:1px solid var(--line);background:rgba(233,230,223,.96);flex:0 0 auto}
+button{font-family:inherit;letter-spacing:.1em;cursor:pointer;border-radius:2px;
+  min-height:52px;min-width:44px;border:1px solid var(--line);background:#f3f1ea;color:var(--ink);
+  font-size:clamp(14px,3.6vw,17px);touch-action:manipulation;transition:transform .08s,background .12s}
+button:active{transform:translateY(1px) scale(.985);background:#e6e2d8}
+.seal{flex:1 1 120px;border:2px solid var(--red);color:var(--red);font-size:clamp(16px,4.2vw,20px)}
+.seal:active{background:#f0e2df}
+.plain{flex:1 1 96px;color:var(--ink2)}
+#hint{flex:1 1 100%;order:3;text-align:center;font-size:11px;color:var(--ink2);letter-spacing:.04em;
+  line-height:1.5}
+
+#veil{position:absolute;inset:0;display:none;flex-direction:column;justify-content:center;
+  padding:clamp(16px,5vw,34px);background:rgba(243,241,234,.97);gap:12px}
+#veil.on{display:flex}
+#vt{font-size:clamp(14px,3.8vw,18px);line-height:1.85}
+#ve{font-size:clamp(12px,3.2vw,14px);color:var(--ink2);line-height:1.8;border-top:1px solid var(--line);padding-top:10px}
+#vgo{align-self:flex-start;padding:0 22px;flex:0 0 auto}
+
+/* ── 三套布局：由 layoutFor() 写进 body[data-layout] ── */
+body[data-layout="tall"] #app{flex-direction:column}
+body[data-layout="tall"] #rail{flex:0 0 auto;border-top:1px solid var(--line)}
+body[data-layout="tall"] #side{flex:0 0 auto;flex-direction:row;flex-wrap:wrap;gap:6px 18px;
+  border-top:0;padding-bottom:4px}
+body[data-layout="tall"] #side .meter{flex:0 0 auto}
+body[data-layout="tall"] #log{display:block;flex:1 1 100%;max-height:52px;overflow:auto;margin-top:2px}
+body[data-layout="tall"] #paperwrap{padding:12px 12px 0}
+
+body[data-layout="wide-short"] #app,
+body[data-layout="desktop"] #app{flex-direction:row}
+body[data-layout="wide-short"] #paperwrap{padding:12px}
+body[data-layout="desktop"] #paperwrap{padding:20px}
+body[data-layout="wide-short"] #rail{flex:0 0 236px;border-left:1px solid var(--line)}
+body[data-layout="desktop"] #rail{flex:0 0 320px;border-left:1px solid var(--line)}
+body[data-layout="desktop"] #side{padding:16px 18px}
+body[data-layout="wide-short"] #side{padding:10px 11px;gap:5px}
+body[data-layout="wide-short"] #log{font-size:10px;line-height:1.6}
+body[data-layout="wide-short"] #ctl{padding:8px 11px;padding-bottom:calc(8px + env(safe-area-inset-bottom,0px))}
+body[data-layout="wide-short"] button{min-height:46px;font-size:13px}
+body[data-layout="wide-short"] .seal{flex:1 1 100%}
+body[data-layout="wide-short"] .plain{flex:1 1 100%}
+body[data-layout="wide-short"] #hint{display:none}
+body[data-layout="desktop"] #paper{max-width:760px;margin:0 auto}
+</style>
+</head>
+<body data-layout="tall">
+<div id="app">
+  <header id="head">
+    <div class="mark">北沙<br>戡乱</div>
+    <div>
+      <div id="date">战后五年四月十一日</div>
+      <div id="office">戡乱政府 · 第四办事口 · 用印台</div>
+    </div>
+  </header>
+
+  <div id="paperwrap"><main id="paper">
+    <div id="no">戡用字〔2026〕第 013 号</div>
+    <div id="link"></div>
+    <div id="name">柳成</div>
+    <div id="reason">在茶棚内议论时政</div>
+    <div id="grade"><span class="sq h"></span><span id="gtxt">黄色等级</span></div>
+    <div id="eff"></div>
+    <div class="ink" id="ink">用印</div>
+    <div id="veil">
+      <div id="vt"></div>
+      <div id="ve"></div>
+      <button id="vgo">继续</button>
+    </div>
+  </main></div>
+
+  <div id="rail">
+    <aside id="side">
+      <div class="meter"><span>今日额度</span><b id="q">0／4</b></div>
+      <div class="meter"><span>已送走</span><b id="s">0 人</b></div>
+      <div class="meter"><span>退回</span><b id="r">0 份</b></div>
+      <div class="meter"><span>连坐</span><b id="hh">0 户</b></div>
+      <div id="log"></div>
+    </aside>
+
+    <footer id="ctl">
+      <button id="yes" class="seal">用印</button>
+      <button id="refuse" class="plain">退回</button>
+      <div id="hint">用印 ＝ 依等级处理这份材料；退回 ＝ 本口另议，不计入今日额度</div>
+    </footer>
+  </div>
+</div>
+
+<script>
+"use strict";
+/* ══════════════════════════════════════════════════════════
+   布局判定：**纯函数**（node 能拿视口矩阵断言它）
+   ══════════════════════════════════════════════════════════ */
+function layoutFor(w, h){
+  if (h < 480 && w > h) return "wide-short";
+  if (w >= 900 && w > h) return "desktop";
+  return "tall";
+}
+
+/* ══════════════ 材料 ══════════════
+   [名字, 罪名, 等级, 关联行, 回声键]
+   等级：黄／蓝／红 照设定集卷四（红＝公开死刑＋连坐十户／蓝＝鞭刑刺青／黄＝口袋罪名）
+        「给」＝请准发放，「缓」＝暂缓不该用印，「已办」＝到你桌上时已经盖过章了
+   回声键：
+        SW  第1天那份：你退回 → 次日同一口升级；你盖了 → 那个口处理过了，换一份别的
+        ROU 第3天那份肉粥：盖了 → 次日核发放数；退回 → 粥没发成（并加一分给周德胜）
+        HUAN 第4天那两份暂缓：盖了 → 越权（第5天你自己出现在材料上）
+   任何一份被【退回】→ 紧接着的那张纸就是同一个名字（已由邻口办理，见 neighbor()）
+   ══════════════════════════════════════════════════════════ */
+var DAYS0 = [
+ {date:"战后五年四月十一日", quota:4,
+  close:["递材料的人姓周。他把这一叠放在你桌角，说：都是上过会的。","你没有问上的是哪个会。"],
+  docs:[["柳成","在茶棚内议论时政","黄"],
+        ["邵文山","影响北沙繁荣","黄",null,"SW"],
+        ["关玉琴","查无此人","黄"],
+        ["徐开","持有未登记纸张","蓝"],
+        ["蒋一鸣","在配给点滞留逾时","黄"],
+        ["韩素芬","家中存有旧报三份","黄"]]},
+
+ {date:"战后五年四月十二日", quota:5,
+  close:["周德胜今天多留了一会儿。","他说：昨天那几个，有两个是一个口的。你没有接话。"],
+  docs:[["冯有田","在墙根聚集三人以上","黄"],
+        ["谢仲平","私自留宿外乡人","蓝"],
+        ["骆长顺","窝藏枪械","红"],
+        ["朱淑贞","为被处理者送饭","黄"],
+        ["尤长庚","经手配给短少","蓝"],
+        ["孟广鑫","夜间外出无凭","黄"]]},
+
+ {date:"战后五年四月十三日", quota:3,
+  close:["今天这一叠的第一份不是处罚。","周德胜说：这个也归咱们口上办，你看着盖。"],
+  docs:[["请准","千达广场免费肉粥三百份","给",null,"ROU"],
+        ["纪文彬","未按期报告迁入","黄"],
+        ["彭占元","房屋空置未报","黄"],
+        ["于素秋","口粮外流","蓝"],
+        ["祁有德","在墙上写字","黄"]]},
+
+ {date:"战后五年四月十四日", quota:2,
+  close:["会期开了。周德胜说：上头交代，这几天街面要好看。",
+         "这一叠薄。他还说：那两份写着暂缓的，你先放着，不用盖。"],
+  docs:[["沈钧","经费所限，暂缓","缓",null,"HUAN"],
+        ["武承业","照会期内办法，不予处理","缓",null,"HUAN"],
+        ["万长顺","于茶棚议论，情节轻微","黄"],
+        ["褚明","未登记纸张（已自行销毁）","黄"]]},
+
+ {date:"战后五年四月十五日", quota:6,
+  close:["会期散了。这一叠厚。","今天不是周德胜送来的。送材料的人说：他这两天的账，也要过一过。"],
+  docs:[["周德胜","经账目不清","蓝","作保人一栏 · 写着你的名字"],
+        ["裴振海","与南边通信","红"],
+        ["柳成","同一口，再犯","黄"],
+        ["关玉琴","查无此人","黄"],
+        ["冯有田","在墙根聚集三人以上","蓝"],
+        ["谢仲平","私自留宿外乡人","蓝"],
+        ["朱淑贞","为被处理者送饭","黄"],
+        ["于素秋","口粮外流","黄"]]}
+];
+var DAYS = [];
+
+/* 等级 → [色块类, 标签, 连坐户数, 后果行] */
+var GV = {
+  "黄":["h","黄色等级",0,"记入口袋罪名 · 移出本口，以查无此人注记"],
+  "蓝":["l","蓝色等级",1,"鞭刑二十 · 刺青 · 本人移送"],
+  "红":["r","红色等级",10,"公开死刑 · 连坐所在口（十户）往南部矿区劳动一年以上"],
+  "给":["g","请准 · 发放",0,"准予发放"],
+  "缓":["g","暂缓 · 未到处理时",0,"这一份写着暂缓"],
+  "已办":["g","已由邻口办理",0,"这一份到你桌上时已经盖过章了"]
+};
+var BILL = function(){ return "经手 " + S.stamped + " 人，连坐 " + S.hh + " 户。"; };
+
+/* ══════════════ 结尾 ══════════════ */
+var ENDS = {
+  toomuch:["三十份你一份没剩。你盖得比谁都快，这件事在办事口是记着的。",
+           "卷宗上写着：该员经手过多，另有任用。"],
+  recordless:["五天里你用印的次数不多。到最后没有人记得你坐在哪一张桌子后面。",
+          "卷宗上写着：无记录。无记录，也是一种记录。"],
+  because:["有几天你没有盖满。额度报上去的时候，那一栏是空的。",
+          "卷宗上写着：该员因故离营。因故这两个字，抵得过很多名字。"],
+  sharp:["五天的额度都满了。最后那一叠，你没有停手。",
+          "卷宗上写着：执行果断。"],
+  another:["五天的额度都满了。最后那一叠的第一个名字，你把章停在了半空。",
+          "卷宗上写着：该员另有任用。"],
+  good:["你盖完了该盖的。有几份你退回去了，没有人问过那几份。",
+          "卷宗上写着：该员表现良好。"]
+};
+
+/* ══════════════ 状态 ══════════════ */
+var S = {d:0, i:0, q:0, dr:0, dhh:0, stamped:0, refused:0, hh:0, miss:0,
+         zhou:true, favor:0, overstep:0, nb:0, seq:97, archive:false};
+var busy = false;
+var el = {};
+["date","office","no","link","name","reason","grade","gtxt","eff","ink","q","s","r","hh","log","yes","refuse","hint",
+ "veil","vt","ve","vgo","paper"].forEach(function(k){ el[k] = document.getElementById(k); });
+
+function applyLayout(){
+  document.body.dataset.layout = layoutFor(window.innerWidth, window.innerHeight);
+}
+window.addEventListener("resize", applyLayout);
+window.addEventListener("orientationchange", applyLayout);
+
+function showInk(){
+  el.ink.classList.remove("on");
+  void el.ink.offsetWidth;
+  el.ink.classList.add("on");
+}
+function clearInk(){ el.ink.classList.remove("on"); }
+function resetDays(){ DAYS = JSON.parse(JSON.stringify(DAYS0)); }
+
+/* 编号在第一次露面时定下来 —— 这样"关联：第 X 号"永远指向真正的那一张 */
+function numOf(doc){
+  if (!doc[5]) doc[5] = "戡用字〔2026〕第 " + String(S.seq++).padStart(3, "0") + " 号";
+  return doc[5];
+}
+
+/* ══════════════ 五条互动 ══════════════ */
+/* ② 邻口：你退回的下一张纸，是同一个名字 —— 已经盖过章了。
+   它只有「归档」一个按钮：不算额度、不算退回、也不减你的账。你只能看着它。 */
+function neighbor(doc){
+  if (S.nb >= 2) return;
+  S.nb++;
+  var day = DAYS[S.d];
+  day.docs.splice(S.i + 1, 0, [doc[0], "已由邻口办理。跟你退回去的那一份，是同一个名字",
+                               "已办", "邻口 · " + numOf(doc)]);
+}
+
+function afterAction(doc, stamped){
+  var key = doc[4];
+  /* ① 同一口：拒绝会长大；盖了，那个口就算处理过了 */
+  if (key === "SW"){
+    if (!stamped){
+      DAYS[1].docs.unshift(["邵文山","同一口，未予劝阻","蓝","同口 · " + numOf(doc)]);
+    } else {
+      DAYS[1].docs.unshift(["韩素芬","家中存有旧报三份","黄"]);
+    }
+  }
+  /* ④ 「给」的那一份有后果 */
+  if (key === "ROU"){
+    if (stamped){
+      DAYS[3].docs.push(["核数","千达广场发放数，需核","蓝","关联 · " + numOf(doc)]);
+      DAYS[3].quota++;
+      addLog("核数 · 已加入明日");
+    } else {
+      DAYS[3].docs.push(["配给","肉粥未予发放，秩序须查","黄","关联 · " + numOf(doc)]);
+    }
+    S.favor += stamped ? 1 : -1;                 /* 肉粥是周德胜的口上的事 */
+  }
+  /* ⑤ 越权：盖过写着暂缓的 → 第五天你自己出现在材料上 */
+  if (doc[2] === "缓"){
+    if (stamped){ S.overstep++; S.favor--; } else { S.favor++; }
+  }
+  /* ③ 周德胜的档位：他每天暗示你"先放着"，你听不听，攒到第五天 */
+  if (doc[2] === "黄" && key !== "SW") { /* 无影响的普通材料 */ }
+  /* ② 邻口 */
+  if (!stamped) neighbor(doc);
+}
+
+/* ③⑤ 第五天开场前结算：他那一份变成哪一档，以及桌上有没有你自己 */
+function prepareDay5(){
+  DAYS[4].docs[0] = ["周德胜","经账目不清", S.favor >= 1 ? "蓝" : "红",
+                     "作保人一栏 · 写着你的名字"];
+  if (S.overstep > 0){
+    DAYS[4].docs.push(["第四办事口 · 用印台","该员用印超出授权数量","黄",
+                       "越权 · 暂缓件 " + S.overstep + " 份"]);
+    DAYS[4].quota++;
+    DAYS[4].close = ["会期散了。这一叠厚。",
+      "今天不是周德胜送来的。送材料的人说：他这两天的账，也要过一过。",
+      "底下还压着一张，写的是你自己的桌子。"];
+  }
+}
+
+function drawDoc(){
+  var day = DAYS[S.d], doc = day.docs[S.i], g = GV[doc[2]];
+  S.archive = (doc[2] === "已办");
+  el.date.textContent = day.date;
+  el.no.textContent = numOf(doc);
+  el.link.textContent = doc[3] ? "关联：" + doc[3] : "";
+  el.name.textContent = doc[0];
+  el.reason.textContent = doc[1];
+  el.gtxt.textContent = g[1];
+  el.grade.querySelector(".sq").className = "sq " + g[0];
+  el.eff.textContent = "";
+  if (S.archive){
+    el.yes.style.display = "none";
+    el.refuse.textContent = "归档";
+    el.hint.textContent = "这一份已经办过了 —— 你的桌上只剩这一件事：看见它";
+  } else {
+    el.yes.style.display = "";
+    el.refuse.textContent = "退回";
+    el.hint.textContent = (doc[2] === "缓")
+      ? "这一份写着暂缓 —— 用印就是把它处理掉，退回才是照它写的办"
+      : "用印 ＝ 依等级处理这份材料；退回 ＝ 本口另议，不计入今日额度";
+  }
+  clearInk();
+  meters();
+}
+function addLog(t){
+  var d = document.createElement("div");
+  d.textContent = t;
+  el.log.insertBefore(d, el.log.firstChild);
+}
+function meters(){
+  var day = DAYS[S.d], left = day.quota - S.q;
+  el.s.textContent = S.stamped + " 人";
+  el.r.textContent = S.refused + " 份";
+  el.hh.textContent = S.hh + " 户";
+  el.q.textContent = S.q + "／" + day.quota + (left > 0 ? "（尚差 " + left + " 份）" : "（已足额）");
+  el.q.style.color = (left > 0) ? "var(--red)" : "var(--ink2)";
+}
+function next(){
+  S.i++;
+  if (S.i < DAYS[S.d].docs.length){ drawDoc(); return; }
+  if (S.q < DAYS[S.d].quota) S.miss++;
+  var last = (S.d === DAYS.length - 1), short = DAYS[S.d].quota - S.q;
+  el.vt.textContent = DAYS[S.d].close.join("");
+  el.ve.textContent = "本日：用印 " + S.q + " 份，退回 " + S.dr + " 份，牵连 " + S.dhh + " 户。"
+    + (short > 0 ? "额度差 " + short + " 份 —— 办事口会记一笔。" : "额度已满。")
+    + (last ? "" : "　累计：经手 " + S.stamped + " 人，连坐 " + S.hh + " 户。");
+  el.vgo.textContent = last ? "落定" : "次日";
+  el.veil.classList.add("on");
+}
+function nextDay(){
+  el.veil.classList.remove("on");
+  if (S.d === DAYS.length - 1){ finish(); return; }
+  S.d++; S.i = 0; S.q = 0; S.dr = 0; S.dhh = 0; S.nb = 0;
+  if (S.d === 4) prepareDay5();
+  drawDoc();
+}
+function finish(){
+  /* 只数"要你动手"的材料：归档件不参与判定 */
+  var actionable = 0;
+  DAYS.forEach(function(day){
+    day.docs.forEach(function(d){ if (d[2] !== "已办") actionable++; });
+  });
+  var id;
+  if (S.stamped >= actionable) id = "toomuch";
+  else if (S.stamped <= 6) id = "recordless";
+  else if (S.miss >= 3) id = "because";
+  else if (S.miss === 0 && S.zhou) id = "sharp";
+  else if (S.miss === 0 && !S.zhou) id = "another";
+  else id = "good";
+  var e = ENDS[id];
+  el.vt.textContent = e[0];
+  el.ve.textContent = e[1] + "　" + BILL();
+  el.vgo.textContent = "重来";
+  el.vgo.dataset.over = "1";
+  el.veil.classList.add("on");
+  el.yes.disabled = true; el.refuse.disabled = true;
+}
+
+function act(stamp){
+  if (busy) return;
+  var day = DAYS[S.d], doc = day.docs[S.i], g = GV[doc[2]];
+  if (S.archive){                                  /* 归档：什么都不算 */
+    addLog(doc[0] + " · 已由邻口办理（归档）");
+    next(); return;
+  }
+  if (stamp){
+    busy = true;
+    S.stamped++; S.q++; S.hh += g[2]; S.dhh += g[2];
+    if (doc[0] === "周德胜") S.zhou = true;
+    el.eff.textContent = g[3] + (g[2] ? "　连坐 " + g[2] + " 户" : "");
+    el.hint.textContent = "用印已落 · 今日额度 " + S.q + "／" + day.quota
+      + "　累计经手 " + S.stamped + " 人";
+    addLog(doc[0] + " · " + g[1] + " · " + g[3]);
+    showInk(); meters();
+    afterAction(doc, true);
+    window.setTimeout(function(){ busy = false; next(); }, 200);
+  } else {
+    S.refused++; S.dr++;
+    if (doc[0] === "周德胜") S.zhou = false;
+    var need = day.quota - S.q;
+    var note = need > 0 ? " · 今日尚差 " + need + " 份" : " · 今日已足额";
+    el.eff.textContent = "退回本口，另议" + note;
+    el.hint.textContent = "已退回 —— 这一份不计入今日额度" + note;
+    addLog(doc[0] + " · 退回本口" + note);
+    meters();
+    afterAction(doc, false);
+    next();
+  }
+}
+
+function bind(btn, fn){ btn.addEventListener("click", fn); }
+function restart(){
+  S = {d:0, i:0, q:0, dr:0, dhh:0, stamped:0, refused:0, hh:0, miss:0,
+       zhou:true, favor:0, overstep:0, nb:0, seq:97, archive:false};
+  busy = false;
+  resetDays();
+  el.log.innerHTML = "";
+  el.yes.disabled = false; el.refuse.disabled = false;
+  el.yes.style.display = "";
+  el.refuse.textContent = "退回";
+  el.vgo.dataset.over = "";
+  el.veil.classList.remove("on");
+  drawDoc();
+}
+
+bind(el.yes, function(){ if (el.vgo.dataset.over) return; act(true); });
+bind(el.refuse, function(){ if (el.vgo.dataset.over) return; act(false); });
+bind(el.vgo, function(){
+  if (el.vgo.dataset.over) restart(); else nextDay();
+});
+
+applyLayout();
+restart();
+</script>
+</body>
+</html>

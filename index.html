@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>黑柩 小游戏</title>
+<link rel="icon" href="icon.png">
+<link rel="apple-touch-icon" href="icon.png">
+<meta name="description" content="《黑柩》同人网页小游戏四件：戡乱政府·用印五日、命途转盘·北沙、和平会议·七日、命途转盘·启示录教团国。">
+<style>
+/* 配色与字体取自《命途转盘 · 北沙》，保持同一套纸墨 */
+:root{
+  --paper:#e9e6df; --paper2:#f4f2ec; --ink:#141312; --ink2:#3c3a36;
+  --dim:#6c6862; --faint:#9a958c; --rule:#c4bfb4; --rule2:#a8a29a;
+  --red:#9c1f1a; --red2:#c2352c; --redbg:#f3e6e3; --steel:#4a5560; --ok:#3f5c3a;
+  --gold:#8a6a24;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  background:var(--paper); color:var(--ink);
+  font-family:"Songti SC","Noto Serif SC","Source Han Serif SC",STSong,SimSun,serif;
+  letter-spacing:.05em; line-height:1.75;
+  min-height:100vh; min-height:100dvh;
+  touch-action:manipulation; overflow-x:hidden;
+}
+.wrap{max-width:1080px;margin:0 auto;padding:0 16px;
+  padding-bottom:calc(28px + env(safe-area-inset-bottom,0px))}
+a{color:inherit;text-decoration:none}
+
+/* ── 顶部警告：排版框强调，不用 emoji ── */
+.warn{margin:16px 0 0;border:1px solid var(--red);border-left:6px solid var(--red);
+  background:var(--redbg);padding:12px 14px;border-radius:2px}
+.warn h2{margin:0 0 6px;font-size:13px;letter-spacing:.24em;color:var(--red);font-weight:400}
+.warn ol{margin:0;padding-left:1.4em;font-size:clamp(12px,3.2vw,13.5px);color:var(--ink2)}
+.warn li{margin:2px 0}
+
+/* ── 抬头 ── */
+header{display:flex;align-items:center;gap:16px;padding:26px 0 18px;border-bottom:2px solid var(--ink)}
+.stamp{flex:0 0 auto;width:64px;height:64px;border:2px solid var(--red);color:var(--red);
+  border-radius:3px;display:flex;align-items:center;justify-content:center;text-align:center;
+  font-size:15px;line-height:1.15;letter-spacing:.02em}
+h1{margin:0;font-size:clamp(26px,7vw,44px);letter-spacing:.22em;font-weight:400}
+.sub{margin:6px 0 0;font-size:clamp(11px,3vw,13px);color:var(--dim);letter-spacing:.14em}
+
+/* ── 卡片 ── */
+.cards{display:grid;gap:14px;margin:22px 0 0}
+.card{position:relative;display:block;border:1px solid var(--rule);background:var(--paper2);
+  border-radius:2px;padding:18px 18px 16px;border-left:6px solid var(--rule2);
+  transition:background .12s;min-height:44px}
+.card:active{background:#eceadf}
+.card.c-red{border-left-color:var(--red)}
+.card.c-gold{border-left-color:var(--gold)}
+.card .idx{font-size:11px;letter-spacing:.3em;color:var(--faint)}
+.card h2{margin:4px 0 8px;font-size:clamp(17px,4.6vw,22px);letter-spacing:.1em;font-weight:400}
+.card .one{margin:0;font-size:clamp(13px,3.4vw,14.5px);color:var(--ink2)}
+.card .feat{margin:10px 0 0;font-size:clamp(12px,3.2vw,13.5px);color:var(--red);
+  letter-spacing:.14em}
+.card.c-gold .feat{color:var(--gold)}
+.card .stats{display:flex;flex-wrap:wrap;gap:6px 8px;list-style:none;margin:10px 0 0;padding:0}
+.card .stats li{font-size:11px;letter-spacing:.1em;color:var(--dim);
+  border:1px solid var(--rule);background:var(--paper);padding:2px 8px;border-radius:2px}
+.card .note{margin:10px 0 0;padding-top:9px;border-top:1px dotted var(--rule);
+  font-size:clamp(11px,2.9vw,12.5px);color:var(--dim)}
+.card .go{display:inline-block;margin-top:10px;font-size:clamp(12px,3.2vw,13.5px);
+  color:var(--red);letter-spacing:.14em}
+.card.c-gold .go{color:var(--gold)}
+
+/* ── 关系说明 ── */
+.rel{margin:30px 0 0;border-top:2px solid var(--ink);padding-top:16px}
+.rel h2{margin:0 0 10px;font-size:clamp(15px,4vw,18px);letter-spacing:.16em;font-weight:400}
+.rel p{margin:0 0 10px;font-size:clamp(12px,3.1vw,13.5px);color:var(--ink2)}
+.rel dt{font-size:clamp(12px,3.1vw,13.5px)}
+.rel dd{margin:2px 0 10px;font-size:clamp(12px,3.1vw,13.5px);color:var(--dim)}
+.rel b{color:var(--ink);font-weight:400}
+.order{list-style:none;margin:10px 0 0;padding:0}
+.order li{font-size:clamp(12px,3.1vw,13.5px);color:var(--ink2);padding:4px 0;
+  border-top:1px dotted var(--rule)}
+.order li:first-child{border-top:0}
+.order .n{display:inline-block;width:1.7em;color:var(--faint)}
+
+/* ── 页底 ── */
+footer{margin:32px 0 0;border-top:1px solid var(--rule);padding-top:16px;text-align:center;
+  font-size:clamp(11px,2.9vw,12.5px);color:var(--dim)}
+footer p{margin:0 0 8px}
+footer .links a{color:var(--red);border-bottom:1px solid var(--redbg)}
+footer .site{letter-spacing:.14em;color:var(--ink2)}
+.legal{margin-top:12px;border:1px solid var(--rule);background:var(--paper2);padding:12px 14px;
+  border-radius:2px}
+.legal h3{margin:0 0 6px;font-size:12px;letter-spacing:.2em;color:var(--ink2);font-weight:400}
+.legal ol{margin:0;padding-left:1.4em}
+.legal li{margin:3px 0}
+
+/* ── 三套布局（与四件游戏同一套判定）── */
+body[data-layout="tall"] .cards{grid-template-columns:1fr}
+body[data-layout="wide-short"] .cards{grid-template-columns:1fr;gap:10px}
+body[data-layout="wide-short"] .card{padding:14px 14px 12px}
+body[data-layout="wide-short"] header{padding:16px 0 12px}
+body[data-layout="wide-short"] .stamp{width:52px;height:52px;font-size:13px}
+body[data-layout="desktop"] .cards{grid-template-columns:1fr 1fr;gap:16px}
+body[data-layout="desktop"] .wrap{max-width:1120px;padding:0 28px}
+@media (min-width:1280px){ body[data-layout="desktop"] .wrap{max-width:1200px} }
+</style>
+</head>
+<body data-layout="tall">
+<div class="wrap">
+
+  <div class="warn">
+    <h2>进站之前</h2>
+    <ol>
+      <li>本站作品<strong>全部由 AI 创作</strong>，不保证严谨与准确。</li>
+      <li>内容是基于《黑柩》设定集的<strong>再演绎</strong>，与设定集及其他黑柩内容<strong>可能不相容</strong>。</li>
+      <li>全部人物、组织、事件均属<strong>虚构</strong>，与现实中任何个人、团体、事件无关。</li>
+    </ol>
+  </div>
+
+  <header>
+    <div class="stamp">黑柩<br>小游戏</div>
+    <div>
+      <h1>黑柩 小游戏</h1>
+      <p class="sub">后启示录的彷徨世界 · 网页小游戏四件</p>
+    </div>
+  </header>
+
+  <section class="cards">
+
+    <a class="card c-red" href="yongyin.html">
+      <div class="idx">01</div>
+      <h2>戡乱政府 · 用印五日</h2>
+      <p class="one">你是戡乱政府第四办事口掌印的人。五天，三十份材料，一枚章。</p>
+      <p class="feat">短小精悍，小有回味</p>
+      <ul class="stats"><li data-size="yongyin">22 KB</li><li>3–5 分钟</li><li>6 个结局</li></ul>
+      <p class="note">含行政暴力与处刑描写。只做一件事：用印。进度不保存，刷新即重来。</p>
+      <span class="go">开始用印 →</span>
+    </a>
+
+    <a class="card c-red" href="beisha.html">
+      <div class="idx">02</div>
+      <h2>命途转盘 · 北沙 · 白色恐怖</h2>
+      <p class="one">你是北沙宪兵队里的一名宪兵，从入城那天到清场之后，一整年。</p>
+      <p class="feat">体验较长，故事严肃</p>
+      <ul class="stats"><li data-size="beisha">549 KB</li><li>约 40–60 分钟</li><li>148 件事件 · 45 个结局</li><li>两个身份可玩</li></ul>
+      <p class="note">篇幅最长，建议留出整块时间。含暴力与政治迫害描写。</p>
+      <span class="go">进入转盘 →</span>
+    </a>
+
+    <a class="card" href="qiri.html">
+      <div class="idx">03</div>
+      <h2>和平会议 · 七日</h2>
+      <p class="one">中分山天寨洋馆，战后五年四月，一场开七天的会议——你是听差。</p>
+      <p class="feat">简单模拟，可供试手</p>
+      <ul class="stats"><li data-size="qiri">47 KB</li><li>约 10 分钟</li><li>北沙 · 外传</li></ul>
+      <p class="note">体量最小的一件，适合先拿它熟悉这套纸墨界面。</p>
+      <span class="go">入席听差 →</span>
+    </a>
+
+    <a class="card c-gold" href="jiaotuan.html">
+      <div class="idx">04</div>
+      <h2>命途转盘 · 启示录教团国</h2>
+      <p class="one">在教团国里过完一生：从入学到入土，十二签一轮，命途之轮转一生。</p>
+      <p class="feat">人生之旅，仅供参考</p>
+      <ul class="stats"><li data-size="jiaotuan">310 KB</li><li>十二签一轮</li><li>卷二 · 教团国</li></ul>
+      <p class="note">命途转盘系列的早期版本（2026-10-10），参数未经与《北沙》同等校验，仅供参考。</p>
+      <span class="go">转这一生 →</span>
+    </a>
+
+  </section>
+
+    <div class="legal">
+      <h3>声明</h3>
+      <ol>
+        <li>本网站由 <strong>AI 生成</strong>，内容准确性无法完全保证；发现错漏请以《黑柩》设定集与创作站为准。</li>
+        <li>本站为爱好者作品，<strong>非原作者发布</strong>，不代表原作者立场；设定与黑柩其他内容可能不相容。</li>
+        <li>作品取材于设定集的某些时期，并对其未写明处作了<strong>推定与补写</strong>；介意剧透者请先读设定集。</li>
+        <li>内容含<strong>行政暴力、政治迫害、处刑与死亡</strong>的描写，请自行判断是否适合阅读与游玩。</li>
+        <li>四件作品均为单文件网页，<strong>不保存进度</strong>；刷新或关闭即从头开始。</li>
+        <li>《黑柩》相关内容版权归原作者所有；全部人物、组织、事件均属虚构。</li>
+      </ol>
+    </div>
+
+  <section class="rel">
+    <h2>四件的关系，以及先玩哪个</h2>
+    <p>四件的底子是同一份设定集，但<b>位置不同</b>：有的让你坐在桌子后面，有的让你站在队伍里，
+       有的让你只是端茶的那个人。</p>
+    <dl>
+      <dt><b>命途转盘</b>（北沙 · 教团国）</dt>
+      <dd>一个系列，同一套「命途之轮十二签 · 一命」的骨架：一局就是一生。
+          教团国是卷二、早期版本；北沙是卷四、后来做得更厚的一件。</dd>
+      <dt><b>和平会议 · 七日</b></dt>
+      <dd>《北沙》的外传：同一片北沙、同一个月份，换一个位置——你是会上的听差。</dd>
+      <dt><b>戡乱政府 · 用印五日</b></dt>
+      <dd>独立小件，取材于同一段时期的北沙。全作只有一个动词：用印。</dd>
+    </dl>
+    <p>如果不知道从哪开始，建议按这个顺序：</p>
+    <ol class="order">
+      <li><span class="n">一</span>《和平会议 · 七日》——十分钟，先熟悉这套纸墨</li>
+      <li><span class="n">二</span>《用印五日》——五分钟，最短，也最容易记住</li>
+      <li><span class="n">三</span>《命途转盘 · 北沙》——正餐，留出一小时</li>
+      <li><span class="n">四</span>《命途转盘 · 启示录教团国》——早期版本，当参考看</li>
+    </ol>
+  </section>
+
+  <footer>
+    <p class="site">darkcoffin-game.hubingsf.cn</p>
+    <p class="links">友情链接：<a href="https://darkcoffin.hubingsf.cn">黑柩创作站</a> ·
+       <a href="https://darkcoffin-wiki.hubingsf.cn">黑柩 Wiki</a></p>
+    <p>最近更新：<span id="updated"><!--UPDATED-->2026-10-16<!--/UPDATED--></span></p>
+
+  </footer>
+
+</div>
+
+<script>
+"use strict";
+/* 与四件游戏同一套布局判定：纯函数，可被脚本断言 */
+function layoutFor(w, h){
+  if (h < 480 && w > h) return "wide-short";
+  if (w >= 900 && w > h) return "desktop";
+  return "tall";
+}
+function applyLayout(){
+  document.body.dataset.layout = layoutFor(window.innerWidth, window.innerHeight);
+}
+window.addEventListener("resize", applyLayout);
+window.addEventListener("orientationchange", applyLayout);
+applyLayout();
+</script>
+</body>
+</html>

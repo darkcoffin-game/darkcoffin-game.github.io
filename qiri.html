@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>和平会议 · 七日</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='9' fill='%239c1f1a'/><g stroke='%23f3f1ea' stroke-width='7' fill='none' stroke-linecap='square'><path d='M14 20h36M34 20v19c0 8-5 11-13 11'/></g></svg>">
+<style>
+:root{
+  --paper:#e9e6df; --paper2:#f2efe8; --ink:#141312; --ink2:#3a3733;
+  --faint:#8c877e; --line:#c9c4b9; --seal:#9c1f1f; --seal2:#c2352f;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  background:var(--paper);color:var(--ink);
+  font-family:"Songti SC","Noto Serif CJK SC","Source Han Serif SC",Georgia,"SimSun",serif;
+  font-size:16px;line-height:1.85;letter-spacing:.02em;padding:0 0 70px;
+}
+.wrap{max-width:780px;margin:0 auto;padding:0 22px}
+header{border-bottom:1px solid var(--line);padding:24px 0 14px;position:relative}
+h1{font-size:23px;letter-spacing:.3em;margin:0 0 6px;font-weight:600}
+.sub{font-size:12px;color:var(--faint);letter-spacing:.26em}
+.seal{position:absolute;right:0;top:18px;width:52px;height:52px;border:2px solid var(--seal);
+  color:var(--seal);border-radius:3px;display:flex;align-items:center;justify-content:center;
+  font-size:13px;line-height:1.15;transform:rotate(4deg);text-align:center}
+.prog{margin:14px 0 6px}
+.prog .row{display:flex;align-items:center;gap:10px;font-size:11.5px;color:var(--faint);letter-spacing:.14em}
+.prog .bar{flex:1;height:6px;background:#ddd8cd;border:1px solid var(--line);position:relative}
+.prog .bar i{display:block;height:100%;background:var(--ink2);width:0}
+.prog .bar-accent i{background:var(--seal)}
+.daybar{display:flex;margin:12px 0 4px;border:1px solid var(--line);background:var(--paper2);font-size:11.5px}
+.daybar div{flex:1;text-align:center;padding:6px 0;color:var(--faint);border-right:1px solid var(--line);letter-spacing:.06em}
+.daybar div:last-child{border-right:none}
+.daybar div.on{background:var(--ink);color:var(--paper)}
+.daybar div.done{color:var(--ink2)}
+.stats{display:flex;flex-wrap:wrap;gap:8px 20px;font-size:12.5px;color:var(--ink2);
+  border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:9px 0;margin:10px 0 20px;letter-spacing:.04em}
+.stats b{font-weight:600}
+.stats .flag{color:var(--seal)}
+.card{background:var(--paper2);border:1px solid var(--line);padding:19px 21px;margin:0 0 16px}
+.card .tag{font-size:11.5px;color:var(--faint);letter-spacing:.2em;margin-bottom:8px}
+.card h2{font-size:17px;margin:0 0 13px;letter-spacing:.09em;font-weight:600}
+.card p{margin:0 0 11px}
+.card p:last-child{margin-bottom:0}
+.q{border-left:3px solid var(--seal);padding:2px 0 2px 13px;color:var(--ink2);margin:13px 0;font-size:15.5px}
+.said{margin:0 0 9px}
+.said b{font-weight:600}
+.mini{font-size:13.5px;color:var(--faint);margin:10px 0 0}
+table.seat{width:100%;border-collapse:collapse;font-size:13.5px;margin:6px 0 10px}
+table.seat td{border-bottom:1px dotted var(--line);padding:6px 4px;vertical-align:top}
+table.seat td:first-child{color:var(--faint);width:9.5em;white-space:nowrap;letter-spacing:.06em}
+.btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:15px}
+button{font-family:inherit;font-size:14.5px;letter-spacing:.05em;cursor:pointer;
+  background:var(--paper);border:1px solid var(--ink2);color:var(--ink);padding:10px 18px;transition:.15s}
+button:hover{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+button.main{background:var(--seal);border-color:var(--seal);color:#fff}
+button.main:hover{background:var(--seal2);border-color:var(--seal2)}
+button.ghost{border-color:var(--line);color:var(--faint)}
+.choice{display:block;width:100%;text-align:left;margin:0 0 9px;padding:12px 15px;line-height:1.7}
+.delta{font-size:12.5px;color:var(--seal);letter-spacing:.05em;margin-top:13px}
+.log{border-top:1px solid var(--line);margin-top:24px;padding-top:15px}
+.log h3{font-size:13px;letter-spacing:.22em;color:var(--faint);margin:0 0 11px;font-weight:400}
+.log .item{font-size:13.5px;color:var(--ink2);padding:6px 0;border-bottom:1px dotted var(--line)}
+.log .item:last-child{border-bottom:none}
+.end h2{font-size:20px;letter-spacing:.15em}
+.end .rank{font-size:12px;color:var(--seal);letter-spacing:.28em;margin:6px 0 17px}
+.note{font-size:13px;color:var(--faint);line-height:1.8;margin-top:16px;border-top:1px solid var(--line);padding-top:13px}
+.src{font-size:11.5px;color:var(--faint);line-height:1.95}
+.src b{color:var(--ink2);font-weight:600}
+footer{text-align:center;font-size:11.5px;color:var(--faint);letter-spacing:.2em;margin-top:36px}
+@media (max-width:560px){
+  body{font-size:15.5px}.wrap{padding:0 15px}
+  h1{font-size:19px;letter-spacing:.22em}.seal{width:44px;height:44px;font-size:11px}
+  .card{padding:15px}table.seat{font-size:12.5px}table.seat td:first-child{width:7.5em}
+}
+
+/* ══ 移动端补丁（追加在最后；只改观感与命中区，不动剧情、数值与判定）══
+   桌面浏览器上这些几乎看不出差别，但手机上差别很大：
+   双击不再有 300ms 延迟、点击不闪灰块、按钮有 44px 命中区、
+   触摸时有 :active 反馈（原来只有 :hover，触摸设备上从不触发）、
+   底部固定控制条不会被 iPhone 的小白条压住。 */
+html,body{-webkit-text-size-adjust:100%;}
+body{touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
+button,[role="button"],.choice,.origin,.tab,
+a.btn,.opt{cursor:pointer;touch-action:manipulation;min-height:44px;
+  -webkit-tap-highlight-color:transparent;}
+button:active:not(:disabled),.choice:active,.origin:active,.tab:active,
+a.btn:active,.opt:active{filter:brightness(.93);}
+.controls{padding-bottom:calc(8px + env(safe-area-inset-bottom,0px));}
+.jump{bottom:calc(var(--ctl-h, 96px) + 14px + env(safe-area-inset-bottom,0px));}
+
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>和平会议 · 七日</h1>
+    <div class="sub">黑柩 · 北沙 · 外传</div>
+    <div class="seal">中分<br>天寨</div>
+  </header>
+  <div id="app"></div>
+  <footer>中分山天寨洋馆 · 战后五年四月</footer>
+</div>
+
+<script>
+/* ══════════════════════════════════════════════════════════════
+   《和平会议 · 七日》 —— 依《评审总汇》重做
+   现场层 以《第九季下·再聚》原始记录为准
+   底层   以《黑柩设定集》为准
+   口吻   以《花絮总集》为准
+   ══════════════════════════════════════════════════════════════ */
+
+var S = {
+  day: 1,
+  trust: { qingdu: 0, beisha: 0, zhongfen: 0, nihon: 0 },
+  fire: 0,      /* 0 不知 / 1 知道未报 / 2 知道已报 */
+  feast: 0,     /* 0 不知 / 1 听见了 / 2 说出去过 */
+  chair: 0,     /* 0 未动 / 1 摆着 / 2 撤了 */
+  paper: false,
+  xina: 0,
+  lies: 0,
+  nameIdx: 0,
+  story: [],
+  reported: [],
+  ending: null
+};
+
+var SEATS = [
+  ["希共席位", "叶心 · 路絮 · 原星 · 波"],
+  ["青都社会代表席位", "风薰 · 齐藤……"],
+  ["中分山席位", "镜缘 · 鸣十二"],
+  ["日本街席位", "月见灯 · 川崎罗 · 时崎信子 · 柳生纯一 · 海老名姐妹"],
+  ["宪兵队席位", "高领"],
+  ["警局／宪特席位", "洪黎（中佐 · 宪兵队驻警局联络人）"],
+  ["民主党席位", "文不迁"],
+  ["北沙社会代表席位", "和头 · 大主教（保罗）"],
+  ["光胜席位", "余烬（迟到）· 唐晖"]
+];
+var TEN = [
+  "打倒进盟社达政权", "全国军事总动员", "全国人民总动员", "改革政治机构",
+  "共抗外敌的外交政策", "共抗外敌的经济政策", "改善人民生活",
+  "共抗外敌的教育政策", "肃清内部敌特势力", "共抗外敌的各地区团结政策"
+];
+
+/* ── 七天 ───────────────────────────────────────────────────── */
+var DAYS = [
+{
+  n: 1, date: "四月八日", title: "餐会", prog: [12, 6],
+  open: [
+    "天寨洋馆在半山腰。餐会大厅里摆着一幅巨幅动态壁画，画的是中分山的历史。",
+    "武裝人员一律禁止进入大厅，都在洋馆外面巡逻。每张餐桌前有一块姓名牌。",
+    "管事把你叫到一边：今天的差事只有一件——看看统领席要不要摆。"
+  ],
+  extra: "seat",
+  scenes: [
+    { who: "镜缘", txt: "「欢迎大家来到中分山，参加全北沙期待已久的和平会议！本次会议的第一场是餐会，供大家自由交流讨论，大家可以边吃边聊，有想说的就到大厅中央来！」", note: "她手里拿着话筒。" },
+    { who: "高领", txt: "（走到余烬面前，行了个军礼，礼貌地请他坐到餐桌旁）", note: "光胜的席位离日本街很远。" },
+    { who: "林村长", txt: "（坐在高领身旁，五味杂陈地看着余烬，没有说话）", note: "你端水经过的时候，他的手指在桌沿上敲。" },
+    { who: "西娜·陈", txt: "（站在大厅边上，没有入席。她一直在看每一个人的脸，看得不快也不慢）", note: "宣传部的人。你从她面前走过的时候，她的眼睛在你身上停了半秒。" }
+  ],
+  task: {
+    ask: "统领席要不要摆。高冒不来，但那张椅子空着，谁也没说不摆。",
+    opts: [
+      { label: "摆上，擦干净。北沙的实权者也算到了。", t: { zhongfen: 1, beisha: 1 }, chair: 1, log: "你把统领席摆上了，擦得很干净。" },
+      { label: "摆上，但不擦。原样搬过来。", t: { zhongfen: 1 }, chair: 1, log: "你把椅子搬来了，没有擦。" },
+      { label: "先不摆，去问管事。", t: { zhongfen: 1 }, log: "你去问了管事。管事说：摆上。" },
+      { label: "撤掉。他既然不来，就不该留位子。", t: { zhongfen: -1, beisha: -1 }, chair: 2, log: "你把统领席撤了。" }
+    ]
+  },
+  report: {
+    ask: "管事来问你今天听到了什么。",
+    opts: [
+      { label: "镜缘开场那句话。她说「有想说的就到大厅中央来」。", t: { zhongfen: 1, qingdu: 1 }, log: "你报了镜缘的开场。" },
+      { label: "高领向余烬行了个军礼。", t: { beisha: 1 }, log: "你报了高领那个军礼。" },
+      { label: "林村长一直没说话，手指在敲桌沿。", t: { zhongfen: 1, qingdu: 1 }, log: "你报了林村长的指头。" },
+      { label: "什么也没说。第一天看不出什么。", t: {}, log: "你说第一天看不出什么。" }
+    ]
+  }
+},
+{
+  n: 2, date: "四月九日", title: "三印之信", prog: [18, 10],
+  open: [
+    "上午，青都方面递来一封信。信是邀请函的抄件。",
+    "管事让你把它归档，并抄一份留档。信末有三枚印、三个签名。",
+    "你抄到第二枚印的时候停下来——那枚印的印泥是新的。而且它不是按顺序盖上去的。"
+  ],
+  scenes: [
+    { who: "信末", txt: "宪兵队印 · 希共印 · 中分山印。（三印三签）", note: "第二枚印压在第三枚的边角上。这说明它后盖。" },
+    { who: "高领（短信抄件）", txt: "「余总裁，出于私情，我只跟您说一句最重要的话。这是最后一次机会，勿谓言之不预也。」", note: "这行字旁边有人用铅笔划了一道。" },
+    { who: "叶心", txt: "（对路絮，低声）「这场会开得成，靠的不是这三枚印。」", note: "路絮没有接话。" }
+  ],
+  task: {
+    ask: "那枚新印泥，你怎么处置。",
+    opts: [
+      { label: "报给镜缘。这是她的山，她该知道。", t: { zhongfen: 2 }, log: "你把新印泥的事报给了镜缘。", story: "三印之信·报给中分山" },
+      { label: "报给高领。北沙的印，北沙该知道。", t: { beisha: 2 }, log: "你把新印泥的事报给了北沙的人。", story: "三印之信·报给北沙" },
+      { label: "谁也不说，照原样归档。", t: { zhongfen: 1 }, log: "你照原样归档了。", story: "三印之信·没说" },
+      { label: "把那枚印的样子单独描一张，自己留着。", t: {}, log: "你描了一张印样，自己留着。", story: "三印之信·自己留着" }
+    ]
+  },
+  report: {
+    ask: "管事问你今天归档了什么。",
+    opts: [
+      { label: "邀请函的抄件。三印三签。", t: { zhongfen: 1 }, log: "你报了邀请函抄件。" },
+      { label: "那封短信。「勿谓言之不预也」。", t: { beisha: 1, zhongfen: 1 }, log: "你报了高领那句短信。" },
+      { label: "叶心那句话：「靠的不是这三枚印」。", t: { qingdu: 2, zhongfen: -1 }, leak: "qingdu", log: "你报了叶心那句话。" },
+      { label: "只说归档完了。", t: {}, log: "你说归档完了。" }
+    ]
+  }
+},
+{
+  n: 3, date: "四月十日", title: "空着的席位", prog: [26, 14],
+  open: [
+    "第三日，议题进入《共抗外敌十大纲领》的第二、三条。",
+    "镜缘拿着话筒主持会议：公共发言请举手。她说话的时候，眼睛扫过那张空椅子。",
+    "「改善人民生活」这一条由高领上台主讲。他讲的是宪兵队扫黑。"
+  ],
+  extra: "ten",
+  scenes: [
+    { who: "高领", txt: "（在台上）「……改善人民生活，首先要肃清盘踞在市面上的恶势力。宪兵队从今天起展开扫黑。」", note: "台下有人在鼓掌。" },
+    { who: "镜缘", txt: "（小声，对鸣十二）「这人满嘴屁话，信他能解决人权问题不如相信我家的猫会后空翻。顶多看在和平会议面子上做做样子罢了。」", note: "她说这句的时候在笑，麦克风还开着一点点。" },
+    { who: "洪黎", txt: "（与叶心在走廊上说话。他是宪兵队中佐，驻警局联络人）「叶主席，我只说一句。军队里现在分两拨人，一拨听高领，一拨听他们自己的军衔。」", note: "你端着水从他们中间过去。两个人都让了一下。" },
+    { who: "叶心", txt: "（对洪黎）「如果说文先生是在钢丝上行走的话……但您已经站在了悬崖。」", note: "洪黎没有答。他把手插在口袋里，站了很久。" },
+    { who: "镜缘", txt: "（散会后，在你旁边停下）「那把椅子，今天是你摆的？」", note: "她没有等你答，就走了。" }
+  ],
+  task: {
+    ask: "她去而复返，站在你面前，笑了一下。然后问了一句。",
+    opts: [
+      { label: "「是我摆的。统领不来，位子不能空。」", t: { zhongfen: 2, beisha: 1 }, dark: true, log: "你照实答了椅子的事。", story: "空椅子·照实答" },
+      { label: "「是管事让摆的。」", t: { zhongfen: -1 }, dark: true, log: "你把事推给了管事。", story: "空椅子·推给管事" },
+      { label: "「大当家，那句话，我听见了。」（指猫会后空翻那句）", t: { zhongfen: 2 }, dark: true, log: "你提了那一句。", story: "空椅子·你提了那句话" },
+      { label: "「我不知道那把椅子是谁摆的。」", t: { zhongfen: -1 }, dark: true, lie: true, log: "你说不知道椅子是谁摆的。", story: "空椅子·撒谎" }
+    ]
+  },
+  report: {
+    ask: "北沙的文书来问你：今天台上讲了什么。",
+    opts: [
+      { label: "高领讲扫黑那一段。", t: { beisha: 2, zhongfen: -1 }, leak: "beisha", log: "你报了高领的扫黑。" },
+      { label: "镜缘说「要肃清内部敌特」，也说了「猫会后空翻」。", t: { zhongfen: 2, qingdu: 1 }, leak: "zhongfen", log: "你两句话都报了。" },
+      { label: "十大纲领第二、三条通过了举手。", t: { zhongfen: 1 }, log: "你报了举手通过的条数。" },
+      { label: "什么也没报。今天台上那些话，你记不住。", t: { zhongfen: -1 }, log: "你说记不住。" }
+    ]
+  }
+},
+{
+  n: 4, date: "四月十一日", title: "同名的招牌", prog: [38, 18],
+  open: [
+    "会议的第四天，管事派你下山一趟：去山下的「饰华秀丽 KTV」送两箱酒。",
+    "KTV 在双山国道边上，门口停着几辆好车。你搬酒上楼的时候，包房的门开着一条缝。",
+    "里面在唱、在笑。然后有人提了一句「饰华」。接着是一段安静。",
+    "你什么也没看清。"
+  ],
+  scenes: [
+    { who: "包房里", txt: "（有人在唱一首很老的老歌）", note: "你抱着箱子站在走廊上。" },
+    { who: "包房里", txt: "「……饰华那边，最近紧。」", note: "然后是一段安静。安静了大概十秒。" },
+    { who: "包房里", txt: "「门口那个是谁带来的？」", note: "你把箱子放下，走了。" }
+  ],
+  task: {
+    ask: "回去的路上，你手里有纸和笔，还有一段路。",
+    opts: [
+      { label: "把「饰华」两个字记在纸上。", t: {}, feast: 1, log: "你记下了「饰华」两个字。", story: "同名的招牌·记下了" },
+      { label: "记在心里，纸上一个字不写。", t: { zhongfen: 1 }, feast: 1, log: "你只记在心里。", story: "同名的招牌·只记在心里" },
+      { label: "回去就报给管事。", t: { zhongfen: 1, beisha: 1 }, feast: 2, log: "你把 KTV 里那句话报给了管事。", story: "同名的招牌·报了" },
+      { label: "什么也没记住。那两个字跟你没关系。", t: {}, log: "你说你什么也没记住。", story: "同名的招牌·装作没听见" }
+    ]
+  },
+  report: {
+    ask: "希共的人来问你：山下那一趟，看到什么没有。",
+    opts: [
+      { label: "照实说：包房里有人提了「饰华」，然后安静了。", t: { qingdu: 2, zhongfen: 1 }, feast: 2, log: "你把「饰华」那一段说了。", story: "同名的招牌·报给希共" },
+      { label: "说没有。就是送了两箱酒。", t: { qingdu: -1 }, lie: true, log: "你说只有两箱酒。", story: "同名的招牌·对希共撒了谎" },
+      { label: "反问：那两个字，你们知道是什么意思吗？", t: { qingdu: 2 }, log: "你反问了一句。", story: "同名的招牌·你反问了" },
+      { label: "说包房里在唱歌。别的没听见。", t: {}, log: "你说包房里在唱歌。" }
+    ]
+  }
+},
+{
+  n: 5, date: "四月十二日", title: "报纸", prog: [52, 24],
+  open: [
+    "会议期间互联网防火墙是开着的，什么都印得出来。这一天山下送上来一叠报纸。",
+    "报纸叫《新知》。头版不是会议，是一篇长文——他们在和平会议期间去了各国深入调查。",
+    "写北沙的那一段，被人划了一道线。"
+  ],
+  scenes: [
+    { who: "《新知》（摘）", txt: "「各国各地政权中，只有北沙沾沾自喜地把恐怖统治当成建设本身。」", note: "这一段下面被划了一道。不是一支笔划的，是三四个人的笔迹叠在一起。" },
+    { who: "《新知》（摘）", txt: "「北沙领导者最骄傲的事情竟然是他写了部刑罚大典……要说北沙政权是这个世界最反动的政权，可能也不为过了。」", note: "报纸的边角被人捏皱了。" },
+    { who: "文不迁", txt: "（低声，对身边的人）「这不是给北沙看的。这是给来开会的人看的。」", note: "他是民主党席位。他说这句话的时候在笑。" },
+    { who: "西娜·陈", txt: "（在会外的一间小屋里，对一个人说话。门没有关严）「……想办法把宴会的事情透露给文志远。」", note: "她说这句话的时候在笑。一个人在笑的时候说这种话，你会记很久。" },
+    { who: "西娜·陈", txt: "（同一个人问她为什么）「看文志远到底来不来。如果他来了，并且成功，这就是天命。」", note: "你端着茶盘退了两步。她没有回头。" }
+  ],
+  xina: {
+    ask: "你听见的那间小屋里的话，还在你耳朵里。你要不要把它也报上去？",
+    opts: [
+      { label: "报。一字不落地报。", t: { beisha: 2, zhongfen: -1 }, xina: 2,
+        log: "你把小屋里那两句话报了上去。", story: "西娜·会外的话·报了" },
+      { label: "报一半。只说「有人在会外见客」。", t: { beisha: 1 }, xina: 1,
+        log: "你只报了有人在会外见客。", story: "西娜·会外的话·报了半句" },
+      { label: "不报。这种事报了，报的人先不在。", t: { zhongfen: 1 }, xina: 1, lie: true,
+        log: "你说会外什么也没看见。", story: "西娜·会外的话·没报" },
+      { label: "去告诉叶心。这件事该她知道。", t: { qingdu: 2, beisha: -2 }, xina: 2,
+        log: "你把这件事告诉了青都的人。", story: "西娜·会外的话·告诉了青都" }
+    ]
+  },
+  task: {
+    ask: "洋馆的杂役塞给你半张报纸，问你：这个要不要烧。",
+    opts: [
+      { label: "烧了。这里不是看报的地方。", t: { beisha: 2, zhongfen: -1 }, log: "你让他烧了。", story: "报纸·烧了" },
+      { label: "留着，带下山去。", t: { qingdu: 1, zhongfen: 1 }, paper: true, log: "你让他留着，你带下了山。", story: "报纸·带下山" },
+      { label: "送去给青都的人。", t: { qingdu: 2, beisha: -2 }, paper: true, log: "你把报纸送去了青都那边。", story: "报纸·送去青都" },
+      { label: "交给管事。", t: { zhongfen: 2 }, log: "你把报纸交给了管事。", story: "报纸·交给管事" }
+    ]
+  },
+  report: {
+    ask: "管事问你：今天山下送来的东西，你看过没有。",
+    opts: [
+      { label: "看过。头版讲的是北沙的法律。", t: { zhongfen: 1, beisha: -1 }, leak: "zhongfen", log: "你说你看过。" },
+      { label: "没看过。送来的东西都归档了。", t: { beisha: 1 }, lie: true, log: "你说没看过。" },
+      { label: "把文不迁那句「这是给来开会的人看的」报上去。", t: { beisha: 2, qingdu: -1 }, leak: "beisha", log: "你报了文不迁那一句。" },
+      { label: "两张都留下了，一张也没交。", t: {}, paper: true, lie: true, log: "你一张也没交。" }
+    ]
+  }
+},
+{
+  n: 6, date: "四月十三日", title: "山道", prog: [74, 30],
+  open: [
+    "夜里有动静。后山那边有火把的光，一会儿就没了。",
+    "你去库房取东西的时候，看见两个北沙的人站在山道的岔口上，其中一个手里拿着地图。",
+    "他们没有看见你。你退回库房，从窗缝里看。"
+  ],
+  scenes: [
+    { who: "北沙的人甲", txt: "「东面坡上都是干松。风从西边来，点东面。」", note: "他用手指在地图上划了一道。" },
+    { who: "北沙的人乙", txt: "「大当家那边埋的人怎么办？」", note: "甲没有答。他把地图折起来了。" },
+    { who: "北沙的人甲", txt: "「上面说了，这些人都算进去了。走吧。」", note: "两个人下了山道。火把灭了。" }
+  ],
+  task: {
+    ask: "管事的房间还亮着灯。你去不去敲门？",
+    opts: [
+      { label: "去。把看见的、听见的一字不落说一遍。", t: { zhongfen: 3, beisha: -2 }, fire: 2, log: "你把纵火的事全说了。", story: "山道·一字不落" },
+      { label: "去。但只说「有人在岔口看地图」。", t: { zhongfen: 1 }, fire: 1, log: "你只说了有人在看地图。", story: "山道·只说了一半" },
+      { label: "不去。这不是你该知道的事。", t: { beisha: 1 }, fire: 1, log: "你没有去敲门。", story: "山道·没报" },
+      { label: "不去。但把那张地图的样子记下来。", t: { zhongfen: 2 }, fire: 1, log: "你记住了那张地图。", story: "山道·记住地图" }
+    ]
+  },
+  night: {
+    ask: "值夜巡楼。二楼那间屋子传出声音——游戏音效，还有人在骂队友。",
+    opts: [
+      { label: "站着听一会儿。", t: { zhongfen: 2 }, log: "你在二楼门外听了一会儿。", story: "洋馆二楼·听见了" },
+      { label: "敲门，问要不要添水。", t: { zhongfen: 1 }, log: "你敲了门。里面说：不要。", story: "洋馆二楼·敲过门" },
+      { label: "走开。当作没听见。", t: {}, log: "你走开了。", story: "洋馆二楼·走开" },
+      { label: "第二天跟月见灯提一句：大当家昨夜打游戏到很晚。", t: { nihon: 2, zhongfen: -1 }, log: "你把这件事说给了月见灯。", story: "洋馆二楼·说给了月见灯" }
+    ]
+  },
+  report: {
+    ask: "天亮之后，管事的来找你。",
+    opts: [
+      { label: "把夜里的火把再说一遍。", t: { zhongfen: 2 }, log: "你又提了一遍火把。" },
+      { label: "说夜里没看见什么。", t: { beisha: 1 }, lie: true, log: "你说夜里没看见什么。" },
+      { label: "说二楼有声音。大当家在打游戏。", t: { zhongfen: 2, nihon: 1 }, log: "你说了二楼的声音。", story: "洋馆二楼·报了" },
+      { label: "说山道上有过火把，但只有一次。", t: { zhongfen: 1 }, log: "你说只有一次火把。" }
+    ]
+  }
+},
+{
+  n: 7, date: "四月十四日", title: "签字", prog: [100, 40],
+  open: [
+    "最后一天谈的是协议。十大纲领基本没有谈成，但双方都同意在纸上宣布达成。",
+    "签字之前，叶心在西厅门口站了一会儿。",
+    "管事把一份名单交给你，让你照单把客人送到车上。名单最后一行是空白的。"
+  ],
+  scenes: [
+    { who: "叶心", txt: "（签字前，对镜缘）「谈判是为了尊重对方，而不是羞辱。」", note: "镜缘笑了一下。" },
+    { who: "镜缘", txt: "（叹）「几百年前，古中国重庆也有过一场这样的会议，只是当时民主党这个位置的人把会议的协议当废纸撕了。也许最后我们会议的结局也是如此……」", note: "她说这句的时候，屋里很静。" },
+    { who: "文不迁", txt: "（签字时）「我效忠的不是统领本身……我效忠的是我与统领之间的感情。」", note: "他签得很快，字很端正。" }
+  ],
+  task: {
+    ask: "名单最后那一行空白，写谁。",
+    opts: [
+      { label: "写自己的名字。你在这山上待了七天，你也是一个人。", t: { zhongfen: 1 }, log: "你在名单上写了自己的名字。" },
+      { label: "写「山道」，让管事的自己去填。", t: {}, log: "你写了「山道」两个字。" },
+      { label: "空着。有些名字不该由你写。", t: { zhongfen: 1 }, log: "你把那一行留白了。" },
+      { label: "写上前几天你在报纸上见过的那个名字。", t: { qingdu: 1, beisha: -1 }, log: "你写了一个报纸上见过的名字。" }
+    ]
+  }
+}
+];
+
+/* ── 结局：三层判定 ───────────────────────────────────────────
+   tier1 特殊事件（玩家主动带出去的东西）
+   tier2 关系
+   tier3 兜底
+   注意：山道那条（灰／没烧起来）门槛最高，放在 tier1 末尾，
+        否则它会吃掉所有别的结局。 */
+var ENDINGS = [
+  { tier: 1, id: "feast", name: "同名的招牌", rank: "平行线",
+    hit: function (s) { return s.feast >= 2 && s.trust.qingdu >= 2; },
+    body: [
+      "「饰华」那两个字，你说出去了。",
+      "后来你才知道，山下那家 KTV 和城里那个宴会用的是同一个名字。而那件事后来在别处被翻开过——不是由你翻开的。",
+      "你说出去的那一句话，被记在了一份你不知道的纸上。"
+    ],
+    note: "「……饰华那边，最近紧。」" },
+  { tier: 1, id: "paper", name: "一张印出来的纸", rank: "正史",
+    hit: function (s) { return s.paper; },
+    body: [
+      "那张报纸你带下了山。会议散场之后，你把它交给了山下的一个人，那个人又交给了别人。",
+      "半个月后，叶心回到青都。同一个月，北沙的互联网防火墙重启，边境封锁，高领宣布第二轮大清算开始。",
+      "叶心没有死。会后再过些年，你听说中分山那边有人用无线电喊过她的名字，喊的是「救命」。",
+      "那半张报纸后来出现在很多地方。没有人知道它是从哪一座山上带下来的。"
+    ],
+    note: "「各国各地政权中，只有北沙沾沾自喜地把恐怖统治当成建设本身。」" },
+  { tier: 1, id: "liar", name: "前后不一的人", rank: "平行线",
+    hit: function (s) { return s.lies >= 2; },
+    body: [
+      "你在七天里，把同一件事对两边说成了两个样子。",
+      "管事没有查过你。管事不需要查——他把每一方的原话都记在另一本册子上，那本册子你从来没看见过。",
+      "会议第二天，你的名字被写进了「山上来的人」那一栏。此后很多年，你都不知道那一栏是给谁看的。"
+    ],
+    note: "「公布私下的谈话，只会破坏我们之间的政治默契。」" },
+  { tier: 1, id: "quiet", name: "没烧起来的那座山", rank: "正史",
+    hit: function (s) { return s.fire >= 2 && s.trust.zhongfen >= 2; },
+    body: [
+      "你把夜里的那些话说了出去。他们封了山道，又在东面坡上加了两班哨。",
+      "四月十五日夜里，东面坡上起了一小片火，很快被压住了。",
+      "第二年，有人在北沙的档案里查到一件事：那年春天，中分山在宪兵队里埋的七个线人，全部失联。",
+      "他们是被高领自己算进去的。你没有救他们，你只是让那笔账少了一栏。"
+    ],
+    note: "「这些人都算进去了。」——你说的那一遍，让这句话有了别的人听见。" },
+  { tier: 1, id: "ash", name: "灰", rank: "平行线",
+    hit: function (s) { return s.fire === 1 && s.trust.zhongfen <= 4; },
+    body: [
+      "会议结束之后的第三天，中分山东面的坡上起了火。",
+      "风从西边来。火走了半天，烧掉的是松、是栈道、以及北沙埋在这座山上的七个线人——高领说过，为了这件事，他愿意把他们都算进去。",
+      "你活了下来。你后来才想明白：那天夜里你要是敲门，那七个人里会有几个活下来。"
+    ],
+    note: "「上面说了，这些人都算进去了。」" },
+  { tier: 2, id: "threeside", name: "三方都欠你一句", rank: "正史",
+    hit: function (s) { return s.trust.qingdu >= 2 && s.trust.beisha >= 2 && s.trust.zhongfen >= 2; },
+    body: [
+      "七天里你没有站到任何一边。青都的人记得你给他递过一份报纸，北沙的人记得你没多问，中分山的人记得你听懂了一句话。",
+      "会议结束的时候，三方都跟你说了「辛苦了」。三句，各一次。",
+      "你后来一直在天寨洋馆做事。这是这一作里最难得的一个结局——因为三方都记得你，说明你一次也没有报错。"
+    ],
+    note: "在和平会议这种地方，谁都不欠你，才是常态。" },
+  { tier: 2, id: "nihon", name: "月见灯记住了你", rank: "正史",
+    hit: function (s) { return s.trust.nihon >= 3; },
+    body: [
+      "日本街在这七天里没有说过一句多余的话。她们只是在最后一天上车之前，回头看了你一眼。",
+      "月见灯对你说了一句话：「这山上，你是第二个跟我说话的时候不看我的衣服的人。」",
+      "会后的第二年，日本街的民兵在双山国道上截了一辆车，车上有一个人是你。"
+    ],
+    note: "「我是希联人。」" },
+  { tier: 2, id: "oneside", name: "站住了一边", rank: "正史",
+    hit: function (s) { return Object.keys(s.trust).filter(function (k) { return s.trust[k] >= 3; }).length === 1; },
+    body: [
+      "七天里你只让一边记住了你。这在会议上是活得最久的一种做法。",
+      "散场那天，你被叫去帮着搬箱子。箱子很沉，里面是文件。你搬了三个钟头。",
+      "后来你听人说：这七天的纸，最后谁也没有照着做。"
+    ],
+    note: "「所以它才叫和平。」" },
+  { tier: 3, id: "normal", name: "听差", rank: "正史",
+    hit: function () { return true; },
+    body: [
+      "七天里你端过水、送过报纸、搬过箱子、在楼梯口站过很多次。",
+      "第一议题的收场，是宪兵队在电视上枪毙了两批人——第一批演技非常专业，第二批是真的。",
+      "四月十四日签了一份《青都-北沙和平协议》。十大纲领基本没有谈成，双方都同意在纸上宣布达成。",
+      "五月，叶心回到青都。北沙的防火墙重启，边境封锁，第二轮大清算开始。",
+      "她没有死。那一年之后你还在别处见过她——在青都，在星都，在一场很吵的婚礼上。",
+      "你在洋馆又待了两年。每年四月，山上会来很多人，第二年比第一年少了。"
+    ],
+    note: "「欢迎大家来到中分山，参加全北沙期待已久的和平会议！」" }
+];
+
+/* ── 渲染 ───────────────────────────────────────────────────── */
+function $(id) { return document.getElementById(id); }
+function esc(s) { return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+
+function bar() {
+  return '<div class="daybar">' + DAYS.map(function (d) {
+    return '<div class="' + (d.n === S.day ? "on" : (d.n < S.day ? "done" : "")) + '">' + d.date.slice(-3) + "</div>";
+  }).join("") + "</div>";
+}
+function prog(d) {
+  return '<div class="prog">' +
+    '<div class="row"><span>议程</span><span class="bar"><i style="width:' + d.prog[0] + '%"></i></span><span>' + d.prog[0] + '%</span></div>' +
+    '<div class="row" style="margin-top:4px"><span>暗流</span><span class="bar bar-accent"><i style="width:' + d.prog[1] + '%"></i></span><span>' + d.prog[1] + '%</span></div>' +
+    "</div>";
+}
+function trustLine() {
+  var t = S.trust, fl = [];
+  if (S.fire === 1) fl.push('<span class="flag">山道·未报</span>');
+  if (S.fire >= 2) fl.push('<span class="flag">山道·已报</span>');
+  if (S.feast) fl.push('<span class="flag">饰华</span>');
+  if (S.chair === 1) fl.push('<span class="flag">椅·摆着</span>');
+  if (S.chair === 2) fl.push('<span class="flag">椅·撤了</span>');
+  if (S.paper) fl.push('<span class="flag">报纸</span>');
+  return '<div class="stats">' +
+    "<div>青都 <b>" + t.qingdu + "</b></div>" +
+    "<div>北沙 <b>" + t.beisha + "</b></div>" +
+    "<div>中分山 <b>" + t.zhongfen + "</b></div>" +
+    "<div>日本街 <b>" + t.nihon + "</b></div>" +
+    "<div>不一 <b>" + S.lies + "</b></div>" +
+    (fl.length ? "<div>" + fl.join(" ") + "</div>" : "") + "</div>";
+}
+function card(tag, title, paras) {
+  return '<div class="card"><div class="tag">' + esc(tag) + '</div><h2>' + esc(title) + "</h2>" +
+    paras.map(function (p) { return "<p>" + esc(p) + "</p>"; }).join("") + "</div>";
+}
+function seatTable() {
+  return '<div class="card"><div class="tag">餐会 · 席位</div><h2>每个人餐桌前有一块姓名牌</h2>' +
+    '<table class="seat">' + SEATS.map(function (r) {
+      return "<tr><td>" + esc(r[0]) + "</td><td>" + esc(r[1]) + "</td></tr>";
+    }).join("") + "</table>" +
+    '<p class="mini">中分山席位是「镜缘 · 鸣十二」——没有高冒。宪兵队席位只有高领一人。</p></div>';
+}
+function tenTable() {
+  return '<div class="card"><div class="tag">议题表</div><h2>《共抗外敌十大纲领》</h2>' +
+    '<p class="mini">' + TEN.map(function (x, i) { return (i + 1) + "　" + esc(x); }).join("<br>") + "</p>" +
+    '<p class="mini">这是叶心提出来的。敌人不在场，却决定了所有人说什么。</p></div>';
+}
+function choiceList(opts, fn) {
+  return opts.map(function (o, i) {
+    return '<button class="choice" onclick="' + fn + "(" + i + ')">' + esc(o.label) + "</button>";
+  }).join("");
+}
+function renderLog() {
+  if (!S.reported.length) return "";
+  return '<div class="log"><h3>你报上去的话</h3>' + S.reported.map(function (r) {
+    return '<div class="item">第 ' + r.day + " 日　" + esc(r.log) + "</div>";
+  }).join("") + "</div>";
+}
+function srcTable() {
+  return '<div class="note src">' +
+    "<b>本作的事实来源</b><br>" +
+    "<b>【考据】</b>八席名单、姓名牌、餐会开场、十大纲领、林村长当众忏悔、电视处决（第二批是真枪毙）、" +
+    "三印邀请函、高领私信、叶心的张伯伦类比、镜缘「猫会后空翻」、镜缘「重庆」那句 —— 出自《第九季下·再聚》原始记录<br>" +
+    "<b>【考据】</b>防火墙在会议期间开放、会后重启并宣布第二轮大清算 —— 出自设定集卷四《清算法》条<br>" +
+    "<b>【考据】</b>高领的「天上之战」纵火方案、「这些人都算进去了」 —— 出自设定集高领条<br>" +
+    "<b>【考据】</b>镜缘服药、「不会乱抓人了」、深夜打游戏被骂队友 —— 出自花絮总集<br>" +
+    "<b>【考据】</b>西娜·陈的对外宣传部线与对内夺权线 —— 分别出自设定集与实录；本作按作者裁决以实录为主<br>" +
+    "<b>【考据】</b>洪黎以警局／宪特身份参会、叶心「您已经站在了悬崖」 —— 出自设定集<br>" +
+    "<b>【考据】</b>叶心在会后仍活跃（西沙 97 次／食龙则肥 26 次／竖棺 14 次） —— 出自三份场次志<br>" +
+    "<b>【推演】</b>山道地形、门禁与安检、上菜路线、KTV 包房 —— 据设定合理延伸<br>" +
+    "<b>【原创】</b>听差、管事、杂役，以及支线的具体触发与后果 —— 本作虚构<br>" +
+    "</div>";
+}
+
+function start() {
+  S.day = 1;
+  S.trust = { qingdu: 0, beisha: 0, zhongfen: 0, nihon: 0 };
+  S.fire = 0; S.feast = 0; S.chair = 0;
+  S.paper = false; S.lies = 0; S.nameIdx = 0; S.xina = 0;
+  S.story = []; S.reported = []; S.ending = null;
+  renderDay();
+}
+
+function renderDay() {
+  var d = DAYS[S.day - 1];
+  if (!d) return renderEnd();
+  if (d.n === 7) return renderSign();
+  var h = bar() + prog(d) + trustLine();
+  h += card("第 " + d.n + " 日 · " + d.date, d.title, d.open);
+  if (d.extra === "seat") h += seatTable();
+  if (d.extra === "ten") h += tenTable();
+  h += '<div class="card"><div class="tag">在洋馆里</div>';
+  d.scenes.forEach(function (s) {
+    h += '<p class="said"><b>' + esc(s.who) + "：</b>" + esc(s.txt) + "</p>";
+    h += '<p class="q">' + esc(s.note) + "</p>";
+  });
+  h += "</div>";
+  h += '<div class="card"><div class="tag">差事</div><h2>' + esc(d.task.ask) + "</h2>" +
+    choiceList(d.task.opts, "task") + "</div>";
+  $("app").innerHTML = h;
+  window.scrollTo(0, 0);
+}
+
+function renderSign() {
+  var d = DAYS[6];
+  var h = bar() + prog(d) + trustLine();
+  h += card("第 7 日 · " + d.date, d.title, d.open);
+  h += '<div class="card"><div class="tag">在洋馆里</div>';
+  d.scenes.forEach(function (s) {
+    h += '<p class="said"><b>' + esc(s.who) + "：</b>" + esc(s.txt) + "</p>";
+    h += '<p class="q">' + esc(s.note) + "</p>";
+  });
+  h += "</div>";
+  h += '<div class="card"><div class="tag">名单</div><h2>' + esc(d.task.ask) + "</h2>" +
+    choiceList(d.task.opts, "sign") + "</div>" + renderLog();
+  $("app").innerHTML = h;
+  window.scrollTo(0, 0);
+}
+
+function task(i) {
+  var d = DAYS[S.day - 1], o = d.task.opts[i];
+  applyOpt(o);
+  var h = bar() + prog(d) + trustLine();
+  h += card("第 " + d.n + " 日 · " + d.date, d.title, d.open);
+  h += '<div class="card"><div class="tag">你做完了差事</div><h2>' + esc(o.log) + "</h2>" +
+    "<p>管事听完，点了点头。他在册子上写了一行，没有让你看。</p></div>" + deltaLine(o);
+  if (o.dark) {
+    h += '<div class="card"><div class="tag">她把话说完了</div><h2>「如果你出了事，我就会把你人头挂在我洋馆门头上当装饰。」</h2>' +
+      "<p>她说这句话的时候还在笑。笑完她就走了。</p>" +
+      '<p class="q">「要么听话，要么死。」——她对你说的第一句真话。</p></div>';
+  }
+  if (d.xina) {
+    h += '<div class="card"><div class="tag">会外 · 一间小屋</div><h2>' + esc(d.xina.ask) + "</h2>" +
+      choiceList(d.xina.opts, "xina") + "</div>" + renderLog();
+    $("app").innerHTML = h;
+    window.scrollTo(0, 0);
+    return;
+  }
+  if (d.night) {
+    h += '<div class="card"><div class="tag">第六日 · 深夜</div><h2>' + esc(d.night.ask) + "</h2>" +
+      choiceList(d.night.opts, "night") + "</div>" + renderLog();
+    $("app").innerHTML = h;
+    window.scrollTo(0, 0);
+    return;
+  }
+  h += '<div class="btns"><button class="main" onclick="toReport()">去 回 话</button></div>' + renderLog();
+  $("app").innerHTML = h;
+  window.scrollTo(0, 0);
+}
+
+function xina(i) {
+  var d = DAYS[4], o = d.xina.opts[i];
+  applyOpt(o);
+  var h = bar() + prog(d) + trustLine();
+  h += '<div class="card"><div class="tag">会外 · 一间小屋</div><h2>' + esc(o.log) + "</h2>" +
+    "<p>你把茶盘端走了。小屋的门一直没关严，也没有人出来叫你。</p></div>" + deltaLine(o);
+  h += '<div class="btns"><button class="main" onclick="toReport()">去 回 话</button></div>' + renderLog();
+  $("app").innerHTML = h;
+  window.scrollTo(0, 0);
+}
+
+function night(i) {
+  var d = DAYS[5], o = d.night.opts[i];
+  applyOpt(o);
+  var h = bar() + prog(d) + trustLine();
+  h += '<div class="card"><div class="tag">第六日 · 深夜</div><h2>' + esc(o.log) + "</h2>" +
+    "<p>廊下的灯只有一盏是亮的。你在灯下站了一会儿。</p></div>" + deltaLine(o);
+  h += '<div class="btns"><button class="main" onclick="toReport()">天 亮 了</button></div>' + renderLog();
+  $("app").innerHTML = h;
+  window.scrollTo(0, 0);
+}
+
+function toReport() {
+  var d = DAYS[S.day - 1];
+  var h = bar() + prog(d) + trustLine();
+  h += '<div class="card"><div class="tag">回话</div><h2>' + esc(d.report.ask) + "</h2>" +
+    choiceList(d.report.opts, "report") + "</div>" + renderLog();
+  $("app").innerHTML = h;
+  window.scrollTo(0, 0);
+}
+
+function report(i) {
+  var d = DAYS[S.day - 1], o = d.report.opts[i];
+  applyOpt(o);
+  if (o.leak) {
+    var other = { beisha: "qingdu", qingdu: "beisha", zhongfen: "beisha" }[o.leak];
+    if (other) S.trust[other] = (S.trust[other] || 0) - 1;
+  }
+  S.reported.push({ day: S.day, log: o.log });
+  var h = bar() + prog(d) + trustLine();
+  h += '<div class="card"><div class="tag">你报上去的</div><h2>' + esc(o.log) + "</h2>" +
+    "<p>管事听完，点了点头。他在册子上写了一行，没有让你看。</p></div>" + deltaLine(o);
+  if (o.leak) {
+    h += '<div class="card"><div class="tag">第二天</div><h2>有人知道你说了什么</h2>' +
+      "<p>「公布私下的谈话，只会破坏我们之间的政治默契。」——这句话不是对你说的人说的，是你在走廊上听见的。</p></div>";
+  }
+  h += '<div class="btns"><button class="main" onclick="next()">次 日</button></div>' + renderLog();
+  $("app").innerHTML = h;
+  window.scrollTo(0, 0);
+}
+
+function next() {
+  S.day++;
+  renderDay();
+}
+
+function applyOpt(o) {
+  if (o.t) for (var k in o.t) S.trust[k] = (S.trust[k] || 0) + o.t[k];
+  if (o.lie) S.lies++;
+  if (o.chair) S.chair = o.chair;
+  if (o.feast) S.feast = Math.max(S.feast, o.feast);
+  if (o.fire) S.fire = Math.max(S.fire, o.fire);
+  if (o.paper) S.paper = true;
+  if (o.xina) S.xina = Math.max(S.xina || 0, o.xina);
+  if (o.story) S.story.push(o.story);
+}
+function deltaLine(o) {
+  var dl = [];
+  if (o.t) for (var k in o.t) {
+    var nm = { qingdu: "青都", beisha: "北沙", zhongfen: "中分山", nihon: "日本街" }[k];
+    if (o.t[k]) dl.push(nm + (o.t[k] > 0 ? " +" : " ") + o.t[k]);
+  }
+  if (o.fire === 2) dl.push("山道：已报");
+  if (o.fire === 1) dl.push("山道：未报");
+  if (o.chair === 2) dl.push("统领席：撤了");
+  return dl.length ? '<div class="delta">' + esc(dl.join("　")) + "</div>" : "";
+}
+
+function sign(i) {
+  var d = DAYS[6], o = d.task.opts[i];
+  S.nameIdx = i;
+  applyOpt(o);
+  S.reported.push({ day: 7, log: o.log });
+  renderEnd();
+}
+
+function renderEnd() {
+  var end = null;
+  for (var k = 0; k < ENDINGS.length; k++) {
+    if (ENDINGS[k].hit(S)) { end = ENDINGS[k]; break; }
+  }
+  S.ending = end;
+  var h = bar() + trustLine();
+  h += '<div class="card end"><div class="tag">卷宗</div><div class="rank">' + esc(end.rank) + "</div>" +
+    "<h2>" + esc(end.name) + "</h2>" +
+    end.body.map(function (p) { return "<p>" + esc(p) + "</p>"; }).join("") +
+    '<p class="q">' + esc(end.note) + "</p></div>";
+  var sum = [
+    "青都 " + S.trust.qingdu, "北沙 " + S.trust.beisha,
+    "中分山 " + S.trust.zhongfen, "日本街 " + S.trust.nihon,
+    "前后不一 " + S.lies + " 次",
+    "山道：" + (S.fire === 0 ? "不知" : (S.fire === 1 ? "知道但没报" : "知道并报了")),
+    "饰华：" + (S.feast === 0 ? "不知" : (S.feast === 1 ? "听见了" : "说出去过")),
+    "统领席：" + (S.chair === 2 ? "撤了" : "摆着"),
+    "报纸：" + (S.paper ? "带下山" : "没留"),
+    "会外那件事：" + ((S.xina || 0) === 0 ? "没听见" : ((S.xina || 0) >= 2 ? "说出去过" : "只报了一半"))
+  ];
+  h += '<div class="note">' + esc(sum.join("　·　")) + "</div>";
+  if (S.story.length) h += '<div class="note">支线　' + esc(S.story.join("　·　")) + "</div>";
+  h += renderLog();
+  h += '<div class="btns"><button class="main" onclick="start()">再 来 一 次</button>' +
+    '<button class="ghost" onclick="renderIntro()">回到开头</button></div>';
+  h += '<div class="note">本作有九个结局。判定分三层：先看特殊事件（山道／报纸／饰华／前后不一），' +
+    "再看关系（三方／日本街／一边），最后是兜底。</div>";
+  h += srcTable();
+  $("app").innerHTML = h;
+  window.scrollTo(0, 0);
+}
+
+function renderIntro() {
+  $("app").innerHTML =
+    card("序", "天寨洋馆", [
+      "战后五年四月，和平会议在中分山开。地方叫中分山天寨洋馆——是大当家镜缘的住处。",
+      "来的人很多。餐会大厅里摆着巨幅动态壁画。武裝人员一律禁止进入大厅，都在洋馆外巡逻。每张餐桌前有一块姓名牌。",
+      "你是洋馆里的一个听差。开会的时候你不在席上，你在走廊、楼梯口、以及上菜的过道上。",
+      "你会听到很多话。每天结束的时候，会有人来问你。",
+      "你报上去的话，会让某一方多信你一点，也会让某一方少信你一点。七天之后，看谁记得你。"
+    ]) +
+    '<div class="btns"><button class="main" onclick="start()">进 山</button></div>' +
+    '<div class="note">本作以正史为主线；第六日之后有一条平行线——那条线里，山真的烧起来过。</div>' +
+    srcTable();
+}
+
+renderIntro();
+</script>
+
+
+
+</body>
+</html>

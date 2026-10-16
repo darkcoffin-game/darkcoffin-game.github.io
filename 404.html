@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>查无此页 · 黑柩 小游戏</title>
+<style>
+:root{
+  --paper:#e9e6df; --ink:#141312; --ink2:#3c3a36; --dim:#6c6862;
+  --rule:#c4bfb4; --red:#9c1f1a; --redbg:#f3e6e3;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  background:var(--paper); color:var(--ink); min-height:100vh; min-height:100dvh;
+  font-family:"Songti SC","Noto Serif SC","Source Han Serif SC",STSong,SimSun,serif;
+  letter-spacing:.06em; touch-action:manipulation;
+  display:flex; align-items:center; justify-content:center;
+  padding:24px; padding-bottom:calc(24px + env(safe-area-inset-bottom,0px));
+}
+.box{max-width:520px;width:100%;border:1px solid var(--rule);background:#f4f2ec;
+  border-left:6px solid var(--red);border-radius:2px;padding:24px 22px}
+h1{margin:0 0 6px;font-size:clamp(20px,6vw,28px);letter-spacing:.2em;font-weight:400}
+.no{margin:0 0 14px;font-size:12px;letter-spacing:.24em;color:var(--red)}
+p{margin:0 0 12px;font-size:clamp(12px,3.2vw,13.5px);color:var(--ink2);line-height:1.8}
+.q{border-top:1px dotted var(--rule);padding-top:12px;color:var(--dim)}
+a{display:inline-block;margin-top:6px;min-height:44px;line-height:44px;padding:0 18px;
+  border:2px solid var(--red);color:var(--red);text-decoration:none;border-radius:2px;
+  letter-spacing:.14em;font-size:14px}
+a:active{background:var(--redbg)}
+</style>
+</head>
+<body>
+  <div class="box">
+    <p class="no">戡用字 · 查无此页</p>
+    <h1>这一页不在册</h1>
+    <p>你要找的东西没有找到。可能是地址抄错了，也可能是它已经被移出本口。</p>
+    <p class="q">本口收录的都是单页作品，一共四件。</p>
+    <a href="index.html">回到首页</a>
+  </div>
+</body>
+</html>

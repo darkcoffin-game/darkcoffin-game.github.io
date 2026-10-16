@@ -1,0 +1,5819 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>黑柩·命途转盘 · 启示录教团国</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='9' fill='%2307070a'/><path d='M32 4c2.6 16.5 11 24.9 28 28-17 3.1-25.4 11.5-28 28-2.6-16.5-11-24.9-28-28 17-3.1 25.4-11.5 28-28z' fill='%23c9a24a'/></svg>">
+<style>
+:root{
+  --bg:#07070a; --bg2:#0c0c11; --panel:#12121a;
+  --line:#242430; --line2:#33333f;
+  --ink:#d9d4ca; --dim:#8a8579; --faint:#5c584f;
+  --gold:#c9a961; --gold2:#8a713a;
+  --blood:#8e2a2a; --blood2:#c04a4a;
+  --bone:#e8e2d4;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:radial-gradient(ellipse at 50% -10%,#17141c 0%,#0a0a0e 45%,#060608 100%);
+  color:var(--ink); min-height:100vh;min-height:100dvh;
+  font-family:"Songti SC","Noto Serif SC","Source Han Serif SC",STSong,SimSun,serif;
+  font-size:16px; line-height:1.85; letter-spacing:.02em;
+  -webkit-text-size-adjust:100%;
+}
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:repeating-linear-gradient(0deg,rgba(255,255,255,.014) 0 1px,transparent 1px 3px);
+}
+.wrap{position:relative;z-index:1;max-width:1000px;margin:0 auto;padding:22px 16px 110px}
+
+/* ── 页头 ── */
+.head{text-align:center;padding:14px 0 20px;border-bottom:1px solid var(--line);margin-bottom:22px}
+.head h1{margin:0;font-size:clamp(20px,4.6vw,30px);letter-spacing:.42em;text-indent:.42em;
+  color:var(--bone);font-weight:400;text-shadow:0 0 22px rgba(201,169,97,.18)}
+.head .sub{margin-top:8px;font-size:12px;letter-spacing:.3em;color:var(--faint)}
+.head .sigil{margin:14px auto 4px;width:52px;height:52px;position:relative;opacity:.85}
+.head .sigil::before{content:"";position:absolute;inset:0;border:1px solid var(--gold2);transform:rotate(45deg)}
+.head .sigil::after{content:"";position:absolute;inset:9px;background:var(--gold);opacity:.5;
+  clip-path:polygon(50% 0,61% 39%,100% 50%,61% 61%,50% 100%,39% 61%,0 50%,39% 39%)}
+
+/* ── 副栏 ── */
+.bars{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:8px 14px;
+  background:linear-gradient(180deg,#101017,#0c0c12);border:1px solid var(--line);
+  border-radius:3px;padding:12px 14px;margin-bottom:20px}
+.bar{font-size:12px;letter-spacing:.06em}
+.bar .row{display:flex;justify-content:space-between;align-items:baseline;color:var(--dim)}
+.bar .row b{color:var(--ink);font-weight:400;font-size:13px}
+.bar .track{height:3px;background:#1d1d26;margin-top:5px;overflow:hidden}
+.bar .fill{height:100%;width:0;transition:width .5s ease}
+.f-faith{background:linear-gradient(90deg,#6b5a2a,#c9a961)}
+.f-sin{background:linear-gradient(90deg,#3a1414,#c04a4a)}
+.f-fame{background:linear-gradient(90deg,#243046,#7f9dc4)}
+.f-reason{background:linear-gradient(90deg,#2a1a3a,#9b7fc4)}
+.f-life{background:linear-gradient(90deg,#3a2418,#c98a5a)}
+.bar.warn .row b{color:var(--blood2)}
+
+/* ── 命途卷宗 ── */
+.log{display:flex;flex-direction:column;gap:14px}
+.card{background:linear-gradient(180deg,#111118,#0d0d13);border:1px solid var(--line);
+  border-left:2px solid var(--line2);border-radius:2px;padding:15px 17px;
+  animation:rise .5s ease both}
+@keyframes rise{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:none}}
+.card .tag{font-size:11px;letter-spacing:.22em;color:var(--faint);margin-bottom:7px}
+.card h3{margin:0 0 9px;font-size:17px;font-weight:400;color:var(--bone);letter-spacing:.06em}
+.card p{margin:0 0 9px;color:#c6c1b6;text-align:justify}
+.card p:last-child{margin-bottom:0}
+.card.roll{border-left-color:var(--gold2)}
+.card.choice{border-left-color:#4a5a7a}
+.card.omen{border-left-color:#5a3a7a;background:linear-gradient(180deg,#141020,#0d0a14)}
+.card.death{border-left-color:var(--blood)}
+.deltas{display:flex;flex-wrap:wrap;gap:6px;margin-top:11px;padding-top:10px;border-top:1px dashed var(--line)}
+.chip{font-size:11.5px;letter-spacing:.05em;padding:2px 8px;border:1px solid var(--line2);
+  border-radius:2px;color:var(--dim)}
+.chip.up{color:#c9a961;border-color:#4d3f1e;background:rgba(201,169,97,.05)}
+.chip.down{color:#c07070;border-color:#4d2020;background:rgba(192,74,74,.05)}
+.chip.flag{color:#9b8fc4;border-color:#3a2f52;background:rgba(155,143,196,.05)}
+.quote{margin:10px 0 0;padding:8px 12px;border-left:2px solid var(--gold2);
+  background:rgba(201,169,97,.035);color:#bdb4a0;font-size:14.5px}
+
+/* ── 转盘 ── */
+.altar{margin:24px 0 18px;text-align:center}
+.altar .caption{font-size:12px;letter-spacing:.28em;color:var(--faint);margin-bottom:12px}
+.wheelbox{position:relative;width:min(330px,78vw);aspect-ratio:1;margin:0 auto;--r:130px}
+@media(max-width:430px){.wheelbox{--r:calc(min(330px,78vw) * 0.395)}}
+.wheel{
+  position:absolute;inset:8%;border-radius:50%;
+  border:1px solid var(--line2);
+  background:radial-gradient(circle at 50% 42%,#191922 0%,#0d0d13 68%,#08080c 100%);
+  box-shadow:0 0 40px rgba(0,0,0,.9),inset 0 0 30px rgba(0,0,0,.85);
+  transform:rotate(0deg);
+  transition:transform 3.1s cubic-bezier(.12,.62,.05,1);
+}
+.wheel::after{content:"";position:absolute;inset:34%;border-radius:50%;
+  border:1px solid var(--gold2);background:#0a0a0f;box-shadow:inset 0 0 14px rgba(201,169,97,.14)}
+.spoke{position:absolute;left:50%;top:50%;width:1px;height:calc(var(--r) + 6px);
+  background:linear-gradient(180deg,rgba(70,70,86,.15),rgba(70,70,86,.75));
+  transform-origin:50% 0;pointer-events:none}
+.spoke i{display:none}
+.slabel{position:absolute;left:50%;top:50%;width:0;height:0;pointer-events:none}
+.slabel i{position:absolute;transform:translate(-50%,-50%);font-style:normal;white-space:nowrap;
+  font-size:11.5px;letter-spacing:.06em;color:#a49c8c;max-width:72px;overflow:hidden;
+  text-overflow:clip;text-align:center;line-height:1.2}
+.slabel.landed i{color:var(--gold);font-size:13px;font-weight:400;
+  text-shadow:0 0 14px rgba(201,169,97,.55)}
+.pointer{position:absolute;left:50%;top:-2px;transform:translateX(-50%);width:0;height:0;z-index:4;
+  border-left:9px solid transparent;border-right:9px solid transparent;
+  border-top:20px solid var(--gold);filter:drop-shadow(0 0 6px rgba(201,169,97,.5))}
+.ringnum{position:absolute;left:50%;bottom:2%;transform:translateX(-50%);font-size:10.5px;
+  letter-spacing:.3em;color:var(--faint)}
+.wheelbox.spinning .pointer{animation:tick .09s steps(2) infinite}
+@keyframes tick{50%{transform:translateX(-50%) translateY(2px)}}
+
+/* ── 控件 ── */
+.controls{position:fixed;left:0;right:0;bottom:0;z-index:9;
+  background:linear-gradient(180deg,rgba(7,7,10,.6),rgba(7,7,10,.97) 45%);
+  backdrop-filter:blur(7px);border-top:1px solid var(--line);padding:13px 16px 15px}
+.controls .inner{max-width:1000px;margin:0 auto;display:flex;flex-wrap:wrap;gap:9px;justify-content:center}
+button{font-family:inherit;font-size:14.5px;letter-spacing:.1em;cursor:pointer;
+  background:linear-gradient(180deg,#191922,#111118);color:var(--ink);
+  border:1px solid var(--line2);border-radius:2px;padding:11px 20px;
+  transition:all .22s ease}
+button:hover:not(:disabled){border-color:var(--gold2);color:var(--bone);
+  box-shadow:0 0 16px rgba(201,169,97,.14)}
+button:disabled{opacity:.32;cursor:not-allowed}
+button.primary{border-color:var(--gold2);color:var(--gold);
+  background:linear-gradient(180deg,#1d1a12,#12100a)}
+button.primary:hover:not(:disabled){box-shadow:0 0 24px rgba(201,169,97,.24)}
+button.ghost{font-size:13px;padding:9px 15px;color:var(--dim)}
+button.danger{border-color:#4d2020;color:#c07070}
+.hint{max-width:1000px;margin:9px auto 0;text-align:center;font-size:11.5px;
+  letter-spacing:.09em;color:var(--faint)}
+
+/* ── 开场 ── */
+.intro{background:linear-gradient(180deg,#101017,#0b0b11);border:1px solid var(--line);
+  border-radius:3px;padding:24px 24px 20px;text-align:center}
+.intro h2{margin:0 0 6px;font-size:21px;font-weight:400;letter-spacing:.24em;color:var(--bone)}
+.intro .verse{color:var(--dim);font-size:14.5px;margin:0 0 20px;letter-spacing:.05em}
+.intro .fields{display:flex;flex-wrap:wrap;gap:11px;justify-content:center;margin-bottom:18px}
+.intro label{font-size:12px;letter-spacing:.18em;color:var(--faint);display:block;
+  text-align:left;margin-bottom:5px}
+.intro input{font-family:inherit;font-size:15px;background:#0a0a0f;color:var(--ink);
+  border:1px solid var(--line2);border-radius:2px;padding:9px 12px;width:190px;letter-spacing:.1em}
+.intro input:focus{outline:none;border-color:var(--gold2)}
+.origins{display:grid;grid-template-columns:repeat(auto-fit,minmax(178px,1fr));gap:9px;
+  margin:16px 0 4px;text-align:left}
+.origin{border:1px solid var(--line);border-radius:2px;padding:12px 13px;cursor:pointer;
+  background:#0d0d13;transition:all .2s ease}
+.origin:hover{border-color:var(--gold2);background:#131018}
+.origin.sel{border-color:var(--gold);background:#17140d;box-shadow:0 0 18px rgba(201,169,97,.16)}
+.origin b{display:block;font-weight:400;color:var(--bone);font-size:15px;letter-spacing:.08em}
+.origin span{display:block;font-size:12px;color:var(--faint);line-height:1.6;margin-top:5px}
+.origin .trait{font-size:11.5px;color:var(--gold2);margin-top:7px;letter-spacing:.06em}
+
+/* ── 结局 ── */
+.finale{margin-top:24px;border:1px solid var(--gold2);border-radius:3px;padding:26px 24px;
+  background:radial-gradient(ellipse at 50% 0%,#1b1710 0%,#0b0b11 70%);
+  animation:rise .9s ease both}
+.finale .verdict{font-size:11.5px;letter-spacing:.42em;color:var(--gold2);text-align:center}
+.finale h2{margin:10px 0 4px;text-align:center;font-size:clamp(22px,5vw,30px);font-weight:400;
+  letter-spacing:.16em;color:var(--gold);text-shadow:0 0 30px rgba(201,169,97,.22)}
+.finale .rank{text-align:center;font-size:12.5px;letter-spacing:.24em;color:var(--faint);margin-bottom:18px}
+.finale p{color:#c6c1b6;text-align:justify}
+.epitaph{white-space:pre-wrap;background:#0a0a0f;border:1px solid var(--line);border-radius:2px;
+  padding:14px 16px;font-size:13.5px;color:#b3ada0;line-height:1.9;margin-top:16px;
+  max-height:340px;overflow:auto}
+.scoreline{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-top:18px}
+.scoreline div{border:1px solid var(--line);border-radius:2px;padding:9px 11px;font-size:12px;color:var(--dim)}
+.scoreline div b{display:block;color:var(--bone);font-size:17px;font-weight:400;letter-spacing:.06em}
+
+.note{font-size:12px;color:var(--faint);text-align:center;margin-top:16px;letter-spacing:.08em}
+@media(max-width:560px){
+  body{font-size:15.2px}
+  .wrap{padding:14px 12px 118px}
+  .card{padding:13px 14px}
+  .head h1{letter-spacing:.3em;text-indent:.3em}
+}
+
+/* ══ 移动端补丁（追加在最后；只改观感与命中区，不动剧情、数值与判定）══
+   桌面浏览器上这些几乎看不出差别，但手机上差别很大：
+   双击不再有 300ms 延迟、点击不闪灰块、按钮有 44px 命中区、
+   触摸时有 :active 反馈（原来只有 :hover，触摸设备上从不触发）、
+   底部固定控制条不会被 iPhone 的小白条压住。 */
+html,body{-webkit-text-size-adjust:100%;}
+body{touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
+button,[role="button"],.choice,.origin,.tab,
+a.btn,.opt{cursor:pointer;touch-action:manipulation;min-height:44px;
+  -webkit-tap-highlight-color:transparent;}
+button:active:not(:disabled),.choice:active,.origin:active,.tab:active,
+a.btn:active,.opt:active{filter:brightness(.93);}
+.controls{padding-bottom:calc(8px + env(safe-area-inset-bottom,0px));}
+.jump{bottom:calc(var(--ctl-h, 96px) + 14px + env(safe-area-inset-bottom,0px));}
+
+  /* ── 悬浮跳转按钮（配色照教团：金 ＋ 暗底）──
+     位置由 JS 量出的底栏高度 --ctl-h 决定，窗口缩小、底栏换行变高时也不会压住选项。 */
+  .jump{position:fixed;right:12px;z-index:11;padding:8px 13px;
+    font-size:12px;letter-spacing:.06em;color:var(--gold);font-family:inherit;
+    background:rgba(18,18,26,.92);border:1px solid var(--gold2);border-radius:20px;
+    cursor:pointer;box-shadow:0 2px 12px rgba(0,0,0,.5);backdrop-filter:blur(4px);
+    transition:background .15s,color .15s;
+    bottom:calc(88px + 14px);
+    bottom:calc(var(--ctl-h, 88px) + 14px + env(safe-area-inset-bottom, 0px))}
+  .jump:hover{background:#1c1a24;color:var(--bone)}
+  .jump[hidden]{display:none}
+  /* 窄屏与移动端：缩成 42px 圆钮，只留箭头，尽量不挡选项 */
+  @media (max-width:560px){
+    .jump{width:42px;height:42px;padding:0;border-radius:50%;font-size:0;
+      right:10px;opacity:.92;
+      bottom:calc(96px + 8px);
+      bottom:calc(var(--ctl-h, 96px) + 8px + env(safe-area-inset-bottom, 0px))}
+    .jump::before{content:"\2191";font-size:16px;line-height:42px;display:block}
+    .jump[data-dir="down"]::before{content:"\2193"}
+  }
+
+    /* 空隙按「固定底栏高度 ＋ 悬浮按钮高度」一起算，让页底整块停在按钮上方（按钮停在 底栏+14px，高约 42px）*/
+
+
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="head">
+    <div class="sigil"></div>
+    <h1>黑柩·命途转盘</h1>
+    <div class="sub">卷 二 · 启 示 录 教 团 国</div>
+  </header>
+
+  <section class="bars" id="bars" hidden></section>
+
+  <section class="altar" id="altar" hidden>
+    <div class="caption" id="altar-caption">命 途 之 轮</div>
+    <div class="wheelbox" id="wheelbox">
+      <div class="pointer"></div>
+      <div class="wheel" id="wheel">
+        <div id="spokes"></div>
+        <div id="spoke-labels"></div>
+      </div>
+      <div class="ringnum">十 二 签 · 一 命</div>
+    </div>
+  </section>
+
+  <main class="log" id="log"></main>
+  <div id="finale"></div>
+
+</div>
+
+<div class="controls" id="controls" hidden>
+  <div class="inner" id="controls-inner"></div>
+  <div class="hint" id="hint"></div>
+</div>
+
+<script>
+"use strict";
+
+/* 篇目数据在下方注入；这两张表由各篇覆盖 */
+let FLAG_ENDINGS = [];
+let ENDING_GATE = {};
+
+/* ═══════════════════════════════════════════════════════════════
+   黑柩 · 命途转盘 —— 启示录教团国篇（精简版 · 卷一）
+   玩法：转盘决定命运，关键节点由玩家抉择。
+   允许撤回；撤回后重转同一转盘，结果必定与上次不同。
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── 零、工具 ── */
+const $ = (id) => document.getElementById(id);
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const clone = (o) => JSON.parse(JSON.stringify(o));
+const pickInt = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+const has = (arr, t) => arr.indexOf(t) >= 0;
+
+/* 确定性随机（用于同一转盘内的视觉分扇，不影响结果） */
+function mulberry(seed) {
+  let t = seed >>> 0;
+  return function () {
+    t = (t + 0x6d2b79f5) >>> 0;
+    let r = Math.imul(t ^ (t >>> 15), 1 | t);
+    r = (r + Math.imul(r ^ (r >>> 7), 61 | r)) ^ r;
+    return ((r ^ (r >>> 14)) >>> 0) / 4294967296;
+  };
+}
+function hash(str) {
+  let h = 5381;
+  for (let i = 0; i < str.length; i++) h = ((h << 5) + h + str.charCodeAt(i)) >>> 0;
+  return h;
+}
+/* 由 id 串确定地取一个「签」，用于把中性票分配到具体事件上 */
+function tieBreak(ids, seed, salt) {
+  const rnd = mulberry(hash(seed + "|" + salt) ^ 0x9e3779b9);
+  const arr = ids.slice();
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(rnd() * (i + 1));
+    const t = arr[i]; arr[i] = arr[j]; arr[j] = t;
+  }
+  return arr;
+}
+
+/* ── 一、教团国词条资料（摘自《黑柩设定集·第一版》） ── */
+
+/* 主题配置：换一个势力篇，只改这里与数据区即可 */
+const THEME = {
+  title: "黑柩·命途转盘",
+  subtitle: "卷 二 · 启 示 录 教 团 国",
+  archivists: "序 · 档案司",
+  register: "登记在册",
+  bornAt: "启示录教团国 · 平民区",
+  fileWord: "档案司",
+  introTitle: "报 上 名 号",
+  introVerse: "顺民的名字会被记进教团的册子。<br>你也可以不留名——册子照样有你的位置。",
+  introNote: "选定出身即定下你的第一份档案。此后一切由轮盘与你的抉择共同写完。",
+  introHint: "启示录教团国的档案司正在等一个名字。",
+  randomName: "听凭安排",
+  randomDesc: "你不选。教团替你选，诸神替你选，或者什么也不选。",
+  prologue: [
+    "教团国把治下的人分作两类：教士与顺民。档案司在你出生的第三日就替你勾好了其中一栏，墨迹至今未干。",
+    "此后你的一生将被记录在案。记录的方式是：每一转抽一次签。",
+    "凡你所遇之事，皆由轮盘落定。落定之后你可以撤回一次——撤回之后，命运会换一个结果给你，但绝不重复已经发生过的那一个。",
+  ],
+  epitaphTail: "死因记述由中央教团档案司核定，异议不予受理。",
+};
+
+const TERMS = {
+  state: "启示录教团国",
+  church: "中央教团",
+  faith: "启示录教",
+  pope: "教皇渊",
+  head: "陛下",
+  lay: "顺民",
+  clergy: "教士",
+  rite: "受洗",
+  exam: "教法考",
+  student: "教生",
+  election: "民选教士",
+  chosen: "神选教士",
+  ward: "教士监护",
+  doctrine: "《启示教典》",
+  law: "《启示录国教法》",
+  interim: "《临时约法》",
+  flag: "黑星旗",
+  sect: "承罪学社",
+  scripture: "《启示之书》",
+  trial: "宗教裁判",
+  saints: "十三圣人",
+  council: "圣人会议",
+  heaven: "圣地",
+};
+
+/* ── 二、出身与阶层 ── */
+
+const ORIGINS = [
+  {
+    id: "farmhand",
+    name: "神赐土地上的农家子",
+    desc: "父母耕种教团分下的神赐土地。你会在田垄与祷词之间长大，饿不着，也走不远。",
+    trait: "初始标签：顺民、忠实、无名",
+    mods: { faith: 12, fame: -6, reason: -4, sin: 0, life: 0 },
+    flags: ["顺民", "农家", "忠实"],
+  },
+  {
+    id: "clergykin",
+    name: "教士家的次子",
+    desc: "父亲是地方教士。你从小在教法问答里长大，知道礼节，也知道礼节背后是什么。",
+    trait: "初始标签：教士家庭、通晓教法",
+    mods: { faith: 4, fame: 10, reason: 6, sin: 4, life: 0 },
+    flags: ["教士家庭", "通晓教法", "体面"],
+  },
+  {
+    id: "orphan",
+    name: "教团抚养的孤儿",
+    desc: "你不知自己从哪来。教团给你饭吃、给你衣穿、教你认字——你欠它一条命。",
+    trait: "初始标签：教养、无根、顺服",
+    mods: { faith: 16, fame: 0, reason: 2, sin: 0, life: -4 },
+    flags: ["教养", "无根", "顺服"],
+  },
+  {
+    id: "heretic",
+    name: "罪民之后",
+    desc: "你的血亲在清剿中被定罪。你被容许活着，条件是永远记住自己为什么活着。",
+    trait: "初始标签：罪民血亲、被监视、隐忍",
+    mods: { faith: -6, sin: 14, fame: -12, reason: 8, life: -2 },
+    flags: ["罪民血亲", "被监视", "隐忍"],
+  },
+  {
+    id: "chosenborn",
+    name: "圣人所拣选的孩子",
+    desc: "某一日，一位圣人看了看你，说了一句没人听懂的话。从此村庄看你的眼神不同了。",
+    trait: "初始标签：神眷之疑、被注视、孤独",
+    mods: { faith: 8, fame: 16, reason: -2, sin: 6, life: 4 },
+    flags: ["神眷之疑", "被注视", "孤独"],
+  },
+  {
+    id: "cornvillage",
+    name: "玉米村的孩子",
+    desc: "你的村庄把一场歉收解释成了启示。解释的人后来升了职，村庄少了一半人。",
+    trait: "初始标签：饥荒记忆、疑心、沉默",
+    mods: { faith: -4, sin: 2, fame: -4, reason: 10, life: -6 },
+    flags: ["饥荒记忆", "疑心", "沉默"],
+  },
+];
+
+const RANDOM_ORIGIN_ID = "__random__";
+
+/* ── 三、转盘事件池 ── */
+/* era: 年龄阶段序号 0幼年 1少年 2青年 3壮年 4残年
+   weight: 数字或函数(G)=>数字（<=0 表示不可抽中）
+   req: 函数(G)=>布尔
+   delta: 属性增减；flags: 加标签；flagsOff: 去标签
+   chain: 后续事件 id（按顺序占下一转）
+   choices: 关键节点抉择                                        */
+
+const EVENTS = [];
+function ev(o) { EVENTS.push(o); return o.id; }
+const EVENT_BY_ID = {};
+function indexEvents() { EVENTS.forEach((e) => { EVENT_BY_ID[e.id] = e; }); }
+
+/* ══════ 幼年 ══════ */
+
+ev({
+  id: "c_doctrine", short: "背教典", title: "第一本《启示教典》",
+  era: [0], weight: 30,
+  body: [
+    "教团的义务教育从会走路就开始。第一课不是识字，是背《启示教典》第一章。",
+    "教士说，你们这一代人不需要去分辨哪句话是真的，只需要在需要的时候把它说出来。他念一句，你们跟一句。念到“顺民当以忠诚为食”时，他停下，挨个看你们的眼睛。",
+    "你背得很熟。回到家，母亲问你今天学了什么。你背给她听。她没有说话，只是把灶里的火拨得更旺了一些。",
+  ],
+  delta: { faith: 6, reason: -2 }, flags: ["通晓教法"],
+  quote: "“秩序促进繁荣，繁荣促进秩序。”",
+});
+ev({
+  id: "c_corn", short: "拾玉米", title: "秋收的玉米地",
+  era: [0], weight: 26,
+  body: [
+    "中央教团的命令是：各监护区必须积极种植玉米，严禁私养牲畜。",
+    "你和母亲在田里拾落穗。远处有教士骑着车经过，车后架上挂着一只剥了皮的羊——那是“统一分配”之后剩下的东西。母亲按住你的头，让你低下去，别让教士看见你在看他。",
+    "那天晚上，她第一次跟你说：吃饱比忠诚要紧。她说这句话的时候，声音低得像是别人的。",
+  ],
+  delta: { faith: -3, reason: 5, life: -2 }, flags: ["饥荒记忆", "疑心"],
+});
+ev({
+  id: "c_mother", short: "母亲病", title: "母亲病了",
+  era: [0], weight: 20,
+  body: [
+    "母亲病了很久。当地教团的教士来了一趟，翻了翻她的眼睑，说她“放任自身状态恶化”，按教法应当接受强制精神治疗。",
+    "治疗是免费的，但要把人送去监护区的治疗所。父亲签了字。母亲被带走那天没有哭，她只是把你抱了一下，让你以后千万别生病。",
+    "治疗所每月能探视一次。头三个月你还去，后来路太远，家里没那么多粮食给你带着上路。",
+  ],
+  delta: { life: -6, reason: 6, sin: 2 }, flags: ["监护区档案", "亲人离散"],
+});
+ev({
+  id: "c_priest", short: "教士来", title: "教士来家里",
+  era: [0], weight: 18,
+  body: [
+    "教士每月来一次，看你们家的粮食、屋子和祷告。他念一段经文，然后问父亲：为什么上个月祷告缺席了一次。",
+    "父亲说是牛病了。教士记在本子上，说牛的病不能代替人的忠诚。走之前他看了看你，说你眼睛很亮，适合将来考教生。",
+    "他走后，父亲在门槛上坐了很久，说了一句你当时听不懂的话：他们连牛都要管。",
+  ],
+  delta: { faith: 4, reason: 3, fame: 3 }, flags: ["教士印象"],
+});
+ev({
+  id: "c_morning", short: "晨祷会", title: "清晨的启示会议",
+  era: [0], weight: 16,
+  body: [
+    "每逢月初，全村要在教会堂里开“启示会议”。教士站在诸神的注视下宣誓自己已经努力实现了监护区的秩序与繁荣，然后公示各项统计数据。",
+    "今年的数字很好看。你认得那些数字：牲畜栏里的羊去年就死了，产量那一栏却比去年高。",
+    "散会后，人们照例鼓掌。掌声很整齐，整齐得像事先练过。",
+  ],
+  delta: { faith: 5, reason: -1, fame: 2 }, flags: ["数据印象"],
+});
+ev({
+  id: "c_book", short: "禁书", title: "一本不该存在的书",
+  era: [0], weight: 12, rare: true,
+  body: [
+    "你在教士丢下的废纸堆里捡到一本簿子。里面写的不是教典，而是一些人怎么问问题。",
+    "有一句话被反复圈过：“疑物从无——既然我们没有任何证据能证明一切灵魂能量都是人类灵魂本身。”你那时还不懂这句话，但你记住了写这句话的人不害怕。",
+    "你把簿子藏在墙缝里。三天后，教士带着人来村里查“不应掌握的知识”，挨家挨户翻。你家被翻过两遍，什么都没有翻到。",
+  ],
+  delta: { reason: 12, faith: -6, sin: 8 }, flags: ["读过禁书"],
+  quote: "“疑物从无。”",
+});
+ev({
+  id: "c_eat", short: "蒙修礼", title: "邻家姐姐的受洗",
+  era: [0], weight: 15,
+  body: [
+    "受洗之前要先“蒙修”：身体完全用纱布包裹，不得示人，直到完成试炼。",
+    "邻家的姐姐裹着白纱从街上走过。所有人都低着头，没有人看她，也没有人敢不看。三天后她没能从试炼里出来。教团说她被诸神接走，村里分了一袋玉米作为抚恤。",
+    "这是你第一次意识到，教团说“福”这个字的时候，你最好别问它后面接的是什么。",
+  ],
+  delta: { faith: -4, reason: 6, life: -2 }, flags: ["蒙修印象"],
+});
+ev({
+  id: "c_callexam", short: "小教法考", title: "第一次教法考",  era: [0, 1], weight: function (G) { return G.faith >= 30 ? 24 : 14; },
+  body: [
+    "教法考考的是你对教法和经文的理解。通过的人成为“教生”，有权在教团学院学习魔法，并拜一名教士为导师。",
+    "考场设在教会堂里，墙上是黑星旗：黑象征蒙昧，星象征启示。监考的教士说，你们答的不是题目，是你们的忠诚。",
+    "卷子收上去了。教士们当场批。你看着自己的名字被念出来的时候，脑子里第一件事是：母亲说的对，吃饱比忠诚要紧——但忠诚能换来吃饱。",
+  ],
+  delta: { faith: 8, fame: 6, reason: 4 }, flags: ["教生", "通晓教法"],
+  quote: "“启示的教育和考试便是永恒自我完善之路的最佳实践。”",
+  choices: [
+    {
+      label: "埋头考教生",
+      body: [
+        "你把自己钉在教法与经文上。同学的父母是教士，你的父母是佃农，所以你唯一能用的东西是夜里那盏油灯。",
+        "你考上了。你的导师教士把你记在名下，从此你的表现由他负责，你的前程也由他负责。",
+      ],
+      delta: { faith: 10, fame: 8, reason: 2 }, flags: ["教生", "有导师"],
+    },
+    {
+      label: "不肯背，去种地",
+      body: [
+        "你把课本塞在床板下，跟着父亲下地。教士上门三次，问你为什么不来参加考前辅导。父亲替你说了三次好话。",
+        "第四次教士没有来，来的是地方教团的监理会通知：你被列入“不配合”名册。此后你家分到的种子比别家少一成。",
+      ],
+      delta: { faith: -8, fame: -6, reason: 8, life: -2 }, flags: ["不配合名册", "务农"],
+    },
+    {
+      label: "替别人答一份卷子",
+      body: [
+        "同考的一个孩子家里许诺给你两袋玉米。他的字你认得，于是你替他写了一份，笔迹刻意写得不像自己。",
+        "两个人都过了。他后来在学院里一路往上，你在地方教团做文书。很多年后他成了能决定你生死的人。",
+      ],
+      delta: { faith: 2, sin: 10, reason: 6, fame: 4 }, flags: ["替考旧账"],
+      quote: "“不要这么说，教团可是大家的家呀。”",
+    },
+  ],
+});
+ev({
+  id: "c_monk", short: "自己蒙修", title: "蒙修与试炼",
+  era: [1], weight: 22,
+  body: [
+    "轮到你受洗了。按《启示录国教法》，受洗权收归教士：由教士决定顺民是否可以受洗，受洗之后直接成为教士。",
+    "教团发给你纱布。要先蒙修一段时间，把身体完全包裹住，不得示人，然后完成入教试炼。试炼内容不公布，据说因人而异。",
+    "裹上纱布的第一夜，你听不见自己的声音，只听见布下面的心跳。你忽然明白：教团要的不是你的身体，是你愿意把自己交出去的那个动作。",
+  ],
+  delta: { faith: 6, reason: 3 }, flags: ["受洗", "教士"],
+  choices: [
+    {
+      label: "老实完成蒙修与试炼",
+      body: [
+        "你在不见光的屋子里待了很久，直到教士解开你的纱布，说：诸神看见你了。",
+        "你成为教士。第一件事是领到一本写着你名字的教法。第二件事是学会：这本教法对顺民说的每一句话，都可以对你反过来说。",
+      ],
+      delta: { faith: 12, fame: 8 }, flags: ["受洗教士", "忠诚记录清白"],
+    },
+    {
+      label: "托人递一份礼，省掉试炼",
+      body: [
+        "你的导师收了东西，把你的试炼记成“圆满”。受洗仪式照做，纱布照裹，只是天数少了一半。",
+        "当天晚上他拍着你的肩说：教团的规矩是给守规矩的人准备的。你们这些聪明人，将来是要替教团办事的。你笑得很好看。",
+      ],
+      delta: { faith: 2, sin: 10, fame: 6 }, flags: ["受洗教士", "导师的把柄"],
+    },
+    {
+      label: "谎称病弱，求个轻判",
+      body: [
+        "地方教团一开始说你“放任自身状态恶化”，要送你去强制精神治疗。你在治疗所门口改了口，说自己是被恶魔动摇过，愿意接受教团的宽恕。",
+        "文书上最终写的是“神罚后重归极乐之路”。你受洗了，编号却挂在一份“需要关注”的附册上。",
+      ],
+      delta: { faith: -4, sin: 8, reason: 8 }, flags: ["受洗教士", "精神治疗档案"],
+    },
+  ],
+});
+
+ev({
+  id: "c_kinship", short: "族谱", title: "教士家的族谱",
+  era: [0, 1], weight: function (G) { return has(G.flags, "教士家庭") ? 34 : 12; },
+  body: [
+    "教团给你家发了一本族谱。扉页上印着黑星旗，黑象征蒙昧，星象征启示。",
+    "父亲把族谱摊在桌上，一个个念名字，念到第三页停下，说这一支你不要记。你问为什么。他说，因为这一支里有人说过不该说的话，教团查过。",
+    "族谱最后一页是空的，留白，等着填。父亲说：那一页是给将来当教士的人留的。",
+  ],
+  delta: { faith: 6, fame: 4, reason: 3 }, flags: ["族谱"],
+  quote: "“忠诚者可选为教士，不忠者万人唾弃。”",
+});
+ev({
+  id: "c_pledge", short: "誓词", title: "对着黑星旗宣誓",
+  era: [0, 1], weight: 26,
+  body: [
+    "每月初一，全村在教会堂前对着旗帜宣誓。誓词三段，最后一句是：若有需要，我愿以性命向诸神证明忠诚。",
+    "念到这一句时，队伍里有个老人咳嗽，教士停了一下，回头看他。老人的儿子把他扶稳，替他把那一句念得格外大声。",
+    "散场以后，父亲在回家的路上说：那一句你念小声一点。他说完自己又笑了一下，好像这话有什么好笑。",
+  ],
+  delta: { faith: 5, reason: 5, life: -1 }, flags: ["宣誓过"],
+  choices: [
+    {
+      label: "次次认真念，念到教士记住你",
+      body: [
+        "你站在第一排，声音比谁都亮。教士第二次就记住了你的名字，第三次让你站上台领誓。",
+        "你成了这个村的“示范”。示范是有好处的：你家的种子从来没缺过一斤。",
+      ],
+      delta: { faith: 12, fame: 12, reason: -2 }, flags: ["示范生"],
+    },
+    {
+      label: "按父亲说的，小声念过去",
+      body: [
+        "你把那一句含在嘴里，像含一颗太烫的玉米。三年下来，你念得极准，只是没人听得见。",
+        "很多年后你明白，这是你学会的第一门手艺：说对的话，但不说给所有人听。",
+      ],
+      delta: { reason: 12, faith: 2, sin: 4 }, flags: ["口型规整"],
+    },
+    {
+      label: "问教士：以性命证明，是现在就证明吗",
+      body: [
+        "教士愣了一瞬，说：现在是用力气证明，将来才用性命。旁边的人都笑，父亲没有笑。",
+        "当天夜里父亲打了你一顿。打完之后他坐了很久，说：你这个问题问得太好了，好得我害怕。",
+      ],
+      delta: { reason: 14, faith: -6, sin: 6, fame: -4 }, flags: ["问过不该问的话"],
+    },
+  ],
+});
+ev({
+  id: "c_app", short: "启示APP", title: "父母的手机",
+  era: [0, 1], weight: 22,
+  body: [
+    "启示APP只装手机，注册即实名，严管境外用户。父亲有一部旧手机，里面只有三个应用：启示APP、公告、计算器。",
+    "启示APP的热搜是教团安排的。那天的头条是“第一届大教法考紧张备战中”，第二条是“大教法考倒计时十五天”，第三条是一位老师的话：提升一分，干掉千人。",
+    "父亲把手机递给你，让你念给他听。他识字不多。你念完第三条的时候，他“哦”了一声，什么也没说。",
+  ],
+  delta: { reason: 5, faith: 3, fame: 2 }, flags: ["会念热搜"],
+  quote: "“提升一分干掉千人。”",
+  choices: [
+    {
+      label: "把三条都念清楚，包括评论区",
+      body: [
+        "评论区第一条是：干掉的千人里有我。第二条是：那你就多考一分。第三条被删了。",
+        "父亲听完说：这个评论是半夜发的，发的人第二天还要下地。他把手机收进柜子，锁上。",
+      ],
+      delta: { reason: 12, faith: -2, sin: 2 }, flags: ["看过被删的评论"],
+    },
+    {
+      label: "只念前两条，第三条跳过",
+      body: [
+        "父亲没有追问。此后他会隔几天让你念一次，每次你都念前两条。",
+        "这是个很省事的习惯。你后来在教团里干了三十年，靠的都是这个习惯。",
+      ],
+      delta: { faith: 8, reason: 4, sin: 4 }, flags: ["会省略"],
+    },
+  ],
+});
+ev({
+  id: "c_national", short: "国庆", title: "建国日",
+  era: [0, 1], weight: 20,
+  body: [
+    "建国日那天，全村要在广场上站三个小时。教士讲教团国的功业：否定了社会达尔文主义，肯定了人人平等，反对基因筛查，强调医学伦理；建了义务教育，建了逐级教团。",
+    "讲完之后唱颂歌。你不会唱，只跟着张嘴。你旁边的小孩也不会唱，他张得比你大声。",
+    "散场时，教士宣布：今年本区粮食产量增长两成，诸神祝福。人群鼓掌。你听见身后有人低声说：两成，那去年是多少。没有人回答他。",
+  ],
+  delta: { faith: 6, fame: 3, reason: 3 }, flags: ["国庆印象"],
+});
+ev({
+  id: "c_lot", short: "抽签", title: "抽签分粮",
+  era: [0, 1], weight: 24,
+  body: [
+    "神赐土地计划之后，粮食由地方教团统一分配。分配的方式是抽签——签上写着你能领多少，公平、公开、诸神见证。",
+    "你家抽到最少的那一档。教士把这张签举起来给全村看，说：诸神的意思，不是教团的意思。",
+    "回家的路上，父亲没有骂人。他只是把签折成很小的一块，塞进墙缝里，跟你以前藏东西的地方是同一道缝。",
+  ],
+  delta: { faith: -4, reason: 6, life: -3 }, flags: ["抽签最末"],
+  choices: [
+    {
+      label: "忍了。明年再抽",
+      body: [
+        "第二年你家抽到中档，第三年抽到最上档。教士说你家的运气改了，说明祷告有用。",
+        "父亲把三年的签都塞在墙缝里。你后来才知道，那些签上的数字加起来，还是少了一成。",
+      ],
+      delta: { faith: 6, reason: 4, life: 2 }, flags: ["抽签最末", "忍过"],
+    },
+    {
+      label: "问教士：签是谁做的",
+      body: [
+        "教士看着你，说你这个问题比签本身重。他没回答，只把你的名字记下来，写在“善于思考”一栏。",
+        "这一栏在你十五岁那年救了你一次，也在你三十岁那年害了你一次。",
+      ],
+      delta: { reason: 12, sin: 6, faith: -2 }, flags: ["善于思考"],
+    },
+    {
+      label: "夜里去把签箱的底看了一遍",
+      body: [
+        "你发现最上档的签只有三根，而村里有十七户是教士的亲戚。你没有声张，也没有告诉父亲。",
+        "此后你每次抽签都盯着教士的手看。你看出了门道，也因此学会了不看别人的手。",
+      ],
+      delta: { reason: 14, sin: 8, faith: -6 }, flags: ["知道签的分量"],
+    },
+  ],
+});
+ev({
+  id: "c_land", short: "征用", title: "盖一座新教堂",
+  era: [0, 1], weight: 20,
+  body: [
+    "教团要在村里盖一座新教堂。地基要三亩地，教团不出钱，按“共同负担”摊给全村。",
+    "被摊掉的是村西头最穷的那户。教士说：他家的地靠路口，位置好，适合向上向善。",
+    "那户人家的女人在教会堂门口坐了一整天。傍晚教士端了一碗玉米粥出来，她没有接，说了一句：这碗粥是我家的地长出来的。",
+  ],
+  delta: { faith: -2, reason: 6 }, flags: ["见过征地"],
+  choices: [
+    {
+      label: "帮着搬砖，把这当成荣耀",
+      body: [
+        "你搬了半个月的砖，教士在启示会议上念了你的名字。你领到一双新鞋和一张写着“向上向善”的纸。",
+        "村西头那户人家在教堂落成前搬走了。新教堂的第一次启示会议，念的就是你家的名字。",
+      ],
+      delta: { faith: 12, fame: 10, sin: 6 }, flags: ["建堂有功"],
+    },
+    {
+      label: "夜里给那户人家送半袋玉米",
+      body: [
+        "你把家里的玉米分出半袋，趁着天黑放在他家门口。第二天早上玉米还在原地，被踩进了泥里。",
+        "你没有再送第二次。但你记住了那半袋玉米踩进泥里的样子，记了三十年。",
+      ],
+      delta: { reason: 8, sin: 6, faith: -4, life: -2 }, flags: ["送过半袋玉米"],
+    },
+    {
+      label: "在启示会议上提议换一块地",
+      body: [
+        "你说村东的荒地更适合盖教堂，理由是那里离水源近、离坟地远。你说了三条理由，每条都很像样。",
+        "教士考虑了两天，同意了。村西头那户人家保住了地，村东头几户人家的坟被迁走了。",
+      ],
+      delta: { reason: 14, fame: 6, sin: 8 }, flags: ["提过议"],
+    },
+  ],
+});
+ev({
+  id: "c_report", short: "举报", title: "村里第一次举报",
+  era: [0, 1], weight: 18,
+  body: [
+    "教法规定：屡次触犯教法者，其家族乃至社区应承担连带责任。举报因而成了一件正经事。",
+    "被举报的是你家的邻居。罪名是说他家儿子穿的衣服不合规矩——袖子太窄，帽檐太宽。判决结果是公开训诫。",
+    "训诫那天全村都去了。邻居站在台上念自己的悔过书，声音很稳。念完他抬头看了一眼台下，谁也没看，就看了一眼天。",
+  ],
+  delta: { faith: 4, sin: 4, reason: 5 }, flags: ["见过训诫"],
+  quote: "“奇装异服惹人不满即可举报。”",
+});
+ev({
+  id: "c_quota", short: "指标", title: "教士的账本",
+  era: [0, 1], weight: function (G) { return has(G.flags, "教士家庭") ? 26 : 14; },
+  body: [
+    "你替父亲抄账。你发现账上的牲畜数比实际多两头，播种面积比实际多三成。",
+    "你问父亲为什么。他说：上面要的是能实现的目标。你要是写实的，上面就换一个能写得漂亮的人来当教士。",
+    "他说完把笔塞给你，让你自己改。笔尖悬在那两个数字上，悬了很久。",
+  ],
+  delta: { sin: 4, reason: 6 }, flags: ["抄过账"],
+  choices: [
+    {
+      label: "照着规矩改，改得比父亲还漂亮",
+      body: [
+        "你改完之后，父亲把账本拿远一点看，说：你这手字将来是要往上走的。",
+        "那一年本区排了第三名。第二年指标又高了两成，父亲第一次在你面前叹气。",
+      ],
+      delta: { faith: 8, fame: 10, sin: 10, reason: -2 }, flags: ["抄过账", "报表苗子"],
+    },
+    {
+      label: "写真实的数字，让父亲自己看着办",
+      body: [
+        "父亲看了很久，最后把真实的数字交了上去，自己写了一封请罪信。他被降了一级，扣了半年的配给。",
+        "这一年你家的饭桌上有过三个月只有玉米糊。父亲没有怪你，母亲怪了你一辈子。",
+      ],
+      delta: { reason: 14, faith: -4, fame: -6, life: -3 }, flags: ["交手过真账"],
+    },
+    {
+      label: "改一半：把牲畜数改实，把面积留着",
+      body: [
+        "你说牲畜不进屋，上面来查能数出来；面积在天上，谁也量不准。父亲看了你三秒，笑了。",
+        "这个“改一半”的办法，后来成了你在教团里保命的本事。",
+      ],
+      delta: { reason: 12, sin: 6, fame: 4 }, flags: ["懂分寸"],
+    },
+  ],
+});
+ev({
+  id: "c_corvee", short: "修渠", title: "修渠的那十天",
+  era: [0, 1], weight: 18,
+  body: [
+    "教团下令修一条灌溉渠，各村按人头出工。顺民必须工作，而且必须努力工作——这是教法写在最前面的几条之一。",
+    "第十天渠壁塌了一段，压死两个人。武装教士团来验了，结论是死者生前“未按统一安排劳作”，不算教团的责任。",
+    "渠照常通水，从两个人的头上流过去。有人在渠边插了一块木牌，第二天木牌不见了。",
+  ],
+  delta: { life: -6, reason: 6, sin: 2 }, flags: ["修过渠", "见过死人"],
+  quote: "“不按统一安排耕种畜牧者，按程度处以架身游行到鞭刑不等。”",
+});
+ev({
+  id: "c_school2", short: "乡校", title: "乡校的两门课",
+  era: [0, 1], weight: 24,
+  body: [
+    "教团的义务教育什么都教：算术、地理、现代科学，还有教法与经文。教士说，这是教团与天空教的区别——天空教不让民众识字，教团要民众识字，只是要知道该读什么。",
+    "教地理的老师讲到圣地：人类终有一日要走出圣地，重返整个地球。讲完他停了一下，说：你们这一代大概是看不到了。",
+    "下课以后，班里有个人问：那为什么还要学。老师说：因为教团要你们学。",
+  ],
+  delta: { faith: 6, reason: 8, fame: 2 }, flags: ["读过乡校"],
+  quote: "“唯有跟随天空诸神赐予人类的‘启示’行事，人类才能有朝一日走出圣地。”",
+});
+ev({
+  id: "c_tour", short: "巡游", title: "圣训教士团全国巡游",
+  era: [0, 1], weight: 16,
+  body: [
+    "圣训教士团是第十圣人麾下的中央警察组织，也负责全国巡游宣传。他们到村里那天，所有人都被叫到路边站好。",
+    "车过去的时候，发下来一批纸。纸上是《信仰、秩序、繁荣》的摘句：信仰诸神的信念，造就诸神注视下的秩序；诸神注视下的秩序，造就诸神注视下的繁荣。",
+    "有个教士从车上撒了一把糖。孩子们去抢，你也在里面。抢到的糖纸背面印着“秩序、和谐、幸福、繁荣”。",
+  ],
+  delta: { faith: 8, fame: 3, reason: 2 }, flags: ["巡游在场"],
+});
+ev({
+  id: "c_lie", short: "告发", title: "你替自己撒过的第一个谎",
+  era: [0, 1], weight: 22,
+  body: [
+    "教士来家访，问你父亲有没有说过对教团不满的话。",
+    "父亲上个月确实说过。那天他从镇上回来，喝了点酒，说教团收走的东西比进盟多。说完他就睡了，第二天什么也不记得。",
+    "教士在等你的回答。他的手放在膝盖上，指头一下一下点着。",
+  ],
+  delta: { sin: 4, reason: 6 }, flags: ["面临过告发"],
+  choices: [
+    {
+      label: "说没有",
+      body: [
+        "你说没有。教士看了你很久，然后笑了，说：你很爱你的父亲。他走的时候在簿子上写了两个字。",
+        "那两个字你后来在一份档案里看到了。写的是“可用”。",
+      ],
+      delta: { faith: 4, reason: 10, sin: 6, fame: 4 }, flags: ["可用"],
+    },
+    {
+      label: "说没有，但把隔壁家的事说了",
+      body: [
+        "你说隔壁家的男人上个月骂过教团的粮车。这是真的，你亲眼看见的。教士把这条记下了。",
+        "隔壁家被公开训诫。你父亲从头到尾不知道这件事是怎么来的，只是一直说：这村里的人心怎么变成这样了。",
+      ],
+      delta: { sin: 16, faith: 8, fame: 4, reason: 4 }, flags: ["换过供"],
+    },
+    {
+      label: "说“我不知道他算不算不满”",
+      body: [
+        "你把父亲的原话一个字不改地复述了一遍，然后说你不知道这算不算不满。",
+        "教士把原话记下来，合上簿子，说：教团要的是明确。他说这句话的时候，语气很像是失望，也像是满意。",
+      ],
+      delta: { reason: 14, sin: 8, faith: -2 }, flags: ["复述过原话"],
+    },
+  ],
+});
+ev({
+  id: "c_cache", short: "墙缝", title: "父亲藏在墙缝里的东西",
+  era: [0, 1], weight: function (G) { return has(G.flags, "读过禁书") ? 30 : 14; },
+  body: [
+    "你在墙缝里找到了那本簿子——不是你自己藏的那本。这一本更薄，抄的是《魔法公约》里的几段：魔法作为工具与人之间的作用和反作用。",
+    "扉页上有一行小字，是父亲的笔迹：从行脚医手里换的半袋玉米。",
+    "你把簿子放回原处，装作没有看见。第二天父亲自己去墙缝摸了一下，摸完之后把缝口的泥又抹平了一层。",
+  ],
+  delta: { reason: 12, faith: -6, sin: 8 }, flags: ["父亲的行脚医", "读过禁书"],
+  quote: "“保守神秘，使人类免受神秘所害。”",
+});
+ev({
+  id: "c_corn3", short: "玉米糊", title: "别人家的孩子",
+  era: [0, 1], weight: 20,
+  body: [
+    "“怪病”潮来的时候，先是几个村的孩童腿肿，然后成片地倒。教团说这是对付异端的试探，要求各村按程式祷告、隔离、上报数据。",
+    "你隔壁家的孩子也肿了。他母亲抱着他坐在教会堂门口，要教士给一点药。教士给了她一本教典，说：念这个。",
+    "你在旁边看着，什么也没做。那孩子第三天就没了。你后来想起来的时候，记住的不是他的脸，是他母亲把那本教典翻得很快的样子。",
+  ],
+  delta: { life: -4, reason: 10, faith: -6, sin: 4 }, flags: ["怪病幸存", "见过死人"],
+});
+ev({
+  id: "c_elders", short: "老人席", title: "启示会议上的老人席",
+  era: [0, 1], weight: 16,
+  body: [
+    "启示会议按教法要“在诸神面前宣誓自己已经努力实现监护区的秩序和繁荣，同时公示各项经济社会统计数据”。",
+    "前排是教士、教士亲属、有地的豪强——教法规定，愿遵从教法的豪强优先选为教士并保留资产。后排是顺民。最后一角还有一席，是给“老而无用”的人留的。",
+    "你被教士叫去给老人席端水。一位老人接过水，问你：孩子，你知道我们这一排为什么在最后吗。你说不知道。他说：因为我们不产粮食了。",
+  ],
+  delta: { reason: 10, faith: -2, fame: 2 }, flags: ["端过水"],
+  quote: "“愿遵从教法的豪强，优先选为教士并保留资产。”",
+});
+ev({
+  id: "c_notebook", short: "名册", title: "监理会的名册",
+  era: [0, 1], weight: 18,
+  body: [
+    "监理会的人来了，带一本名册。名册上全村的名字都在，每个人后面有空格，空格里填三种符号之一：直的、弯的、打叉的。",
+    "你偷看到自己在“弯的”那一栏。你问父亲这什么意思。父亲说：直的就是干净的，弯的是要看的，打叉的就是要处理的。",
+    "他说完看了你一眼，说：你什么时候变成弯的了。",
+  ],
+  delta: { reason: 10, sin: 6, faith: -4 }, flags: ["被记录在案", "弯的"],
+});
+ev({
+  id: "c_shoe", short: "新鞋", title: "一双不合规矩的鞋",
+  era: [0, 1], weight: 14,
+  body: [
+    "母亲给你做了双新鞋，鞋头上绣了一朵花。你穿着去启示会议，被教士叫住了。",
+    "教士说：教法规定，悖逆公众伦理者，公开训诫到石刑不等；奇装异服惹人不满即可举报。你这双鞋，村里有几个人不满？",
+    "你说不知道。他说：三个人。他说这个数的时候，一点犹豫都没有。",
+  ],
+  delta: { faith: -2, sin: 6, fame: -4, reason: 6 }, flags: ["穿过花鞋"],
+  choices: [
+    {
+      label: "当场把花刮掉",
+      body: [
+        "你蹲在教会堂门口，用石头把两朵花磨平了。磨完之后鞋头是灰的，母亲再没给你做过鞋。",
+        "二十年后你自己做了教士。你上任第一件事，就是把自己家的鞋样都看了一遍。",
+      ],
+      delta: { faith: 10, sin: 4, reason: 4, fame: 4 }, flags: ["刮过花"],
+    },
+    {
+      label: "回家收起来，只在夜里穿",
+      body: [
+        "鞋放在床下，你隔几天夜里穿一次，在屋里走两圈。鞋底很硬，走起来响，你走得很轻。",
+        "这是你人生里第一件不必给别人看的东西。人一旦有了这样的东西，就很难再完全交出去。",
+      ],
+      delta: { reason: 14, faith: -4, sin: 6 }, flags: ["有夜里才穿的东西"],
+    },
+    {
+      label: "把三个不满的人记下来",
+      body: [
+        "你花了半年时间，弄清楚了是哪三个人。其中一个是你的姑姑——她是替你母亲抱不平，才在别人面前说了那朵花不合规矩。",
+        "你什么也没做，但这三个名字在你心里有了固定的位置。这是你最像教团国人的地方。",
+      ],
+      delta: { sin: 12, reason: 10, faith: 6 }, flags: ["记过名字"],
+    },
+  ],
+});
+ev({
+  id: "c_father", short: "收纳", title: "父亲被带走了三个钟头",
+  era: [0, 1], weight: 20,
+  body: [
+    "监理会带走了父亲，理由是“多次未按统一安排耕种”。三个钟头后他回来了，衣服上有一道浅痕。",
+    "母亲问他打了没。他说没有，只是让他站了一会儿。他坐下的时候坐得很慢，那种慢法你后来在别的人身上见过很多次。",
+    "当夜父亲把你叫到床边，说了三句话：一是把书藏好；二是别在人前说话太整齐；三是如果有一天你必须选，选活着。",
+  ],
+  delta: { life: -2, reason: 12, faith: -6, sin: 4 }, flags: ["父亲被带走", "三句交代"],
+  quote: "“其家族乃至社区应承担连带责任。”",
+});
+
+ev({
+  id: "y_orphanage", short: "孤儿院", title: "教团抚养的孩子",
+  era: [0, 1], weight: function (G) { return has(G.flags, "无根") ? 40 : 12; },
+  body: [
+    "教团办的教养院里，孩子按编号排队。教士说：你们不知自己从哪里来，这不是不幸，这是恩典——因为你们欠教团一条命，欠债的人比有家的人更懂得忠诚。",
+    "你在那里学会了三件事：把话说短，把眼睛放低，把一切好处都记成欠账。",
+    "出教养院那天，教士把你的档案交给你自己拿着，让你去交给下一个教士。你第一次看见自己的档案：只有一页，上面写着“来源不明”。",
+  ],
+  delta: { faith: 12, fame: -2, reason: 4, life: -3 }, flags: ["教养", "无根"],
+});
+ev({
+  id: "y_corvee", short: "修渠", title: "修渠的十日",
+  era: [1], weight: 20,
+  body: [
+    "教团下令修一条灌溉渠，各村按人头出工。教法规定，拒绝就业者处鞭刑到石刑不等。",
+    "第十日，渠壁塌了一段，压死了两个人。武装教士团来了，说是死者生前“不按统一安排劳作”所致，不算教团的责任。",
+    "两人被埋在渠边。渠照常通水，水从他们的头顶上流过去。收工的时候有人在渠边插了一根木牌，第二天木牌也不见了。",
+  ],
+  delta: { life: -5, reason: 5, sin: 2 }, flags: ["劳作", "见过死人"],
+});
+ev({
+  id: "y_love", short: "爱恋", title: "一个不该爱的人",
+  era: [1], weight: 18,
+  body: [
+    "教法延续了进盟平民区的一夫一妻传统，也全面取缔了奴隶制，并且督促落实女性的完整公民权。这些都写在教法上。",
+    "你喜欢的人属于另一个监护区，家在“旧人”聚落，教团的档案里把他们记作“来源可疑”。你们一起在渠边坐过三次，第四次的时候，来了一名监理会的教士。",
+    "教士没有说什么，只是把你们的名字记下来，说：教团不反对感情，教团反对的是不该有的关系。",
+  ],
+  delta: { faith: -4, reason: 6, fame: 2 }, flags: ["被记录在案", "旧人牵系"],
+  choices: [
+    {
+      label: "断了。去地方教团认错",
+      body: [
+        "你在教士面前跪下，说自己被恶魔动摇，请求神罚。教士让你抄了三遍教法，把你的名字从附册上划掉。",
+        "划掉之后，你觉得自己身体里有一部分也跟着被划掉了。此后你做事越来越稳，越来越对。",
+      ],
+      delta: { faith: 8, reason: -6, sin: 2 }, flags: ["斩断旧人牵系"],
+    },
+    {
+      label: "继续往来",
+      body: [
+        "你们换了地方见面，用暗号，用节气，用只有两个人懂的句子。教团监控电话、网络和媒体，所以你们不用电话，不用网络。",
+        "这段关系在几年里被记了三次。第三次之后，监理会的人问你愿不愿意“主动报告”一次，换取从此不再有人过问。",
+      ],
+      delta: { faith: -8, sin: 8, reason: 8, fame: -2 }, flags: ["私通旧人", "双面生活"],
+    },
+    {
+      label: "向教士检举对方",
+      body: [
+        "你说他传播过对启示不利的言论。你没有撒谎，你只是把一句玩笑说成了一次宣讲。",
+        "他半个月后被送去做精神治疗。你被记了功。这件事让你在地方教团里第一次有了名字。",
+      ],
+      delta: { faith: 10, sin: 16, fame: 8, reason: -4 }, flags: ["举报有功", "背弃"],
+      quote: "“屡次触犯教法者，其家族乃至社区应承担连带责任。”",
+    },
+  ],
+});
+ev({
+  id: "y_plague", short: "怪病", title: "怪病潮",
+  era: [1], weight: 22,
+  body: [
+    "先是几个村的孩童腿肿，然后成片地倒。教团说这是对付异端的试探，要求各村按程式祷告、隔离、上报数据。",
+    "农学院的人后来说是饮食单一——全国只种玉米，别的作物产量急剧下降，营养失衡。数万人死了。这件事最后是希联拿玉米换农产品解决的。",
+    "你所在的村子被划进了隔离区。你的任务是每天在门口站着，防止有人出去。你记得每一个被你拦回去的人长什么样。",
+  ],
+  delta: { life: -8, faith: -6, reason: 10, fame: 2 }, flags: ["怪病幸存", "见过死人"],
+  quote: "“橘生淮南则为橘，生于淮北则为枳。”",
+  choices: [
+    {
+      label: "替教团封锁村庄",
+      body: [
+        "你守住了路口。事后监理会发了表彰，说你“在危机中体现了对监护的服从”。",
+        "表彰是一张纸。你把它贴在墙上，每天看着它，直到纸变黄。",
+      ],
+      delta: { faith: 12, sin: 8, fame: 6 }, flags: ["封锁有功"],
+    },
+    {
+      label: "放走几家人",
+      body: [
+        "夜里你放走了七家人，往北，往希联的方向。你没有告诉他们路线，只是把路口的灯熄了。",
+        "一月后，监理会查这件事。有人提起你在路口守夜。你说那夜你睡着了。他们信了，因为你是教生。",
+      ],
+      delta: { faith: -6, sin: 6, reason: 8 }, flags: ["私放顺民", "夜里的灯"],
+    },
+    {
+      label: "把父母送出去，自己留下",
+      body: [
+        "你把家里仅剩的口粮塞给母亲，让她跟着邻村的队伍走。父亲不肯走，说你一个人留下不行。",
+        "后来母亲没有回来。父亲活了下来，此后十年没有跟你说过一句重话，也没有跟你说过一句贴心话。",
+      ],
+      delta: { life: -4, reason: 12, faith: -4, fame: 2 }, flags: ["母亲走失", "独自留守"],
+    },
+  ],
+});
+ev({
+  id: "y_book2", short: "又见禁书", title: "读过禁书的手",
+  era: [1, 2], weight: function (G) { return has(G.flags, "读过禁书") ? 34 : 8; },
+  body: [
+    "教团内部对知识设秘密等级，一般按知识的“威能”高低划分。向民众传播“不应掌握”的知识是“大叛逆”，是渎神之罪，应当绝罚。",
+    "教士在教生里查了一遍，查出三个人读过类似的簿子。你是第四个，但你没有交出去。",
+    "三个人被带走。第二天，其中一个人的母亲来学堂门口跪着，捧着儿子的课本，问教士能不能把书还给她——她说家里还要用它点灶。",
+  ],
+  delta: { reason: 10, sin: 10, faith: -6 }, flags: ["藏匿禁书", "大叛逆嫌疑"],
+  quote: "“教士们有权掌控知识的尺度。”",
+});
+ev({
+  id: "y_hunt", short: "风闻", title: "风闻",
+  era: [1, 2], weight: 16,
+  body: [
+    "教团宣布，被恶魔动摇的部分教士已被裁判。宣布的方式是：先在启示APP上放一条短讯，然后由当地教士在启示会议上念三遍。",
+    "你认识名单上的一个人。他上个月还在教你们抄写教法，字写得非常工整。",
+    "他有没有被恶魔动摇，你不知道。你只知道名单出来之后，村里所有人家都把窗子关得比以前早。",
+  ],
+  delta: { faith: -3, reason: 8, sin: 4 }, flags: ["恶魔叙事印象"],
+});
+ev({
+  id: "y_laborcampus", short: "农学院", title: "中央农学院的推荐",
+  era: [1, 2], weight: function (G) { return has(G.flags, "教生") ? 26 : 8; },
+  body: [
+    "第八圣人和第十圣人合办的中央农学院到地方招生。推荐名额由地方教团给，考的是教法、算术和一篇文章。",
+    "题目是：《论神赐土地》。你写了玉米、产量和秩序，没有写那几个死在渠边的人。",
+    "你被推荐上了。出发那天，教士握着你的手说：教团投在你身上的东西，将来要还。",
+  ],
+  delta: { fame: 12, reason: 8, faith: 6 }, flags: ["农学院", "技术官僚苗子"],
+});
+
+ev({
+  id: "y_magic", short: "学魔法", title: "教团学院的第一课",
+  era: [1, 2], weight: function (G) { return has(G.flags, "教生") ? 30 : 8; },
+  body: [
+    "教生有权在教团学院学习魔法。第一课不是教你怎么点火，是教你怎么不说。",
+    "导师在黑板上画了三层：可教的知识、需保密的灵知、威能过高必须封存的知识。他说：教团国以对魔法和灵魂学的掌握为国本，知识的分层就是教士与顺民之间最实质的那条线。",
+    "他还说了一句：你们学到的每一样东西，都不是你们的。",
+  ],
+  delta: { reason: 10, faith: 6, fame: 4 }, flags: ["学过魔法", "知道分层"],
+  quote: "“教士们有权掌控知识的尺度。”",
+  choices: [
+    {
+      label: "老实按层学，只学该学的",
+      body: [
+        "你学了三年的自然魔法，做了两年的助手，从没碰过封存的那一层。",
+        "导师在毕业评语上写：可靠。可靠这个词在教团国比“聪明”值钱。",
+      ],
+      delta: { faith: 12, fame: 8, reason: 4 }, flags: ["可靠"],
+    },
+    {
+      label: "夜里去图书馆看封存的那一层",
+      body: [
+        "你把封条上的火漆用蜡烛烤软，取出来又放回去。你看到了灵魂能量的解释，也看到了“祭品”这个词被划掉过七次。",
+        "你花了两年才看懂那些被划掉的痕迹想说什么。看懂之后，你再也当不成一个纯粹的教士了。",
+      ],
+      delta: { reason: 20, sin: 14, faith: -10 }, flags: ["读过封层", "泄露禁传知识"],
+    },
+    {
+      label: "只把课背熟，一句不多问",
+      body: [
+        "你把每一条口诀都背得很熟，从不问为什么。你的导师因此喜欢你，也因此在很多年后保过你一次。",
+        "你一辈子会算魔法，不算人心。这在这个国家不算缺点。",
+      ],
+      delta: { faith: 8, fame: 6, reason: -2 }, flags: ["死背型"],
+    },
+  ],
+});
+ev({
+  id: "y_contract", short: "契约", title: "教育契约",
+  era: [1], weight: 22,
+  body: [
+    "教团办的义务教育不收费，但要签一份契约。契约上写着：所授知识属教团，受教者当以所学服务教团与诸神的启示。",
+    "签契约的那天，教士逐个念名字。念到一个不识字的孩子，教士替他签了，然后让他按手印。那孩子按得很大力，把纸按皱了。",
+    "教士说：皱了的也算数。",
+  ],
+  delta: { faith: 6, reason: 6, fame: 2 }, flags: ["签过契约"],
+  quote: "“教团建立义务教育、逐级教团与基层组织——这一切都是为了换取民众的‘忠诚’。”",
+  choices: [
+    {
+      label: "签了，认真学",
+      body: [
+        "你学得很快，三年后能替教士写文书。你在教团体系里第一次有了位置。",
+        "你后来发现，这份契约真正的条款不是写在纸上的。纸上写的是义务，纸下写的是你可以被要求做什么。",
+      ],
+      delta: { faith: 12, fame: 10, reason: 8, sin: 4 }, flags: ["教团文书"],
+    },
+    {
+      label: "签了，但只学写字和算术",
+      body: [
+        "你把教义那门课当成了默写课：能背，但不进脑子。教士抽查时你答得一字不差，所以他从未发现。",
+        "这是很多教团国人的活法：把该记的记住，把该信的放在外面。",
+      ],
+      delta: { reason: 12, faith: 4, sin: 6 }, flags: ["会默写"],
+    },
+    {
+      label: "不肯按手印",
+      body: [
+        "你说你要自己写名字。教士看了你一眼，把笔给你。你写得很慢，笔画歪，但是自己的。",
+        "教士在你名字后面加了一个注：此人有主见。这个注跟了你好几年。",
+      ],
+      delta: { reason: 14, fame: 4, sin: 6, faith: -4 }, flags: ["有主见"],
+    },
+  ],
+});
+ev({
+  id: "y_exam_big", short: "大教法考", title: "大教法考",
+  era: [1, 2], weight: function (G) { return has(G.flags, "教生") ? 26 : 14; },
+  body: [
+    "第一届大教法考。考场设在日光市来的考官面前，一共三场：教法与经文、普通教育、还有一场口试。",
+    "口试的题目是：请说明“监护”与“教育”的区别。你答完之后，考官问了一句：那你觉得，顺民过不好，是谁的错。",
+    "考场外面挂着横幅：提升一分，干掉千人。",
+  ],
+  delta: { fame: 4, reason: 6, faith: 4 }, flags: ["考过大教法考"],
+  quote: "“观察家认为，教考侧重考察教生对‘监护’的理解、维护秩序与顺民忠诚的理解。”",
+  choices: [
+    {
+      label: "答“是教士的错”",
+      body: [
+        "考官把笔停了一下，说：教法上确实这么写，教士要感到羞耻。他给了你满分，然后在评语里写了一行：此人对教义的执行力可疑。",
+        "你后来去了一个很偏远的监护区。偏远的监护区出不了大成绩，但也很少出大事。",
+      ],
+      delta: { faith: 8, fame: 4, reason: 12, life: -2 }, flags: ["执行力可疑", "偏远区"],
+    },
+    {
+      label: "答“是顺民自己的错”",
+      body: [
+        "考官说：教法没有这么写，但你说的也是实话。他给了你高分，把你分去了日光市。",
+        "日光市的教团总部里，所有人说话都像你那天口试。你在那里活得很好，也慢慢想不起来那天你到底信不信自己说的话。",
+      ],
+      delta: { faith: 14, fame: 14, reason: -6, sin: 6 }, flags: ["日光市"],
+    },
+    {
+      label: "答“我不能替诸神回答”",
+      body: [
+        "考官沉默了很久，然后把这道题的分数空着。空着不是零分，空着是“待定”。",
+        "这份空着的卷子后来被一位圣人看过。他没有填分数，只在边上写了三个字：有意思。",
+      ],
+      delta: { reason: 16, fame: 6, faith: -2, sin: 4 }, flags: ["待定卷"],
+    },
+  ],
+});
+ev({
+  id: "y_dorm", short: "宿舍", title: "教生宿舍里的记录本",
+  era: [1, 2], weight: function (G) { return has(G.flags, "教生") ? 24 : 6; },
+  body: [
+    "教生宿舍是六人一间。舍监说：教团要求你们互相帮助，互相监督。",
+    "宿舍里有一本记录本，每天由值日生写字，内容是“本日同学言行”。三个月下来，本子上写满了“背诵认真”“晨祷到位”，只有一条不一样：某夜有人起身，未查明去向。",
+    "那一夜起身的人就是你。写这条的是你最好的朋友。",
+  ],
+  delta: { sin: 4, reason: 8, fame: 2 }, flags: ["宿舍记录"],
+  choices: [
+    {
+      label: "替他把这一条圆过去",
+      body: [
+        "你在本子上补了一句：系取水，有同舍可证。你找了另外三个人做证，其中两个答应了。",
+        "他后来再没提过这件事。你们的关系一直很好，也一直隔着一层纸。",
+      ],
+      delta: { reason: 10, sin: 8, fame: 4 }, flags: ["圆过记录"],
+    },
+    {
+      label: "从此不再夜里起身",
+      body: [
+        "你把自己的作息调成跟所有人一样。你把要藏的东西转移了三个地方，最后放在了教会堂的地砖下。",
+        "你学会了做一个不让人写进本子里的人。这是一门很有用的本事，代价是从此你也不知道自己什么时候是真的睡着了。",
+      ],
+      delta: { faith: 6, reason: 10, sin: 6, life: -2 }, flags: ["不留足迹"],
+    },
+    {
+      label: "也写他一条",
+      body: [
+        "你写的是：某同学夜间咳嗽，恐状态恶化，建议监理会关注。你写得很轻，很像是关心。",
+        "他被叫去问了一次话，回来之后对你非常客气。此后宿舍里所有人都对你非常客气。",
+      ],
+      delta: { sin: 18, faith: 8, fame: 6, reason: -4 }, flags: ["写过同学"],
+    },
+  ],
+});
+ev({
+  id: "y_festival", short: "丰年祭", title: "丰年祭",
+  era: [1], weight: 20,
+  body: [
+    "丰年祭一年一次。教团要全村献出收成的十分之一，叫作“谢恩”，谢的是诸神把玉米给了这片土地。",
+    "献完之后会分一口“恩粥”。粥是教士先盛的，顺民排队，老人和孩子最后——因为孩子不算劳动力，老人不算生产力。",
+    "你排在队伍中间。前面一个小孩领到半碗，喝完还舔碗。教士说：舔碗是懂得感恩。",
+  ],
+  delta: { faith: 6, reason: 4, life: -2 }, flags: ["领过恩粥"],
+});
+ev({
+  id: "y_select", short: "遴选日", title: "遴选日",
+  era: [1, 2], weight: 20,
+  body: [
+    "遴选日，教团来村里挑人。挑的不是最聪明的，是“最合适的”——体格、家世、嘴严、眼睛不飘。",
+    "排到你的时候，来的人让你说三句话：我叫什么、我信什么、我愿意做什么。前两句你说得很顺。第三句停了一下。",
+    "他说：停一下没关系，停一下的人比不停的人好用。",
+  ],
+  delta: { fame: 6, faith: 4, reason: 4 }, flags: ["被遴选过"],
+  choices: [
+    {
+      label: "说“我愿意服从安排”",
+      body: [
+        "他把你分去了地方教团的文书房。三年后你成了能写“圣言体”的人，能替教团向民众解释一切。",
+        "圣言体的写法有个要诀：不问为什么，只问合不合规矩。你学得很快。",
+      ],
+      delta: { faith: 12, fame: 12, reason: 4 }, flags: ["会写圣言体"],
+    },
+    {
+      label: "说“我愿意带顺民把地种好”",
+      body: [
+        "他愣了一下，说：这句话比前一句好听。他把你分去了农业口。",
+        "你在农业口干了二十年。你带过的最好的一个村，粮食够吃；最差的一个村，饿死了两个人。那两个人一直跟着你。",
+      ],
+      delta: { faith: 8, fame: 6, reason: 10, life: -2 }, flags: ["农业口"],
+    },
+    {
+      label: "不说第三句，看着他",
+      body: [
+        "他等了一会儿，说：你这个人有意思，但教团不喜欢有意思的人。他把你划掉了。",
+        "你回了村，继续种地。村里人从此对你有种怪异的尊重——你没有去成，但你没有说谎。",
+      ],
+      delta: { reason: 14, fame: -4, faith: -4, sin: 4 }, flags: ["落选"],
+    },
+  ],
+});
+ev({
+  id: "y_talisman", short: "护身符", title: "一枚旧护身符",
+  era: [1, 2], weight: 16,
+  body: [
+    "祖母死前给了你一枚护身符，铜的，磨得很亮，上面刻的图案被磨得看不清了。她说这是“老东西”，让你别给人看。",
+    "教法不立任何经文之外的信仰物。你把它缝在衣领里，洗澡也不摘。",
+    "有一次教士拍你的肩，手正好压在领子上。他什么也没说，只是把手收回去的时候多看了你一眼。",
+  ],
+  delta: { reason: 8, faith: -4, sin: 6 }, flags: ["旧护身符"],
+  choices: [
+    {
+      label: "留着，缝得更深一点",
+      body: [
+        "你把衣领拆了重缝，缝了三层。它跟着你走了很多地方，最后跟着你进了一个不该带它的房间。",
+        "你没有因为这块铜得到过任何东西。但它让你在某些夜里知道自己还是一个人。",
+      ],
+      delta: { reason: 12, sin: 4, faith: -4 }, flags: ["留到最后"],
+    },
+    {
+      label: "交给教士，换一句表扬",
+      body: [
+        "教士把护身符收下，说：你这是识大体。他在启示会议上提了一句，你家那年多分了一成种粮。",
+        "祖母的遗物换来一成种粮。这件事你从来没有跟任何人讲过，但你每年算账的时候都会想起来。",
+      ],
+      delta: { faith: 12, fame: 8, reason: -4, sin: 8 }, flags: ["交过旧物"],
+    },
+    {
+      label: "埋进祖母的坟里",
+      body: [
+        "你把护身符连着那年存的半袋玉米一起埋了。埋完之后你在坟前坐了一夜。",
+        "这一夜之后，你好像多了一个可以回想的地方。教团国的人很少有这样的地方。",
+      ],
+      delta: { reason: 10, life: -1, faith: -2 }, flags: ["埋过东西"],
+    },
+  ],
+});
+ev({
+  id: "y_market", short: "黑市", title: "黑市上的一本书",
+  era: [1, 2], weight: 18,
+  body: [
+    "镇外有个晚上才开的市。教法禁止的东西都在那里：没交税的布、教士禁养的鸡、印着别国字的东西。",
+    "你看到一本书，封面是《土地与人的关系》，作者是希联人。摊主说：这本书讲的是种地，不是讲政治的。",
+    "你翻了两页，发现它讲的确实是种地，只是顺手把“谁来决定种什么”这件事也讲了。",
+  ],
+  delta: { reason: 12, sin: 8 }, flags: ["去过黑市"],
+  quote: "“教团国拒绝希联提出的‘互联网民主’技术支援。”",
+  choices: [
+    {
+      label: "买下来，藏在墙缝里",
+      body: [
+        "书很贵，你用了两年的积蓄。你把它和父亲的那本簿子放在一起。",
+        "这本书后来被人借走了一次，还回来的时候少了一页。你没有问那一页是什么，因为你知道问了会更麻烦。",
+      ],
+      delta: { reason: 16, sin: 12, faith: -6 }, flags: ["读过禁书", "藏匿禁书"],
+    },
+    {
+      label: "只看，不买",
+      body: [
+        "你在摊子边站到收摊，把序言和第一、二章看完了。摊主收摊时说：你是真打算记住的人。",
+        "你确实记住了。此后十年，你在自己的监护区里照着第二章的办法调整过播种顺序，产量确实好过别区一成。",
+      ],
+      delta: { reason: 14, sin: 4, faith: 2 }, flags: ["照第二章种地"],
+    },
+    {
+      label: "把摊子报给监理会",
+      body: [
+        "监理会第二天就来清了摊。摊主被抓走那天看了你一眼，只看了你一眼。",
+        "你领到一笔奖励，数目比那本书的价格高。你用这笔钱买了一双鞋，穿了七年。",
+      ],
+      delta: { faith: 10, sin: 18, fame: 6, reason: -6 }, flags: ["举报有功", "背弃"],
+    },
+  ],
+});
+ev({
+  id: "y_protect", short: "庇护", title: "教士的庇护",
+  era: [1, 2], weight: 22,
+  body: [
+    "教法规定，教生须拜教士为导师，教士可为名下教生安排工作，并为教生表现负责、实施“监护”。",
+    "你的同学里有一个人把这句话用到了极致：他把自己家里所有的错事都写成了报告交给导师，导师因此一路升迁，他也一路跟着。",
+    "导师有一天问你：你家里有没有什么需要报的？他的语气很温和，像是在关心。",
+  ],
+  delta: { faith: 4, sin: 6, reason: 6 }, flags: ["导师问过"],
+  choices: [
+    {
+      label: "报一件事，很小的一件",
+      body: [
+        "你报的是“父亲曾说过教团收的东西比进盟多”，这是真的，你也知道这会被怎么处理。",
+        "父亲被训诫了一次。导师拍着你的肩说：这叫忠诚。你两个月没敢回家。",
+      ],
+      delta: { faith: 14, sin: 16, fame: 8, reason: -8 }, flags: ["报过父亲", "背弃"],
+    },
+    {
+      label: "说自己家里干净",
+      body: [
+        "导师笑了笑，说那就好。此后再没提。你的考评连续两年是中等。",
+        "第三年你才知道，导师先去查了你家。他查的结果确实干净——因为你父亲这三十年只留下了一句醉话。",
+      ],
+      delta: { reason: 12, faith: 4, fame: -2, sin: 4 }, flags: ["查过且干净"],
+    },
+    {
+      label: "反问他：您家里呢",
+      body: [
+        "导师愣住了。隔着桌子他看了你很久，然后说：你这个毛病，将来要么害死你，要么让你爬得比我还高。",
+        "他说完这句就把话题转开了。此后他给你写的一切评语都很模糊——模糊是保护，也是拒绝。",
+      ],
+      delta: { reason: 16, fame: 4, faith: -4, sin: 6 }, flags: ["反怼过导师"],
+    },
+  ],
+});
+ev({
+  id: "y_purify", short: "蒙修礼", title: "蒙修的日子",
+  era: [1, 2], weight: function (G) { return has(G.flags, "受洗教士") ? 0 : 26; },
+  body: [
+    "受洗之前要先蒙修：身体完全用纱布包裹，不得示人，直到完成试炼。",
+    "你在不见光的屋子里待了十七天。第七天你开始分不清白天黑夜；第十天你开始跟墙说话；第十四天你不再说话了。",
+    "第十七天，教士解开纱布，说：诸神看见你了。你看着他，第一次觉得他的脸很陌生。",
+  ],
+  delta: { faith: 8, reason: -6, life: -3 }, flags: ["受洗", "蒙修完成"],
+  quote: "“入教后需要保持一段时间的‘蒙修’，将身体完全用纱布包裹住，不得示人。”",
+});
+ev({
+  id: "y_monitor", short: "监控", title: "电话线上的多一个人",
+  era: [1, 2], weight: 20,
+  body: [
+    "教团国对全国的电话、网络和媒体进行监控。无论顺民还是教士，都不得发表任何有违《启示教典》的言论。",
+    "你与在外地的表哥通电话，说到一半，你听见线里“咔”的一声。你停了。那边也停了。",
+    "表哥先开口，说的是：今年的玉米长得不错。你接着说：是不错。你们把这段话说完了，才挂。",
+  ],
+  delta: { reason: 8, sin: 4, faith: -2 }, flags: ["听过咔的一声"],
+  quote: "“中央教团的人员常常蒙面行动，教皇长期不露面，只闻其指示不见其人。”",
+});
+ev({
+  id: "y_border", short: "边界", title: "南边的那道线",
+  era: [1, 2], weight: 16,
+  body: [
+    "教团国的南边是进盟。建国时双方在南北交界划界立国。线这边是教团国的平民区，线那边是进盟的平民区。",
+    "两边的人长得一样，说话一样，吃的也一样。唯一的差别是线这边挂黑星旗，线那边挂进盟的旗。",
+    "有个老人每天傍晚走到线附近站着，站一会儿再回来。有人问他看什么。他说他小时候住在那边，那边的院子里有一棵杏树。",
+  ],
+  delta: { reason: 10, faith: -2, fame: 2 }, flags: ["看过那条线"],
+});
+ev({
+  id: "y_trust", short: "信任", title: "教生之间的告发",
+  era: [1, 2], weight: 20,
+  body: [
+    "学院里出了事：有人把封存层的封条换了。全院停课审查，每人写一份自述。",
+    "写自述之前，你的室友找你，说他那天夜里确实出过门。他求你替他圆一句。",
+    "你写了自述，交上去。第二天你听说审查组已经拿到了十份自述，其中有六份提到了同一个人——不是他。",
+  ],
+  delta: { sin: 6, reason: 8, faith: 2 }, flags: ["写过自述"],
+  choices: [
+    {
+      label: "供出真正的那个换封条的人",
+      body: [
+        "你把他供了。他其实是为了给家里治病去偷药方。审查组说他“动机可悯但行为渎神”。",
+        "他被开除了教生身份，送回原籍，此后你再也听不到他的消息。你做了很多年教士，从来没跟人提过这件事。",
+      ],
+      delta: { sin: 18, faith: 8, fame: 6, reason: -8 }, flags: ["供过同学"],
+    },
+    {
+      label: "什么也不写，交一张白纸",
+      body: [
+        "审查组问你为什么不写。你说你不知道。他们让你在走廊里站了六个钟头。",
+        "六个钟头里，你听见里面的人一个一个被叫进去。第二天你被记了一次“态度消极”。",
+      ],
+      delta: { reason: 14, fame: -4, life: -3, sin: 4 }, flags: ["交过白纸"],
+    },
+    {
+      label: "把室友那晚出门的事写了，但不写名字",
+      body: [
+        "你写“某同舍夜间曾起身”，把人摘得干干净净，只留一个影子。审查组最后什么也没查出，案子以“封条老化”结案。",
+        "你的室友一直以为是你保了他。你从来没有纠正过这个误会。",
+      ],
+      delta: { reason: 12, sin: 10, faith: 4 }, flags: ["写过影子"],
+    },
+  ],
+});
+ev({
+  id: "y_women", short: "女教士", title: "第一位女教士",
+  era: [1, 2], weight: 16,
+  body: [
+    "教法延续了进盟平民区的一夫一妻等传统伦理，全面取缔奴隶制，并赋予女性和少数族裔完整公民权，还督促落实。",
+    "你的监护区来了第一位女教士。她把头发剪得很短，说话很快，账算得比谁都细。村里有人在她背后说：教团是要让女人骑上来了。",
+    "她在启示会议上公示数据的时候，把真实数字念了出来——邻区报的是增长两成，她报的是下降一成。",
+  ],
+  delta: { reason: 10, faith: 4, fame: 4 }, flags: ["见过女教士"],
+  choices: [
+    {
+      label: "帮她顶一句：教法就是这么写的",
+      body: [
+        "你当众引了教法的条文。有人不服，你把条文背了一遍，一字不差。",
+        "她后来成了你的引路人之一。她教你的第一件事是：引条文的时候要看对方是谁。",
+      ],
+      delta: { fame: 10, reason: 12, faith: 6, sin: 4 }, flags: ["为条文说过话"],
+    },
+    {
+      label: "看着她被围攻，不开口",
+      body: [
+        "你低头。她的数据被上级压了下去，调去了另一个区。走的那天，她对你说：不开口也没关系，别跟着骂就行。",
+        "这句话你记了二十年。二十年后你在一个类似的场合开了口，因为她那句话。",
+      ],
+      delta: { reason: 10, sin: 6, life: -1 }, flags: ["没有开口"],
+    },
+    {
+      label: "私下把邻区的假账交给她",
+      body: [
+        "你把邻区做假账的两张表抄了一份给她。她拿着表去见了监理会，半个月后被调去了更远的地方。",
+        "你后来才明白，她不是被打败了，她是被挪开了——挪开比打败便宜。",
+      ],
+      delta: { reason: 14, sin: 10, fame: 4 }, flags: ["递过表"],
+    },
+  ],
+});
+ev({
+  id: "y_hostel", short: "安置房", title: "日光市第二批顺民安置房",
+  era: [1, 2, 3], weight: 26,
+  body: [
+    "启示APP的头条之一是“日光市第二批顺民安置房”。申请条件写着三条：无地、无业、无不良记录。",
+    "你邻居家的儿子申请上了。走之前他挨家挨户告别，说自己要去日光市当工人。三个月后他托人带回一封信，说日光市的房子“很整齐，一排一排，跟兵一样”。",
+    "信的最后一句是：但那里没有地。",
+  ],
+  delta: { reason: 6, fame: 4 }, flags: ["见过安置房", "申请过安置房"],
+  quote: "“日光市第二批顺民安置房。”",
+});
+ev({
+  id: "y_disability", short: "清白人", title: "不能下地的人",
+  era: [1, 2], weight: 16,
+  body: [
+    "顺民必须工作，且必须努力工作。从事教法不推荐的工作须缴额外税款。若有人不能工作，教法上写的是“不服从监护、放任自身状态恶化者，强制实行精神治疗”。",
+    "村里有个跛脚的老人，被送去治疗所。他走的时候带着自己的拐杖，治疗所的人说那里也用不上拐杖。",
+    "半年后他回来了，走路稳了，也不太说话了。有人问他治疗所怎么样。他说：那里很干净。",
+  ],
+  delta: { faith: -4, reason: 8, life: -2 }, flags: ["见过治疗所"],
+});
+ev({
+  id: "y_escape2", short: "夜校", title: "夜里的读书声",
+  era: [1, 2], weight: function (G) { return (G.reason >= 45) ? 22 : 6; },
+  body: [
+    "村东头有几户人家夜里聚在一起，点一盏灯，轮流念一本书。念的是《魔法公约》里的段落：魔法是工具，工具没有善恶，用工具的人有。",
+    "念完之后要讨论一个问题。那天的问题是：如果教团不让你学，你还学吗。",
+    "你在窗外听了三夜。第四夜他们把门开了一条缝。",
+  ],
+  delta: { reason: 14, sin: 10, faith: -6 }, flags: ["夜校旁听"],
+  choices: [
+    {
+      label: "进去，坐下",
+      body: [
+        "你念了一段，念错了两个字，没有人笑。讨论到半夜，散会时大家从不同的方向回去。",
+        "此后你成了这间屋子的常客。你没有加入任何组织，你只是去念书——这句话你后来对自己说过很多遍。",
+      ],
+      delta: { reason: 16, sin: 12, faith: -8 }, flags: ["夜校成员", "学社接触", "听过她的名字"],
+    },
+    {
+      label: "只在窗外站着听",
+      body: [
+        "你站了三年的窗外。屋里的人从来没有拆穿过你，也没有邀请过你。",
+        "后来那间屋子被清了。屋里的人一个也没供出窗外站着的人——他们确实不知道你是谁。",
+      ],
+      delta: { reason: 12, sin: 6 }, flags: ["窗外的人"],
+    },
+    {
+      label: "把这件事报给监理会",
+      body: [
+        "你报了。清网那天你站在远处看，被带走的人里有一个给你让过位置。",
+        "你领到的奖励是一次调职，去了镇上的文书房。你从此再没回过那个村。",
+      ],
+      delta: { faith: 12, sin: 22, fame: 10, reason: -8 }, flags: ["报过夜校", "举报有功"],
+    },
+  ],
+});
+ev({
+  id: "y_promotion", short: "监学", title: "监学的差事",
+  era: [1, 2], weight: function (G) { return has(G.flags, "教生") ? 18 : 4; },
+  body: [
+    "学院里有一种差事叫“监学”：由高年级教生记录低年级的言行，每周交一份册子。有补贴，有资历，也有麻烦。",
+    "上一任监学做了半年，交上去的册子里记了十七个人。他毕业的时候，那十七个人里有九个在毕业分配上被压了一档。",
+    "导师问你愿不愿意接这个差事。",
+  ],
+  delta: { fame: 4, sin: 4, reason: 4 }, flags: ["监学征询"],
+  choices: [
+    {
+      label: "接，但只记好的",
+      body: [
+        "你的册子半年里全是“背诵认真”“晨祷到位”，导师两次提醒你要“如实”。你第三次写的还是这样。",
+        "监学做了半年被撤。撤职通知上写着“记录不实”。你没有申辩，十七个人里有三个后来主动来找过你。",
+      ],
+      delta: { reason: 14, fame: -4, faith: -2, sin: 6 }, flags: ["只记好的"],
+    },
+    {
+      label: "接，如实记",
+      body: [
+        "你记得很细，很准，从不加形容词。导师说你“笔很干净”。你的册子后来被当成范本给下一届看。",
+        "你的名字从此和“范本”绑在一起。毕业后你进了裁判教士团的前身部门。",
+      ],
+      delta: { faith: 10, fame: 12, sin: 16, reason: -6 }, flags: ["笔很干净", "特务集团"],
+    },
+    {
+      label: "不接",
+      body: [
+        "你说你不适合。导师说：教团需要有判断力的人，你的判断力用错了地方。他给你记了一次。",
+        "这一年你的补贴减半，你的毕业分配延后半年。这半年你读了很多书。",
+      ],
+      delta: { reason: 14, fame: -6, faith: -4, sin: 4 }, flags: ["拒绝过差事"],
+    },
+  ],
+});
+ev({
+  id: "y_poster", short: "标语", title: "墙上的字",
+  era: [1, 2], weight: 18,
+  body: [
+    "街上的标语是教团国最诚实的东西。日光市的写着“诸神寓于万物之中，独处与共处没有区别”；新星镇写着“虚假的隐私权是无神论希联人发明的！圣战要求的是绝对的忠诚”；和平镇的顺民写着“我们就要离开，不知道能否再回来。祈求诸神保佑”。",
+    "你所在的那个镇的标语，是教团自己刷的：秩序、和谐、幸福、繁荣。",
+    "有一天，标语下面多了一行小字，是用炭写的，笔迹歪斜：那繁荣是谁的。第二天小字被刷掉了，刷痕比字还明显。",
+  ],
+  delta: { reason: 10, faith: -2, fame: 2 }, flags: ["见过那行小字"],
+  quote: "“那繁荣是谁的。”",
+});
+ev({
+  id: "y_song", short: "歌", title: "不许唱的歌",
+  era: [1, 2], weight: 14,
+  body: [
+    "教团有指定的颂歌。颂歌之外，村里的年轻人私下唱另一首，唱的是进盟平民区的老调子，词是骂地主的。",
+    "你学会了这首。有一年收工时大家在渠边唱，唱到一半有人开始改词，把“地主”改成“收粮的”。",
+    "第二天，改词的那个人被监理会叫去问话。他回来以后嗓子哑了三个月——不是被打的，是自己在屋里喊哑的。",
+  ],
+  delta: { reason: 8, sin: 6, faith: -4 }, flags: ["会唱老调"],
+});
+ev({
+  id: "y_grave", short: "坟地", title: "坟地要迁",
+  era: [1, 2], weight: 16,
+  body: [
+    "教团规划新的教堂区，村里的坟地要迁。迁坟要给“安置费”，安置费由村里自筹。",
+    "你家有三座坟。迁坟那天，你母亲跪在坟前，磕了三个头，说：不是儿女不孝，是教团要盖房子。",
+    "新的坟地在山坡上，土很薄。埋下去的时候，你把祖母那枚护身符又摸了一下。",
+  ],
+  delta: { life: -2, reason: 6, faith: -2 }, flags: ["迁过坟"],
+});
+ev({
+  id: "y_debt", short: "债", title: "教团的借粮",
+  era: [1, 2], weight: 18,
+  body: [
+    "歉收那年，教团借粮给村里，借一斗还一斗半，规矩写得清清楚楚贴在教会堂门口。",
+    "父亲带着你去按手印。他说：这不叫借，这叫换个法子交。",
+    "三年后你家还清了。同村有七户没还清，其中两户的地被“自愿”转让给了教团，再由教团“安排”给了教士的亲戚。",
+  ],
+  delta: { life: -2, reason: 8, sin: 2 }, flags: ["借过粮"],
+});
+ev({
+  id: "y_letter", short: "家书", title: "一封不能寄的信",
+  era: [1, 2], weight: 16,
+  body: [
+    "教团允许写信，但信要过审查。审查不通过的信会被退回，附一张纸：语句不当，请重写。",
+    "你写了七遍。第一遍写“这里的日子不好过”，被退回；第二遍写“这里的日子还可以”，被退回；第七遍写“一切都好，勿念”，寄出去了。",
+    "母亲收到信的那天，把它读了三遍，然后收进了一个木匣。她一辈子没问你信里为什么没有一句真话。",
+  ],
+  delta: { reason: 8, sin: 4, faith: 2 }, flags: ["写过七遍信"],
+  quote: "“语句不当，请重写。”",
+});
+ev({
+  id: "y_firstdeath", short: "第一次", title: "你见过的第一具尸体",
+  era: [1, 2], weight: 20,
+  body: [
+    "渠边、地里、教会堂门口，教团国的尸体不算新鲜事。但你第一次近距离看，是在自家院子里。",
+    "死的是你家的邻居，五十多岁，死在去交粮的路上。他的车还翻在旁边，粮撒了一地。",
+    "教团的人来登记，登记完把粮收走了，说这是“未送交的公粮”。尸体是村里人埋的。你帮着抬了一段路，很沉。",
+  ],
+  delta: { life: -2, reason: 8, faith: -4, sin: 2 }, flags: ["抬过尸体"],
+});
+ev({
+  id: "y_apprentice", short: "助手", title: "给教士当助手",
+  era: [1, 2], weight: 22,
+  body: [
+    "教士需要一个助手，帮着量地、记账、送文书。你被选上了。",
+    "第一件差事是去一户人家催缴额外税款——他家做的是教法不推荐的行当，卖旧铁。教士说：你不必说话，站着就行。",
+    "你在他家站了半个钟头。他家的孩子一直看着你，手里捏着一块铁。",
+  ],
+  delta: { fame: 6, faith: 6, sin: 6, reason: 4 }, flags: ["当过助手"],
+  choices: [
+    {
+      label: "站着，一句话不说",
+      body: [
+        "税款催齐了。教士说：你很好，站着不动的人比会说话的人难找。",
+        "你从此成了教团里“站着不动”的那种人。这种人职位不高，但从不出事。",
+      ],
+      delta: { faith: 10, fame: 6, reason: -2, sin: 6 }, flags: ["站着不动"],
+    },
+    {
+      label: "替那家说一句缓期",
+      body: [
+        "你说他家孩子病着，能不能缓半个月。教士看了你一眼，说：你怎么知道。你说你看见的。",
+        "缓了半个月。那家后来凑齐了钱。那块铁被孩子做成了一个小刀，他十岁那年把刀送给你，你没敢收。",
+      ],
+      delta: { reason: 12, sin: 4, fame: 4, faith: -2 }, flags: ["缓过一次"],
+    },
+    {
+      label: "把这家的情况详细报上去",
+      body: [
+        "你报得很细：几口人、几亩地、能不能再挤出一成。教士根据你的报告调高了征收额。",
+        "那家的地被抵掉了。你后来在教团里的每一次升迁，都是靠这种“很细的报告”。",
+      ],
+      delta: { sin: 16, faith: 10, fame: 10, reason: -4 }, flags: ["报得很细"],
+    },
+  ],
+});
+ev({
+  id: "y_masked", short: "蒙面", title: "蒙面的教士",
+  era: [1, 2], weight: 16,
+  body: [
+    "中央教团的人员常常蒙面行动。教皇长期不露面，“只闻其指示不见其人”，这一切都为教团带来神秘感。",
+    "你来镇上办事，遇到三个蒙面教士。他们走路的节奏是一致的，谁也没有说话。",
+    "你跟着走了一段，被其中一个回头看了一眼。那一眼里没有敌意，只有一种很干净的“确认”。你立刻停住，转身走了。",
+  ],
+  delta: { reason: 10, faith: 4, sin: 4 }, flags: ["见过蒙面教士", "蒙过面"],
+});
+ev({
+  id: "y_insomnia", short: "失眠", title: "少年人的失眠",
+  era: [1, 2], weight: 14,
+  body: [
+    "你十七岁那年开始失眠。你数玉米、背教典、想第二天要干的活，都不管用。",
+    "你后来发现管用的是数人：数村里一共有多少人、其中多少人信、多少人假装信、多少人不知道自己在假装。你数到第三遍就睡着了。",
+    "这个习惯跟了你一辈子。你一辈子都在数人。",
+  ],
+  delta: { reason: 10, life: -2, faith: -2 }, flags: ["数人的人"],
+});
+ev({
+  id: "y_militia", short: "民兵", title: "武装教士团的征召",
+  era: [1, 2], weight: 18,
+  body: [
+    "武装教士团负责执法，来自教团分部门。公开处刑须在武装教士团监督下实施。",
+    "他们来村里征人，条件写得很好看：有配给、有制服、有人叫你“教士”。条件里没有写的是：你要动手。",
+    "来征人的那位说得很直白：教团国不缺念经的人，缺的是能站到前面去的人。",
+  ],
+  delta: { fame: 6, faith: 4, sin: 8 }, flags: ["民兵征询"],
+  choices: [
+    {
+      label: "去",
+      body: [
+        "你穿了三年制服。第一次执行公开训诫你吐了，第二次你学会了看远处的树，第三次你能一边念文告一边看人群的表情。",
+        "第三次之后，你被记了功。你的名字进了武装教士团的名册。",
+      ],
+      delta: { fame: 14, faith: 8, sin: 18, reason: -8, life: -3 }, flags: ["武装教士团"],
+    },
+    {
+      label: "不去，报病弱",
+      body: [
+        "你报的是“精神状况需治疗”。监理会把你列进附册，却没有送你去治疗所——他们觉得你只是懒。",
+        "你活了下来，也没有去做那些事。代价是此后十年你的一切申请都被压一档。",
+      ],
+      delta: { reason: 10, faith: -8, fame: -6, sin: 4 }, flags: ["报过病弱"],
+    },
+    {
+      label: "去，但要求做验尸和记录",
+      body: [
+        "你说你写字好，愿意做卷宗。他们同意了。你十八岁开始给死人写档案，写了七年。",
+        "你写的每一份卷宗都合乎格式，每一份都在最后写上“处刑经由已向民众解释，教育目的达成”。这是教法要求的句子。",
+      ],
+      delta: { faith: 6, fame: 8, sin: 14, reason: 6 }, flags: ["写过处刑卷宗"],
+    },
+  ],
+});
+ev({
+  id: "y_pilgrim", short: "朝圣", title: "去日光市",
+  era: [1, 2], weight: 16,
+  body: [
+    "教团组织“赴日光照圣”，实质是让各地选出的顺民到首都看一圈：看浮空岛的影子、看教士团的巡游、看安置房排成行。",
+    "你被选上了。你在日光市待了五天，住的是统一宿舍，吃的是统一伙食。",
+    "第四天你看见一个顺民在路边哭。问他为什么，他说：这里太好了，我怕我回去就活不下去了。",
+  ],
+  delta: { fame: 8, faith: 8, reason: 4, life: -2 }, flags: ["到过日光市"],
+  quote: "“日光市第二批顺民安置房。”",
+  choices: [
+    {
+      label: "回去之后把见闻讲给村里人听",
+      body: [
+        "你讲得很有条理：路有多宽、房有多齐、教士团的衣服有多亮。你成了村里的“见过世面的人”。",
+        "你没有讲那个哭的人。不是忘了，是不知道该怎么讲。",
+      ],
+      delta: { faith: 10, fame: 12, reason: 4, sin: 4 }, flags: ["讲见闻"],
+    },
+    {
+      label: "回去之后什么也不说",
+      body: [
+        "村里人问你日光市什么样，你说很好。再问，你就不说了。",
+        "有人因此说你“看了好东西就忘了本”。你没有反驳。你只是从此再没申请过任何一次“赴日光照圣”。",
+      ],
+      delta: { reason: 12, fame: -4, faith: -2 }, flags: ["不说"],
+    },
+    {
+      label: "留在日光市，想办法留下",
+      body: [
+        "你在第五天跑了，去了安置房办事处，说自己是无地无业的顺民。他们查了三天，把你编进了建筑工队。",
+        "你在日光市做了六年苦力。这六年里你见过浮空岛三次，每一次都很远。",
+      ],
+      delta: { fame: 6, reason: 10, faith: -4, life: -6, sin: 6 }, flags: ["留在日光市", "建筑工"],
+    },
+  ],
+});
+
+/* ══════ 青年 ══════ */
+
+ev({
+  id: "a_priestpost", short: "分派", title: "领到你的监护区",
+  era: [2], weight: 24,
+  body: [
+    "毕业之后，监理会从通过毕业考的教士里任命官员。你被分到一个偏远的监护区，职务是“协助本地教士处理日常事务”。",
+    "教法对你说的第一句话是：地方教团应监护所在区域的一切事务。第二句话是：当地的顺民要是过不好，追责教士，教士要感到羞耻。",
+    "你到任那天，全村的顺民排在路口。他们看你的眼神跟你看教士的眼神一模一样。",
+  ],
+  delta: { fame: 10, faith: 6, sin: 2 }, flags: ["地方教士", "监护区档案"],
+  quote: "“秩序、和谐、幸福、繁荣。”",
+  choices: [
+    {
+      label: "照章办事：先做报表",
+      body: [
+        "你把全村的产量、人口、牲畜、就学率、就业率做成了三张纸，交给上级。数字比实情漂亮，因为你把荒掉的地也算进了播种面积。",
+        "上级在启示会议上念了你的表。你的名字第一次出现在表彰名单里，排在第七位。",
+      ],
+      delta: { faith: 10, fame: 10, reason: -4, sin: 4 }, flags: ["报表能手"],
+    },
+    {
+      label: "先看粮仓和病人的床",
+      body: [
+        "你花了两个月走遍全村，记下了每一户的粮、病、债、丧。你发现报表上的“就学率”里有一半是来领饭的孩子。",
+        "你把真实数据交上去。上级在上面画了一道线，说：教团要的是能实现的目标，不是要你替顺民算账。",
+      ],
+      delta: { faith: -2, fame: 4, reason: 12, life: -4 }, flags: ["实地派", "上级不满"],
+    },
+    {
+      label: "先把教团的恩典讲一遍",
+      body: [
+        "你在村口立了一块碑，把教团给这个村的东西——种子、渠、药、学——刻上去。刻得很清楚。",
+        "村民们围着看。有个老人问你：那去年死的那两个，刻不刻？你说碑上没有那一栏。他说，那就对了。",
+      ],
+      delta: { faith: 8, fame: 8, reason: 4 }, flags: ["宣传能手"],
+    },
+  ],
+});
+ev({
+  id: "a_peasant", short: "佃农", title: "一个不配合的佃农",
+  era: [2, 3], weight: 24,
+  body: [
+    "教团在推行新的播种指标，一名佃农拒绝改种。他说他的地种了三十年，他比教团更懂这块地。",
+    "教法上写着：不按统一安排耕种畜牧者，按程度处以架身游行到鞭刑不等。文书是你写的，签字的不是你。",
+    "行刑那天围了很多人看。老人被架着走完全村，没有喊，走到你家门口时停下来看了你一眼。",
+  ],
+  delta: { faith: 4, sin: 10, reason: 4, fame: 4 }, flags: ["执行过教法"],
+  choices: [
+    {
+      label: "按教法办完，一字不改",
+      body: [
+        "你把卷宗做完，用教法学家常用的文句，写清楚案件经由与处刑理由，还向围观的民众解释了一遍：这是教育，不是泄愤。",
+        "民众听懂了，有人点头。晚上你回到住处，发现门缝里塞了一个玉米饼。你不知道是谁塞的。",
+      ],
+      delta: { faith: 12, sin: 6, fame: 8 }, flags: ["教法专家", "民众畏惧"],
+    },
+    {
+      label: "改成鞭刑以下，替他补上指标",
+      body: [
+        "你在卷宗里把“拒种”改成了“体力不足，主动申请减负”，又自己出粮替他把缺的指标补齐。",
+        "老人没有谢谢你。他只是在下一季把最好的那一亩地的收成送到了教堂门口，没有留名。",
+      ],
+      delta: { faith: -4, sin: 6, fame: 2, reason: 8 }, flags: ["徇私记录"],
+    },
+    {
+      label: "把他报成恶魔动摇",
+      body: [
+        "你在卷宗里加了四个字，于是这件案子不再属于教法，而属于裁判。手续更简单，写起来也更快。",
+        "老人被带走了。你从此学会了这四个字的用法：它能解决一切麻烦，代价是你自己心里也多了一块石头。",
+      ],
+      delta: { sin: 20, faith: 4, reason: -8 }, flags: ["滥用恶魔叙事"],
+      quote: "“少部分必须处理的教士可以用恶魔附体等理由宣布他们被对抗诸神的力量腐蚀。”",
+    },
+  ],
+});
+ev({
+  id: "a_cult", short: "承罪学社", title: "承罪学社的暗号",
+  era: [2, 3], weight: function (G) { return (G.reason >= 50 || has(G.flags, "读过禁书")) ? 22 : 6; },
+  body: [
+    "承罪学社在教团国内部坚持“保守神秘”的另一重解释。他们会在民众中讲“此世启示”：此世斗争，此世幸福；人的神圣性在于人的此世存在，彼岸是未知的，疑物从无。",
+    "一个走村的行脚医在你的教堂里借住了一晚。他没有传教，只是帮你把村里三个病人的方子重新写了一遍。第二天走的时候，他在门后留了一个记号。",
+    "那个记号是一圈带星的黑点。你认出来，那是学社的路标。",
+  ],
+  delta: { reason: 8, faith: -4, sin: 8 }, flags: ["学社接触"],
+  quote: "“人的存在本身就是神佑，神的意志必须通过人自己的意志贯彻。”",
+  choices: [
+    {
+      label: "把记号刮掉，向监理会报备",
+      body: [
+        "你把门后的记号刮干净，主动到监理会备了案。他们说：你做得很对，但下次不要在报告里写“学社”两个字，写“外来的可疑人员”。",
+        "你答应了。你后来一共写了十一次“外来的可疑人员”。",
+      ],
+      delta: { faith: 10, fame: 6, sin: 4, reason: -2 }, flags: ["报备者"],
+    },
+    {
+      label: "把记号留着，等下一次",
+      body: [
+        "你没有刮。半年后有人在夜里敲你的门，说他是过路的，问你能不能住一晚。你让他进来了。",
+        "他给你看了一本用粗纸装订的册子，里面是学社的读物。你读了半夜。第二天早上他走了，册子留下了。",
+      ],
+      delta: { reason: 14, faith: -8, sin: 12 }, flags: ["学社成员", "藏匿禁书"],
+      chain: "a_follow",
+    },
+    {
+      label: "假装没看见，什么也不做",
+      body: [
+        "你把记号刮了一半，又觉得刮干净更可疑，就把剩下那一半留着，指望它自己被人忽略。",
+        "此后你每逢夜里听到脚步都要醒一次。这种日子过了很多年，一直没出事——这才是最磨人的地方。",
+      ],
+      delta: { faith: 2, reason: 6, life: -3 }, flags: ["提心吊胆"],
+    },
+  ],
+});
+ev({
+  id: "a_prosper", short: "作假", title: "数据要好看",
+  era: [2, 3], weight: 22,
+  body: [
+    "中央教团只关注纸面数据。负责全国巡视的监理会成员忽视实地走访，于是虚假数据横行。",
+    "上级给你下了指标：本年本区粮食产量增长两成。你算过，除非把山也算成田，否则不可能。",
+    "你同期的同僚都在各自的监护区里改数字。他们改得比你早，也比你多，因此比你先升职。",
+  ],
+  delta: { sin: 6, reason: 6 }, flags: ["报表压力"],
+  choices: [
+    {
+      label: "改数字。教团要的是能实现的目标",
+      body: [
+        "你把数字改了。第二年指标更高，你改得更多。第三年你被调去中央教团做统计，从此你的笔决定很多监护区的排名。",
+        "有一年你核到一份边远区的报表，数字漂亮得不像真的。你笑了很久——那份表是你当年在地方上写的格式。",
+      ],
+      delta: { fame: 16, sin: 14, faith: 6, reason: -6 }, flags: ["统计官僚"],
+    },
+    {
+      label: "照实交。被降职",
+      body: [
+        "你交了真实数字，附了一封说明信。上级把你的信压下来，把你的考评降了一级。",
+        "你在同一个位置上待了很久。村里的老人开始愿意跟你讲真话，这让你的工作更难做，也让你这个人更清楚。",
+      ],
+      delta: { faith: -6, fame: -8, reason: 14, life: -3 }, flags: ["实地派", "仕途迟滞"],
+    },
+    {
+      label: "把两成摊到最穷的几个村",
+      body: [
+        "你没有改数字，你把指标压到了最穷的三个村——他们本来就没什么可交的，多交一点也不会死。",
+        "其中一个村子第二年春天饿死了两个人。这件事没有上任何一份文件，但它上了你的账。",
+      ],
+      delta: { sin: 12, reason: 6, fame: 4, life: -2 }, flags: ["摊派者"],
+    },
+  ],
+});
+ev({
+  id: "a_miracle", short: "神迹", title: "造一个神迹",
+  era: [2, 3], weight: 18,
+  body: [
+    "教团国以对魔法和灵魂学的掌握为国本，向人们制造“神迹”并对其保密，使人们相信教团成员受“启示”指引、具有神力。",
+    "上级下了一道不成文的指令：本区的信仰气氛不足，需要一场“神迹”。具体怎么做，由你去想办法。",
+    "你也会一点魔法。你知道那是什么：灵魂能量，被解释成神的意志。教法允许教士运用魔法协助顺民解决衣食住行，但严禁泄露不允许外泄的知识。",
+  ],
+  delta: { reason: 4, faith: 4 }, flags: ["会魔法"],
+  quote: "“启示录教团用魔法来塑造神权。”",
+  choices: [
+    {
+      label: "做一场：让水变清，让病人能站起来",
+      body: [
+        "你在村口的井上做了三天准备。第四天早上，井水清了，一个瘫了半年的老人扶着墙站了起来。全村跪下。",
+        "老人的腿后来只好了三个月。他死之前一直说，他见过神。你站在他的床边，什么也没说。",
+      ],
+      delta: { faith: 14, fame: 16, sin: 6, reason: -4 }, flags: ["制造神迹", "神迹目击者"],
+    },
+    {
+      label: "拒绝：神迹不容人类解释",
+      body: [
+        "你写了一份报告，引用第三圣人的话：真正的神降是不容人类“解释”的，制造神迹只是把神庸俗化。",
+        "上级没有回复。半年后你的考评里多了一句：意识形态上存在偏差，宜加强学习。",
+      ],
+      delta: { faith: 6, fame: -6, reason: 12 }, flags: ["神秘主义倾向"],
+    },
+    {
+      label: "把真话说给全村听",
+      body: [
+        "你把灵魂能量的原理用最通俗的方式讲了一遍，告诉他们没有神，只有能量。讲完之后你自己都害怕了。",
+        "村里静了两天。第三天，监理会的人来了——不是因为你讲了，而是因为村里有人来举报你讲了。",
+      ],
+      delta: { faith: -16, sin: 16, reason: 18, fame: -10 }, flags: ["泄露禁传知识", "大叛逆嫌疑"],
+      quote: "“向民众传播民众不应掌握的知识是‘大叛逆’，是渎神之罪。”",
+    },
+  ],
+});
+ev({
+  id: "a_pope", short: "教皇出走", title: "来自日光市的消息",
+  era: [2, 3], weight: 40, once: true,
+  body: [
+    "消息从日光市传到你的监护区，用了十一天。",
+    "教皇渊出走了。中央教团颁布《启示录国教法》，以教士监护为国家根本，取消民选教士，取缔各级教团自由受洗顺民的权利，取消教民身份。她的追随者随她一同离去，其中有余力的人，也有一些从前的圣人。",
+    "同一天，地方教团开会。教士们轮流表态，说法一致：教皇受了学社蒙蔽。你被要求也在会上说一句。",
+  ],
+  delta: { faith: -6, reason: 8 }, flags: ["教皇出走之年"],
+  quote: "“教士只是知识的教师，而不是监护者。”",
+  choices: [
+    {
+      label: "在会上痛斥教皇与学社",
+      body: [
+        "你照着稿子说了三段，声音控制得很好。第九圣人的宣命教士团把你的发言摘录进了简报。",
+        "此后你的档案里有了“立场坚定”四个字。这四个字比任何推荐都值钱，也比任何推荐都难洗掉。",
+      ],
+      delta: { faith: 14, fame: 10, sin: 6 }, flags: ["教团派", "立场坚定"],
+    },
+    {
+      label: "只说教法，不说教皇",
+      body: [
+        "你的发言不到二十个字：我服从教团，服从教法，服从诸神的启示。没有提教皇，没有提学社。",
+        "散会后，坐在你旁边的人低声说：你这话说得巧。他再也没有跟你说过第二句话。",
+      ],
+      delta: { faith: 4, reason: 8, fame: -2 }, flags: ["明哲保身"],
+    },
+    {
+      label: "收拾行装，往北去追",
+      body: [
+        "你请了一个月的假，理由是给母亲迁坟。你带上藏了很久的那本粗纸册子，一个人上路。",
+        "路很长，盘查很多。你在第三道关卡被拦下，问你从哪里来，到哪里去。你说你是地方教士，去日光市述职。",
+      ],
+      delta: { faith: -10, reason: 14, fame: -6, life: -6 }, flags: ["出逃倾向", "追索教皇"],
+    },
+    {
+      label: "把消息抄一份，留给村里的人",
+      body: [
+        "你把教皇关于“理性即是信仰”的那段话抄在纸上，夜里贴在教会堂的门后。第二天早上，纸不见了。",
+        "你去教会堂看了很久。门后的钉子上还留着一小块纸屑。此后你每次开门都要看看那个地方。",
+      ],
+      delta: { sin: 10, reason: 12, faith: -4 }, flags: ["贴过一张纸"],
+    },
+  ],
+});
+
+ev({
+  id: "a_appoint", short: "任命", title: "你领到了监护区",
+  era: [2], weight: 30,
+  body: [
+    "监理会从通过毕业考的教士中任命官员。你领到一纸任命，和一个监护区。",
+    "任命书上写着你的职权：监护所在区域的一切事务。写着你最要紧的义务：地方教团应定期召开启示会议，在诸神面前宣誓已努力实现监护区的秩序和繁荣，同时公示各项经济社会统计数据。",
+    "最后一行是：所监护顺民若生活困苦，追责教士，教士应感到羞耻。",
+  ],
+  delta: { fame: 10, faith: 8, sin: 4 }, flags: ["地方教士", "监护区"],
+  quote: "“当地的顺民要是过不好，追责教士，教士要感到羞耻。”",
+  choices: [
+    {
+      label: "先立威：把前两年的旧账全清一遍",
+      body: [
+        "你把全村的欠粮、欠工、逃役全部清了一遍。一个月里有十一户被公开训诫，两户被架身游行。",
+        "第二年这个区的数据全区第一。你被写进了表彰名单，也从此再没有人敢在你面前说实话。",
+      ],
+      delta: { faith: 14, fame: 14, sin: 14, reason: -4 }, flags: ["立过威", "数据第一"],
+    },
+    {
+      label: "先摸底：把每一户的粮、病、债、丧写清",
+      body: [
+        "你花了三个月走访。你写了一份很厚的册子，里面的数字比报表难看得多。",
+        "你把册子锁在柜子里，报表另写。此后你的监护区数据一直是中游——中游最安全。",
+      ],
+      delta: { reason: 16, fame: 4, faith: 4, life: -3 }, flags: ["有本真册子"],
+    },
+    {
+      label: "先问一句：这个区上一任为什么调走",
+      body: [
+        "你问了。答案是：他的数据太好，好到上面来查了一次，查完之后他就调走了。",
+        "你把这条记在心里，然后决定自己的数据永远不要太好。这个决定让你在这个区待了二十年。",
+      ],
+      delta: { reason: 18, fame: 4, sin: 6 }, flags: ["知道前任"],
+    },
+  ],
+});
+ev({
+  id: "a_doctrine_exam", short: "讲义", title: "教法考讲义的争议",
+  era: [2, 3], weight: 20,
+  body: [
+    "教法考分为不同难度，顺民可选学年长短不同的路径。教考的题目由考试院出，也由地方教士讲。",
+    "你讲了一年之后发现一件事：你讲得越认真，考过的人越少；考过的人越少，上面越觉得你讲得好——因为这说明你严守尺度。",
+    "有一位从日光市来的老师，讲课很热闹，还说过一句：提升一分，干掉千人。他的班考过的最多。",
+  ],
+  delta: { reason: 10, fame: 6, faith: 4 }, flags: ["教法考讲师"],
+  choices: [
+    {
+      label: "照他的办法讲：先让学生想考过",
+      body: [
+        "你把讲义改成了他的样子：多例子、多口诀、少讲道理。你的班通过率翻了一倍。",
+        "考过的孩子里，有三年后回来告诉你，他在课堂上第一次听懂“监护”是什么意思。他讲懂的那个意思，跟教团想让他懂的不太一样。",
+      ],
+      delta: { fame: 12, reason: 12, faith: 4, sin: 4 }, flags: ["会讲课"],
+    },
+    {
+      label: "照教团的办法讲：先让学生想忠诚",
+      body: [
+        "你讲得很严。半年后你的班通过率不到三成，但通过的都是“最合适”的人。",
+        "监理会说你是“有原则的教士”。你被调去负责一个更大的区，那里的报表从此很稳定。",
+      ],
+      delta: { faith: 14, fame: 10, reason: -4, sin: 6 }, flags: ["有原则的教士"],
+    },
+    {
+      label: "两样都讲，看人下菜",
+      body: [
+        "你给教士的孩子讲忠诚，给佃农的孩子讲口诀。两边都满意，两边都觉得你是自己人。",
+        "你成了这一带最受欢迎的教士，也成了最不能被提拔的教士——因为你两边都欠着人情。",
+      ],
+      delta: { reason: 14, fame: 10, sin: 8, faith: 2 }, flags: ["两边都欠"],
+    },
+  ],
+});
+ev({
+  id: "a_faction", short: "路线", title: "第十派与教团派",
+  era: [2, 3], weight: 24,
+  body: [
+    "教团国内部有两套治理哲学。第十圣人衡主张“信仰、秩序与繁荣”三角，秩序为上，靠教法学家、武装教士团和神选教士办事，口号是“教士荣誉”。",
+    "三大圣人元一、二极、三柱则主张“信仰高于理性”，认为繁荣在人类历史上是短暂的，秩序才是长久的，越过秩序实现繁荣是对启示的亵渎。",
+    "监理会要你去开一个会，会上两边都会说话。散会之后有人来找你，问你自己是哪一边。",
+  ],
+  delta: { reason: 8, faith: 4, fame: 4 }, flags: ["被问过路线"],
+  quote: "“信仰诸神的信念，造就诸神注视下的秩序。”",
+  choices: [
+    {
+      label: "答：我是教法那一边的",
+      body: [
+        "这个回答两边都能接受。第十派认为你在说秩序，教团派认为你在说信仰。",
+        "这句话你后来又说过很多次。它替你挡掉了至少三次麻烦，也让你一辈子没有真正的靠山。",
+      ],
+      delta: { reason: 16, fame: 6, sin: 4 }, flags: ["教法那一边"],
+    },
+    {
+      label: "答：我不要秩序，我要顺民吃饱",
+      body: [
+        "提问的人笑了，说：这话第十圣人爱听。他给了你一份农业口的差事，和一张纸条，上面是中央农学院的推荐。",
+        "你在农业口干了很多年。你确实让一些人吃饱了，也确实替一些人背了账。",
+      ],
+      delta: { faith: 6, fame: 8, reason: 12, sin: 6 }, flags: ["第十派同情者", "农业口"],
+    },
+    {
+      label: "答：我报告给监理会，由监理会决定",
+      body: [
+        "这是最像教团国人的回答。提问的人点头，说：好，你是组织里的人。",
+        "此后你成了组织里的人：什么都要报告，什么都由上面决定，什么都不用自己担。你在体制里活得很顺。",
+      ],
+      delta: { faith: 14, fame: 8, reason: -6, sin: 8 }, flags: ["组织里人"],
+    },
+  ],
+});
+ev({
+  id: "a_lesson", short: "旁听", title: "第十圣人的公开课",
+  era: [2, 3], weight: 18,
+  body: [
+    "第十圣人衡是公认的“教团之剑”：魔法世家传承者，民间教派“诸神教”的创始人，自领“十”这个数字，认为它有“秩序”的含义。",
+    "他到地方上讲课。他没有讲教义，讲的是怎么给一个区做粮食测算。讲到一半他说：你们要记住，教团要的不是你们听话，是你们算得准。",
+    "课后有人问他：那顺民算不准怎么办。他说：那就替他们算。这句话被记录了下来，后来成了教团民生数据统计方案的一条注解。",
+  ],
+  delta: { reason: 12, faith: 6, fame: 6 }, flags: ["听过第十圣人讲课"],
+  quote: "“教团要的不是你们听话，是你们算得准。”",
+  choices: [
+    {
+      label: "把这门测算学下来，做到最好",
+      body: [
+        "你把测算做了五年，做到全区最准。第十圣人的门下有人来找你，把你编进了监理会的技术官僚名单。",
+        "你从此进了第十派的圈。这个圈子最后死得很惨，但那是很多年以后的事。",
+      ],
+      delta: { reason: 16, fame: 14, faith: 8, sin: 6 }, flags: ["技术官僚苗子", "第十派人"],
+    },
+    {
+      label: "注意到他说“替他们算”时停顿了一下",
+      body: [
+        "你后来反复想那半秒钟的停顿。你想明白的是：他其实知道“替他们算”是什么意思。",
+        "你把这件事写在一张小纸上，塞进墙缝。你没有告诉任何人，因为这话说出来，等于说“教团之剑”心里明白自己在做什么。",
+      ],
+      delta: { reason: 18, sin: 8, faith: -2 }, flags: ["记过停顿"],
+    },
+  ],
+});
+ev({
+  id: "a_envoy", short: "帝国", title: "帝国使团的来访",
+  era: [2, 3], weight: 16,
+  body: [
+    "教团与帝国的关系经历过从敌对到结盟的转折：进盟为“伊甸园计划”向全世界宣战、窃取帝国核技术之后，帝国转向与中央教团合作，共同向进盟宣战，并退还了部分领土。",
+    "帝国使团到地方上来考察“帝国模式”。他们看了你的数据表，说了两句话：你们的表做得很整齐；我们的表也是。",
+    "他们走后，你的上级让你写一份感想。你写的是：帝国之强，在于人人知道自己是什么。",
+  ],
+  delta: { reason: 12, faith: 4, fame: 6 }, flags: ["写过感想"],
+  quote: "“我们可以，因为我们有着光荣的传统，而且我们能让不同的民众成为不同的零件。”",
+});
+ev({
+  id: "a_ai", short: "AI", title: "中央发下来的终端",
+  era: [2, 3], weight: 18,
+  body: [
+    "教团拒绝了希联的“互联网民主”方案，理由是互联网过度普及会提升民众政治参与，影响教士监护。取而代之的是学习帝国的信息监督与中央 AI 统筹，由中央向各地直接发布命令。",
+    "监理会给每个区发了一台终端。终端每天早上吐出一张单子：本区本日应播种、应施肥、应交粮。",
+    "单子上的数字比你算的准。但它不知道山坡上那块地今年冻过，也不知道张家的儿子死了。",
+  ],
+  delta: { reason: 8, faith: 6, fame: 4 }, flags: ["有过终端"],
+  choices: [
+    {
+      label: "照单子办，一个字不改",
+      body: [
+        "你的区连续四年达标。中央的评语是：执行准确。",
+        "第四年春天的单子上写着一片地的播种日期，那片地的主人已经死了一年。你没有改，让他的儿子替他播了。",
+      ],
+      delta: { faith: 14, fame: 10, reason: -6, sin: 8 }, flags: ["执行准确"],
+    },
+    {
+      label: "照单子办，但另写一张真单子",
+      body: [
+        "你按终端办，同时自己记一本真账：哪块地没种、哪户没人、哪个数字是假的。你记了十几年。",
+        "这本真账后来落到了两个地方：一个是你的棺材里，一个是学社的手里。",
+      ],
+      delta: { reason: 18, sin: 10, fame: 4 }, flags: ["有本真册子", "抄过账"],
+    },
+    {
+      label: "把终端砸了，报故障",
+      body: [
+        "你砸了终端，写了一份“设备损毁报告”，措辞很规矩。上面给你换了一台新的，同时记了你一次。",
+        "此后你那个区的数据一直是全区最差，也一直是全区最真。上面的人知道你差，也知道你为什么差，但没有人来动你——动你就要解释那些数字。",
+      ],
+      delta: { reason: 16, fame: -8, faith: -6, sin: 6 }, flags: ["砸过终端"],
+    },
+  ],
+});
+ev({
+  id: "a_secret", short: "隐秘恩典", title: "一份慷慨的资助",
+  era: [2, 3], weight: 12,
+  body: [
+    "有人来找你，说他们是一个叫“隐秘恩典”的组织，自称“神恩”。他们愿意资助你的监护区修水渠、建学堂，不要回报。",
+    "他们的网站做得极好，讲天下大同，讲人道，讲要让顺民过上人的日子。你看了半夜，几乎被说服。",
+    "他们只提出一个条件：希望你能在教士中间替他们说几句好话。",
+  ],
+  delta: { sin: 8, reason: 10, fame: 4, faith: -2 }, flags: ["恩典接触"],
+  quote: "“宣扬天下大同的‘神恩’网站……当场变成宣扬天启理论的隐秘恩典网站。”",
+  choices: [
+    {
+      label: "接受资助，替他们说话",
+      body: [
+        "水渠修好了，学堂建起来了，顺民给你立了一块碑。你替他们说了三年好话。",
+        "第四年，你在一份内参上看到：隐秘恩典是天启分子与深黑军团残部的合流，目标是窃取承罪学社严禁使用的黑魔法与帝国核技术。你把那份内参烧了，之后没再说话。",
+      ],
+      delta: { sin: 18, reason: 14, fame: 14, faith: -8 }, flags: ["恩典合作者", "天启嫌疑"],
+    },
+    {
+      label: "接受资助，但一句好话也不说",
+      body: [
+        "你收了水渠，收了学堂，什么也没答应。他们来催过两次，第三次就不来了。",
+        "水渠用了二十年。你每次走过那条渠，都想一遍：这笔钱到底想买什么。你没有答案，但你一直留着这个问题。",
+      ],
+      delta: { reason: 14, sin: 8, fame: 8 }, flags: ["收过资助"],
+    },
+    {
+      label: "上报监理会",
+      body: [
+        "监理会的人听完之后沉默了很久，说：这件事你不要再提，也不要跟任何人说。",
+        "半年后，那个组织的两个联络人在别的地方出了“意外”。你把水渠的图纸烧了，把学堂的账也烧了。",
+      ],
+      delta: { faith: 10, reason: 10, sin: 8, fame: 4 }, flags: ["上报过恩典"],
+    },
+  ],
+});
+ev({
+  id: "a_night", short: "夜访", title: "半夜敲门的人",
+  era: [2, 3], weight: function (G) { return (G.reason >= 50 || has(G.flags, "夜校成员") || has(G.flags, "学社接触")) ? 26 : 8; },
+  body: [
+    "半夜有人敲门，两短一长。这是学社的敲门方式。",
+    "来的人自称是承罪学社的学者，说话很客气，先道谢，然后才说事情：他想借你的名册看一看——不是要抄，只是想核一核本区的死亡数字。",
+    "他说：教团报上去的数，跟你们埋下去的人数差着多少，你比我清楚。",
+  ],
+  delta: { reason: 12, sin: 8, faith: -4 }, flags: ["学社来访"],
+  quote: "“保守神秘，使人类免受神秘所害。”",
+  choices: [
+    {
+      label: "给他看真册子",
+      body: [
+        "他看了两个钟头，什么也没抄，只问了三个为什么。问完他说：你这个人将来会有用。",
+        "此后你成了学社的一条线。你没有被要求做任何危险的事，只是每年把真实数字递出去一次。",
+      ],
+      delta: { reason: 16, sin: 14, faith: -8 }, flags: ["学社成员", "递过数字"],
+    },
+    {
+      label: "给他看假册子",
+      body: [
+        "你把报表给他看。他看完之后笑了，说：这个数太漂亮了，漂亮到不像是人写的。",
+        "他没有再纠缠，走的时候把你桌上的茶喝完了。此后你没有再见过他，但有人在你门口放过一次东西：一小袋药。",
+      ],
+      delta: { reason: 12, sin: 4, faith: 2 }, flags: ["给过假册"],
+    },
+    {
+      label: "把门关上，报监理会",
+      body: [
+        "监理会第二天就来了人，在你屋里守了三夜。第四夜没有动静。第五夜他们在邻村抓到了两个人。",
+        "你领了奖励，也从此得了失眠。你后来才知道，那两个被抓的人，是为了给一个村的孩子送药才走那条路的。",
+      ],
+      delta: { faith: 12, sin: 20, fame: 6, reason: -8 }, flags: ["报过学社", "举报有功"],
+    },
+  ],
+});
+ev({
+  id: "a_graindeal", short: "粮", title: "收粮队",
+  era: [2, 3], weight: 22,
+  body: [
+    "秋收之后，收粮队进村。教法规定按统一安排耕种畜牧，按指标交粮，欠粮按程度处以架身游行到鞭刑不等。",
+    "一户人家的粮差了三斗。他家把最后一只鸡交了出来，收粮队不收——教团严禁私养。那只鸡被当场踩死。",
+    "围观的人都不说话。你知道有几户人家家里其实够，他们不说，因为说了下一户就是他们。",
+  ],
+  delta: { sin: 6, faith: 4, reason: 6 }, flags: ["收过粮"],
+  choices: [
+    {
+      label: "按规矩办，把人带走",
+      body: [
+        "他被架着游了全村，走到一半他喊了一句话，听不清。之后他照例交齐了粮——把女儿嫁出去换的。",
+        "你在村口的墙上贴了今年的指标。字是你写的，很端正。",
+      ],
+      delta: { faith: 12, sin: 14, fame: 8, reason: -4 }, flags: ["办过差"],
+    },
+    {
+      label: "自己补三斗，把他家摘出去",
+      body: [
+        "你把自家的存粮补了上去。你写卷宗写的是“该户已交齐”。",
+        "这件事你办了六年，一共补了十一次。第七年你没粮可补了，那年被架走的人叫了你的名字。",
+      ],
+      delta: { reason: 12, sin: 10, faith: -4, life: -4 }, flags: ["补过粮"],
+    },
+    {
+      label: "把其他几户的余粮一起算出来，摊平",
+      body: [
+        "你查了全村的存粮，逼着几家有余粮的摊了一部分出来。你没有抓人，也上交齐了。",
+        "此后全村都恨你，但没有一个人饿死。教团给你的评语是“手段灵活，纪律一般”。",
+      ],
+      delta: { reason: 16, fame: 4, sin: 10, faith: -2 }, flags: ["会摊平"],
+    },
+  ],
+});
+ev({
+  id: "a_bandit", short: "匪", title: "山里下来的人",
+  era: [2, 3], weight: 18,
+  body: [
+    "劳动党在东部和山区有根据地，学社的学者被派到村社，与村民和游击队员同吃同住，教授建造房屋、工具和武器的魔法。",
+    "一天夜里，山上来的一队人到了你的监护区。他们没有抢东西，只跟村口几户人家说了半宿话，天亮前走了。",
+    "走之前，领头的在你门上贴了一张纸。写的是《魔法公约》里的一句话：工具没有善恶，用工具的人有。",
+  ],
+  delta: { reason: 10, sin: 8, faith: -4 }, flags: ["见过游击队"],
+  choices: [
+    {
+      label: "把纸撕了，报上去",
+      body: [
+        "你撕纸的时候撕得不干净，留下一角。报上去之后，武装教士团来搜了三天，抓了两个人。",
+        "那一角纸你后来一直没撕。它贴在那里很多年，你自己也不知道为什么。",
+      ],
+      delta: { faith: 10, sin: 12, fame: 6 }, flags: ["报过游击队"],
+    },
+    {
+      label: "把纸留下，什么也不做",
+      body: [
+        "纸贴了三个月，被雨泡烂了。这三个月里没有人举报，也没有人来查。",
+        "你后来想明白一件事：这个村子里，看得见那张纸的人远远多于报上去的人。你以前不知道这件事，现在知道了。",
+      ],
+      delta: { reason: 12, sin: 6 }, flags: ["留过那张纸"],
+    },
+    {
+      label: "跟着上山看一眼",
+      body: [
+        "你跟着他们走了半天山路。根据地里有学校、有医务室、有一个装着真数字的柜子。做饭的人给你盛了一碗粥，粥里有肉。",
+        "你没有留下。你下山的时候，领头的说：你可以再来。你说好。你后来没有再去。",
+      ],
+      delta: { reason: 16, sin: 12, faith: -10, life: -2 }, flags: ["上过山", "学社接触"],
+    },
+  ],
+});
+ev({
+  id: "a_review", short: "考评", title: "年度考评",
+  era: [2, 3], weight: 22,
+  body: [
+    "年度考评看三样：数据、教法执行、忠诚。前两样可以算，第三样靠别人写。",
+    "你看到别人给你写的那一栏时，才明白“忠诚”是什么意思：它不取决于你做了什么，取决于别人觉得你会不会出事。",
+    "你的考评是“中上”。评语里有八个字：勤勉可靠，宜再观察。",
+  ],
+  delta: { fame: 6, faith: 4, reason: 6 }, flags: ["考评中上"],
+  choices: [
+    {
+      label: "去活动活动，把“宜再观察”去掉",
+      body: [
+        "你请了三顿饭，送了两样东西，替一位上级的亲戚安排了一份工作。第二年你的评语变成“勤勉可靠，可当重任”。",
+        "你从此明白，教团国的考评不是考察，是交易。你成了一个很会做交易的人。",
+      ],
+      delta: { fame: 14, faith: 6, sin: 12, reason: -4 }, flags: ["会活动"],
+    },
+    {
+      label: "不动，继续干",
+      body: [
+        "你在同一个位置上待了七年。“宜再观察”跟了你七年，第七年变成了“宜再观察，长期可靠”。",
+        "这七个字是你一生得到过的最准的评语。",
+      ],
+      delta: { reason: 14, faith: 6, fame: -2, life: -2 }, flags: ["长期可靠"],
+    },
+    {
+      label: "找写评语的人谈一次",
+      body: [
+        "你问他：我哪里值得观察。他愣了一下，说：你问这句话本身，就值得观察。",
+        "他后来成了你的上级，也成了唯一一个在你出事时替你说话的人——虽然那次他没有说成。",
+      ],
+      delta: { reason: 16, fame: 6, faith: 4 }, flags: ["问过评语"],
+    },
+  ],
+});
+ev({
+  id: "a_gift", short: "礼物", title: "顺民送来的东西",
+  era: [2, 3], weight: 20,
+  body: [
+    "教法对教士的收受没有明文禁止，但教团对“顺民与教士的私下往来”一向敏感。",
+    "你监护区的一户人家送来一篮子鸡蛋。他家儿子今年考上了教生，是全家的希望。",
+    "你把篮子推回去。他跪下了，说：教士，我们不是送礼，我们是谢恩。他跪着的时候，他儿子一直看着你。",
+  ],
+  delta: { sin: 4, reason: 6, faith: 4 }, flags: ["推过礼"],
+  choices: [
+    {
+      label: "收下，记在册子上",
+      body: [
+        "你把鸡蛋收下，同时在册子上写了一行：某户赠蛋三十枚，折粮抵来年摊派。",
+        "这户人家后来一直很照顾你，逢年过节都来。你的册子上那三十枚鸡蛋，记了十二年。",
+      ],
+      delta: { fame: 8, reason: 10, sin: 8, faith: 4 }, flags: ["记过礼"],
+    },
+    {
+      label: "坚决不收，让他把蛋拿回去",
+      body: [
+        "你把篮子放回他怀里，说：教团要的是忠诚，不是鸡蛋。这话是教团的话，不是你的话。",
+        "他抱着篮子回去，路上把蛋摔了两个。此后他家再没来找过你，他儿子考过教生之后也没来找过你。",
+      ],
+      delta: { faith: 10, reason: 4, fame: 4, sin: 2 }, flags: ["不收礼"],
+    },
+    {
+      label: "收下，然后把蛋分给村里最穷的三户",
+      body: [
+        "你收下了，当天夜里把蛋分成三份，放在三户人家门口。你没有留名。",
+        "第二天有人来问你蛋去哪了，你说吃了。这件事此后没有人再提，但那三户人家见了你都会点头。",
+      ],
+      delta: { reason: 12, sin: 4, fame: 4 }, flags: ["分过蛋"],
+    },
+  ],
+});
+ev({
+  id: "a_suicide", short: "自戕", title: "一个教士自戕了",
+  era: [2, 3], weight: 20,
+  body: [
+    "你隔了两个区的一位教士自戕了。原因是他的区连着两年歉收，上级把责任压在他头上。",
+    "教法上写着：顺民若是过不好，追责教士，教士要感到羞耻。他按教法的要求，把羞耻执行到最后一步。",
+    "教团的处理很体面：追认为“因公殉职”，家属享受抚恤。他的档案里没有留下任何污点，也没有留下任何解释。",
+  ],
+  delta: { reason: 10, faith: 4, life: -2 }, flags: ["见过自戕"],
+  quote: "“教士既然掌握监护权利，就应当对监护的结果负一切责任。”",
+  choices: [
+    {
+      label: "去参加了追思会",
+      body: [
+        "追思会上，主持的教士念了一段很漂亮的话，说他“以生命践行了教士荣誉”。台下有人哭。",
+        "你在灵前站了一会儿，想的是他那个区连着两年歉收的原因，你其实知道：是上面把灌溉的水引到了另一个区。",
+      ],
+      delta: { reason: 12, faith: 6, fame: 4 }, flags: ["参加追思"],
+    },
+    {
+      label: "去翻了他区里的旧账",
+      body: [
+        "你托人抄了他那两年的账。你发现他上报的数字是假的，但假的方向是“报低了”——他少报了产量，为了不让上面加指标。",
+        "你把抄件烧了。你记住了这件事：在教团国，有一种造假是为了让人活着。",
+      ],
+      delta: { reason: 18, sin: 8, faith: -4 }, flags: ["知道另一种造假"],
+    },
+    {
+      label: "把这件事讲给区里的年轻教士听",
+      body: [
+        "你讲了。他们听完都不说话。半年后其中一个来找你，说他打算申请调离。",
+        "他调走了。你留在原地。你后来想起这件事，觉得自己那天讲得太多，也讲得太少。",
+      ],
+      delta: { reason: 12, fame: 4, sin: 4 }, flags: ["讲过这件事"],
+    },
+  ],
+});
+ev({
+  id: "a_reform", short: "新政", title: "教法修订征求意见",
+  era: [2, 3], weight: 16,
+  body: [
+    "教团要修订教法，向地方教士征求意见。征求意见稿里有一条新内容：教法中增加了大量“神学”内容，尤其与恶魔和裁判相关，同时删去了大量科学-魔法体系的段落，改以“神学”解释。",
+    "你看了看删掉的部分，正好是你学过的那一章。",
+    "征求意见的表格最后有一栏：是否有意见。",
+  ],
+  delta: { reason: 8, faith: 4, sin: 4 }, flags: ["见过修订稿"],
+  quote: "“这已经是在掘教团长期经营的科学-魔法知识体系的根，是在仿照天空教愚民。”",
+  choices: [
+    {
+      label: "填“无意见”",
+      body: [
+        "你写了三个字，签了名。表格交上去，此后一切照旧。",
+        "你是那一年填“无意见”的六百四十二个人之一。这个数字后来被写进了修订总结：全体教士一致拥护。",
+      ],
+      delta: { faith: 10, reason: -4, sin: 4 }, flags: ["填过无意见"],
+    },
+    {
+      label: "在“是否有意见”里写了那一章的名字",
+      body: [
+        "你只写了一行：第三卷第七章被删，恐影响教生对魔法的基本理解。你署了真名。",
+        "半个月后有人来找你谈了一次话，态度很好，说你“学术上很认真”。那一年你的职级没动。",
+      ],
+      delta: { reason: 14, faith: -2, fame: 4, sin: 6 }, flags: ["署过真名"],
+    },
+    {
+      label: "把删掉的内容抄了一份，收起来",
+      body: [
+        "你用了三个晚上把那一章抄完，夹在一本教典里。你抄的时候把字写小了，省纸。",
+        "这份抄本跟了你三十年。它没有救过任何人，但它让那一章没有真正消失。",
+      ],
+      delta: { reason: 16, sin: 10, faith: -4 }, flags: ["抄过那一章", "藏过东西"],
+    },
+  ],
+});
+ev({
+  id: "a_blackmkt", short: "票", title: "一张多余的配给票",
+  era: [2, 3], weight: 16,
+  body: [
+    "肉类只优先保证向教士供给。你每月领到一张肉票，你自己吃不了那么多。",
+    "镇上有人收肉票，价格是粮票的三倍。收票的人说：教士的肉票是最硬的通货，比教法还硬。",
+    "你手里握着这张票，想起村里那个跛脚老人被送去治疗所之前，最后一次吃肉是什么时候。",
+  ],
+  delta: { sin: 4, reason: 6, faith: 4 }, flags: ["教士配给"],
+  choices: [
+    {
+      label: "换成粮票，分给区里几户人家",
+      body: [
+        "你换了三次，每次换完都亲自送过去。有一个老太太接过肉的时候哭了，说她已经七年没吃过肉。",
+        "这件事你没有记在任何册子上。这是你一生里做过的少数几件不必记的事。",
+      ],
+      delta: { reason: 12, sin: 4, faith: 4, fame: 4 }, flags: ["换过肉票"],
+    },
+    {
+      label: "拿去黑市卖钱，攒起来买书",
+      body: [
+        "你攒了两年，买了一本二手的《自然哲学基础》。这本书不在禁书单上，但也没有人推荐它。",
+        "卖票的人后来被抓了，牵连了三十多个教士。你不在名单上，因为那两年你一共只卖了四张。",
+      ],
+      delta: { reason: 12, sin: 8, fame: -2 }, flags: ["卖过票"],
+    },
+    {
+      label: "自己吃了，并且认为自己该吃",
+      body: [
+        "教法是这么定的：肉类优先保证向教士供给。你按月吃肉，吃了三十年，身体一直很好。",
+        "你后来在四十五岁那年得了一次病。躺在床上的时候，你想起自己这三十年吃过的每一块肉，一块也没漏。",
+      ],
+      delta: { faith: 8, reason: -2, life: 4, sin: 4 }, flags: ["按月吃肉"],
+    },
+  ],
+});
+ev({
+  id: "a_name", short: "教名", title: "十三圣人的教名",
+  era: [2, 3], weight: 14,
+  body: [
+    "十三圣人都会为自己取教名，以示自己受诸神洗礼。除了元一、二极、三柱享有“尊号”之外，其余在教内只互称编号，对外称“第 x 圣人”。",
+    "你读到一份名录。第十一圣人自取教名“黯”，本意是不忘谦卑，谁知竟变成另一个含义。第十二圣人以战功受封，最爱《堂吉诃德》。第十三圣人是平民出身，由教皇亲手教授魔法，“一个有故事的女性，没有人知道她的过往”。",
+    "你把这一页抄了下来。你不知道自己为什么要抄。",
+  ],
+  delta: { reason: 12, faith: 4, sin: 4 }, flags: ["读过圣人名录"],
+  quote: "“本意是不忘谦卑，谁知竟变为另一个含义。”",
+});
+ev({
+  id: "a_gathering", short: "整风", title: "一次整风",
+  era: [2, 3], weight: function (G) { return (G.sin >= 25 || has(G.flags, "第十派人")) ? 22 : 10; },
+  body: [
+    "教团国内部整风。原因是有内部集团与犯罪组织有联系，被查出来之后驱逐了一批人。",
+    "整风的办法是“人人过关”：每个人写一份材料，检讨自己一年来有没有“与不良势力接触”。",
+    "你写材料的时候才发现，你去年和那个行脚医说过三次话。你写不写进去？",
+  ],
+  delta: { sin: 6, reason: 8, faith: 4 }, flags: ["过关材料"],
+  quote: "“为了向民众表演，不择手段……某些没有底线的投机分子……将事情变得更坏了。”",
+  choices: [
+    {
+      label: "写进去，坦白",
+      body: [
+        "你如实写了三次会面，并说明对方只是替你村里的人看过病。审查的人查了两个月，结论文是：无问题，但交往宜谨慎。",
+        "这行字在你的档案里跟了十五年。它没有害你，也没有帮你，它只是让你永远排在同僚的后面。",
+      ],
+      delta: { reason: 14, faith: 8, fame: -4, sin: 6 }, flags: ["坦白过"],
+    },
+    {
+      label: "不写，写“无”",
+      body: [
+        "你写了“无”。此后半年，每次有人被带走你都睡不好。半年后整风结束，没有人来查你。",
+        "你从此得了一种病：每逢整风就要病一场。医生查不出原因，你自己知道。",
+      ],
+      delta: { reason: 8, sin: 10, faith: 4, life: -3 }, flags: ["写过无"],
+    },
+    {
+      label: "写进了别人的名字",
+      body: [
+        "你在材料里写“某同僚曾与外来人员多次交谈”。这是真的，你亲眼见过。他后来被调走了。",
+        "你成了整风中的“积极分子”。这个身份在教团国很有用，用了十年你就明白它到底是什么了。",
+      ],
+      delta: { sin: 18, faith: 10, fame: 10, reason: -6 }, flags: ["积极分子", "背弃"],
+    },
+  ],
+});
+ev({
+  id: "a_marry", short: "婚", title: "教士能不能成家",
+  era: [2, 3], weight: 18,
+  body: [
+    "教法延续了进盟平民区的一夫一妻等传统伦理，也全面取缔奴隶制，赋予女性和少数族裔完整公民权并督促落实。教法对教士成家没有禁止，但对“教士家属”有特别的考核。",
+    "你打算成家。监理会的人找你谈话，问了三件事：对方的出身、对方家里有没有被记录在案的人、对方会不会影响你的工作。",
+    "第三件事的答案，取决于你说的下一句话。",
+  ],
+  delta: { fame: 4, faith: 4, reason: 4 }, flags: ["婚事"],
+  choices: [
+    {
+      label: "成家，对方是教士家庭出身",
+      body: [
+        "婚事办得很体面。监理会在启示会议上提了一句，等于给你盖了章。",
+        "你家的日子过得很整齐：太太懂规矩，孩子读书，账目分明。你有时候会觉得这个家像一份报表。",
+      ],
+      delta: { faith: 10, fame: 12, sin: 4, life: 4 }, flags: ["成家", "教士联姻"],
+    },
+    {
+      label: "成家，对方家里有“被记录在案”的人",
+      body: [
+        "你如实说了。监理会要你签一份“担保书”，保证对方不会影响你的立场。你签了。",
+        "此后每逢整风，你太太都要回娘家住两个月。她说这样对你比较好。她说得对。",
+      ],
+      delta: { reason: 14, fame: -4, sin: 6, life: 4 }, flags: ["成家", "担保书"],
+    },
+    {
+      label: "不成家，把这件事往后推",
+      body: [
+        "你说工作要紧。监理会的人很满意，说你“心在教团”。",
+        "你一生没有成家。你在监护区待了三十年，认识每一户人家的孩子，但没有人叫你父亲。",
+      ],
+      delta: { faith: 12, fame: 8, reason: 6, life: -2 }, flags: ["独身"],
+    },
+  ],
+});
+ev({
+  id: "a_school", short: "识字班", title: "义务教育的账",
+  era: [2, 3], weight: 18,
+  body: [
+    "教团的义务教育不向顺民收费，但学校要维持。维持的办法是“捐输”：由监护区按户摊。",
+    "今年摊到每户三升玉米。有个寡妇只有两升，她来求你宽限。她说她儿子念得很好，先生夸过。",
+    "她儿子确实念得很好——他去年在教法考上考了本区第一，今年被劝退了，因为他母亲交不出捐输。",
+  ],
+  delta: { reason: 8, faith: 4, sin: 4 }, flags: ["学校摊派"],
+  choices: [
+    {
+      label: "替她垫上，让她儿子继续念",
+      body: [
+        "你垫了三年。第三年那孩子考进神学院，临走前给你磕了一个头。",
+        "他后来成了教团的教士，也成了一个很规矩的人。你们再没见过面。",
+      ],
+      delta: { reason: 12, fame: 6, sin: 4, life: -2 }, flags: ["垫过学费"],
+    },
+    {
+      label: "照规矩劝退",
+      body: [
+        "你按规矩办。那孩子在教室里把自己的书一本一本收好，收得很慢。走的时候他没有看你。",
+        "此后你在启示会议上念数据的时候，念到“就学率”三个字，会想起他收书的样子。",
+      ],
+      delta: { faith: 10, sin: 10, reason: -4 }, flags: ["劝退过学生"],
+    },
+    {
+      label: "把捐输改成按地摊，不按户摊",
+      body: [
+        "你改了摊派办法。有地的多出，无地的少出。教团派来的会计说你“擅自变更”。",
+        "这年冬天有几户人家少吃了一点，但那个寡妇的儿子念完了。你被记了一次，也没有取消。",
+      ],
+      delta: { reason: 16, fame: 4, sin: 8, faith: -4 }, flags: ["改过摊派"],
+    },
+  ],
+});
+ev({
+  id: "a_cure", short: "医药", title: "教士的义务之一",
+  era: [2, 3], weight: 20,
+  body: [
+    "教法规定，教士有责任运用魔法协助顺民解决衣食住行问题，但过程中严禁泄露不允许外泄的魔法知识。",
+    "你学了三年治疗魔法。你用得不多：一是耗灵能，二是用得多了，上面会问你的灵能从哪里来。",
+    "一个孩子高烧三天，村里的巫医已经念了两夜经。孩子的母亲跪在教堂门口。你知道你能救他，代价是你要在三个人面前用一次不该用的法术。",
+  ],
+  delta: { reason: 6, faith: 4, sin: 4 }, flags: ["会治疗"],
+  choices: [
+    {
+      label: "用，当着人用",
+      body: [
+        "孩子的烧当夜退了。第二天全村都在说教士显了神迹。第三天监理会就来了，问你用了什么。",
+        "你说你只是祷告。他们查了你的灵能记录，没有找到异常——因为你用的是自己的底子。此后你再没剩多少底子。",
+      ],
+      delta: { life: -6, fame: 12, faith: 8, reason: 4, sin: 6 }, flags: ["显过神迹"],
+    },
+    {
+      label: "用，但只在夜里，一个人去",
+      body: [
+        "你夜里去了他家，用了一次法术，然后从后墙翻出去。孩子的母亲第二天见你，什么也没说，只是低了头。",
+        "你在这个区待了二十年，他家从来没有提过那一夜。你们之间有一笔不需要记的账。",
+      ],
+      delta: { life: -4, reason: 10, sin: 6, faith: 2 }, flags: ["夜里治过病"],
+    },
+    {
+      label: "不用。照教团的程序，报治疗所",
+      body: [
+        "你按程序写了报告，治疗所在第四天来接人。孩子在路上就没了。",
+        "程序没有问题：报告、审批、转运、结果上报，每一步都合乎教法。你后来用这套程序处理过很多事。",
+      ],
+      delta: { faith: 10, sin: 12, reason: 4 }, flags: ["照程序办"],
+    },
+  ],
+});
+ev({
+  id: "a_blackmagic_doubt", short: "底牌", title: "教团的底牌",
+  era: [2, 3], weight: function (G) { return (G.faith >= 55) ? 18 : 8; },
+  body: [
+    "在很小的圈子里，你会听到一些话。比如：教团有一张底牌，平时不用，到了抵抗侵略的时候才用。",
+    "比如：那张底牌每用一次，需要的不是钱，是命。",
+    "比如：教法上没有这一条，所以它不在教法上。",
+  ],
+  delta: { reason: 10, sin: 8, faith: -2 }, flags: ["听过底牌"],
+  quote: "“每杀一人都需要牺牲上万祭品的生命来形成‘灵魂链条’。”",
+  choices: [
+    {
+      label: "装没听见",
+      body: [
+        "你什么也没问。此后你听到类似的话都绕开。你活得很久，因为你从来不碰那些不该碰的东西。",
+        "很多年后底牌被翻开的时候，你已经不在一线了。你在很远的地方听说了那件事，一句话也没说。",
+      ],
+      delta: { faith: 8, reason: 6, life: 4, sin: 4 }, flags: ["绕开过"],
+    },
+    {
+      label: "去查那张底牌是什么",
+      body: [
+        "你查了两年，查到三个词：祭品、灵魂链条、自愿。第三个词让你停了很久。",
+        "你把查到的东西记在心里，一个字也没有写下来。这是你一生里做对的少数几件事之一。",
+      ],
+      delta: { reason: 20, sin: 12, faith: -6 }, flags: ["知道底牌"],
+    },
+    {
+      label: "去问你的上级",
+      body: [
+        "你的上级听完之后，很温和地说：这件事你没有听过。他说完给你倒了一杯茶，然后跟你聊了半个钟头的天气。",
+        "半年后这位上级升了职。你被调去了一个离首都很近的区，也不知道这算奖赏还是看管。",
+      ],
+      delta: { faith: 6, reason: 10, fame: 8, sin: 6 }, flags: ["被看管"],
+    },
+  ],
+});
+
+/* ══════ 壮年 ══════ */
+
+ev({
+  id: "m_tribunal", short: "裁判团", title: "裁判团递来的名单",
+  era: [3], weight: function (G) { return (G.sin >= 20 || has(G.flags, "教团派")) ? 30 : 16; },
+  body: [
+    "元一授意之后，宗教裁判机构取代了教法机构。教法学家的司法权被特务势力夺走，特务们浮上水面，成为“宗教裁判官”。",
+    "裁判团给了你一份名单，要你指认你监护区里的“不够忠诚者”。名单上有七个名字，第六个是当年给你家多留一成种子的那个人。",
+    "随名单附来的还有一份举报奖励制度的说明：举报者本人及家属在后续审查中享有优先保护。",
+  ],
+  delta: { faith: -4, sin: 8, reason: 6 }, flags: ["被裁判团征询"],
+  quote: "“这样下去我们与北沙也没有什么区别了。”",
+  choices: [
+    {
+      label: "全都签了",
+      body: [
+        "七个人都被带走。你在签署栏签完最后一个名字时，手是稳的，因为你练过字。",
+        "半年后你升了职。升职文书上写着：在肃清工作中表现坚决。你把文书卷起来，放进箱底。",
+      ],
+      delta: { faith: 10, fame: 14, sin: 22, reason: -8 }, flags: ["裁判团协作者", "七个人的名字"],
+    },
+    {
+      label: "只签第一个，把第六个划掉",
+      body: [
+        "你在第六个名字后面写了“证据不足，建议缓议”。裁判团看了三秒钟，什么也没说，把纸收走了。",
+        "那个人活到了抵抗联盟进城。他一直不知道是你划掉的。你也从来没打算让他知道。",
+      ],
+      delta: { sin: 8, reason: 10, fame: 4 }, flags: ["徇私记录", "缓议"],
+    },
+    {
+      label: "声称本区没有不够忠诚的人",
+      body: [
+        "你写了一份很长的说明，证明你的监护区在信仰、秩序、繁荣三项上全部达标。你引用了自己前几年做的漂亮报表。",
+        "裁判团收下了。三个月后，你被调去一个更偏远的监护区，职权不变，粮额减半。",
+      ],
+      delta: { faith: -8, fame: -6, reason: 12, life: -4 }, flags: ["抗命记录"],
+    },
+    {
+      label: "把名单抄一份，送到北边",
+      body: [
+        "你把名单抄在一张很薄的纸上，卷进玉米饼里，交给了走村的行脚医。你不知道他是不是学社的人，你只知道他曾经留下过记号。",
+        "此后半年你没有听到任何回音。第七个月，名单上的第三个人死在了外地，据说是意外。你把这件事记在心里，没有写在任何地方。",
+      ],
+      delta: { sin: 16, reason: 12, faith: -10, fame: -4 }, flags: ["学社成员", "递出名单"],
+    },
+  ],
+});
+ev({
+  id: "m_confess", short: "告解", title: "忏悔室里的两个人",
+  era: [3, 4], weight: 20,
+  body: [
+    "教法规定，对不服从监护、放任自身状态恶化者强制实行精神治疗。精神治疗是教士的职务之一，也是你每周要做四个下午的事。",
+    "你的治疗对象是一个中年女人。她说她梦到死去的女儿在地里喊她。你说这是恶魔的动摇，让她多背教典。",
+    "第四个下午，她说：教士，你也梦到过人吗？你答不上来。那天晚上你梦到了渠边那两个人。",
+  ],
+  delta: { reason: -6, sin: 6, faith: 2 }, flags: ["精神治疗师"],
+  choices: [
+    {
+      label: "给她加大药量",
+      body: [
+        "她的梦少了，话也少了。半年后她不再来，监护区的记录上写着“状态改善，已恢复正常”。",
+        "你在超市门口见过她一次。她看见你，低头快步走过，像看见一个不该想起来的东西。",
+      ],
+      delta: { faith: 10, sin: 8, reason: -6 }, flags: ["治疗方案执行者"],
+    },
+    {
+      label: "听她说完，不开药",
+      body: [
+        "你听她讲了六个下午，一句诊断也没写。第七个下午她没有来，托人给你带了一小罐咸菜。",
+        "上级抽查你的治疗记录，发现这一个案卷是空的。你补写了一份，写了很久，写得比真的还细。",
+      ],
+      delta: { reason: 14, faith: -6, sin: 6, fame: -2 }, flags: ["伪造治疗记录", "听过梦"],
+    },
+    {
+      label: "把自己的梦也告诉她",
+      body: [
+        "你说了渠边那两个人。你说了母亲被带走那天，你抱着她时闻到的药味。你说你也分不清哪些是恶魔，哪些是你自己。",
+        "她听完，说：教士，你不是坏人。你说不出话。这句话后来一直跟着你，跟到很远的地方。",
+      ],
+      delta: { reason: 18, faith: -12, sin: 8 }, flags: ["精神治疗师", "说过真话"],
+    },
+  ],
+});
+ev({
+  id: "m_holywar", short: "圣战", title: "圣战的动员令",
+  era: [3], weight: function (G) { return G.age >= 28 ? 26 : 12; },
+  body: [
+    "元一在日光市庄严宣布，对“走廊国的渎神者”发动“圣战”，并授权第十圣人摧毁一切阻拦圣战的敌人。",
+    "动员令传到你的监护区，内容有三条：上报可服役教士名单；动员顺民捐输；在启示APP上张贴标语。",
+    "后来你才知道，新星镇的城门上吊了几十个人，由公众石刑处死。教士们戴着防毒面罩用魔法消灭残余人员的镜头，成了教团国的经典宣传资料，民众把毒气比作天火，把戴面罩的教士比作义人。",
+  ],
+  delta: { faith: 4, fame: 6 }, flags: ["圣战之年"],
+  quote: "“与其等待天火惩治罪人，不如由我们代表诸神审判人类当中的败类！”",
+  choices: [
+    {
+      label: "报名随圣训教士团上前线",
+      body: [
+        "你签了名，交接了监护区。出发前一夜，你把箱底的升职文书烧了——你说不清为什么。",
+        "在走廊区边境，你戴着面罩走进一个园区。里面的人跪着，你没有听他们说话。事后你在报告里写：行动顺利，无我方伤亡。",
+      ],
+      delta: { fame: 18, faith: 8, sin: 24, reason: -10, life: -8 }, flags: ["圣战参与者", "见过毒气"],
+      quote: "“第九圣人提出‘将渎神者绝种’，第十反对，元一通过。”",
+    },
+    {
+      label: "留在后方，把粮草账做清楚",
+      body: [
+        "你把本区的捐输做成了两张表，一张给监事会上报，一张自己留着。两张表差着三成。",
+        "圣战打了很久。你在后方听说前线的事，越听越像另一种宗教。你开始明白：教团国内部也有两种人，一种去杀，一种记账。",
+      ],
+      delta: { fame: 8, sin: 8, reason: 8, faith: 2 }, flags: ["后方记账"],
+    },
+    {
+      label: "在启示APP上写一句反对的话",
+      body: [
+        "启示APP注册即实名，严管境外用户。你用了自己的真名，写了两行字：教团有权审判，无权把人当成天火。",
+        "两小时后帖子被删，四小时后裁判团的人敲你的门。他们问你：你是在替渎神者说话吗。你说不是，你是在替教法说话。",
+      ],
+      delta: { sin: 14, fame: 4, reason: 14, faith: -8 }, flags: ["实名发言", "裁判团关注"],
+    },
+  ],
+});
+ev({
+  id: "m_apostle", short: "圣裁招募", title: "圣裁教士团的招募",
+  era: [3], weight: function (G) { return (G.faith >= 55 || G.sin >= 30) ? 24 : 8; },
+  body: [
+    "圣裁教士团是特种部队，也是后来的特务机构前身，由第九圣人率领。他们来你的监护区抽人。",
+    "来的人不穿制服，说话很客气。他问你：你愿意为教团做不方便记入档案的事吗。",
+    "他没有说做什么。他只说，一旦加入，家人由教团供养；一旦暴露，不要活着回来见教团，否则你的家人将代替你牺牲。",
+  ],
+  delta: { sin: 10, fame: 6 }, flags: ["圣裁征询"],
+  quote: "“还是老规矩，一旦暴露，不要活着回来见我，否则你们的家人就要代替你们牺牲。”",
+  choices: [
+    {
+      label: "加入",
+      body: [
+        "你受了训练。训练里最重要的一课是：不要在报告里写“学社”，写“外来的可疑人员”。",
+        "你出过四次任务。第一次你吐了，第二次你没有，第三次你在回来的车上睡着了。",
+      ],
+      delta: { fame: 14, sin: 24, faith: 8, reason: -8, life: -6 }, flags: ["圣裁教士", "特务集团"],
+    },
+    {
+      label: "拒绝，但承诺保密",
+      body: [
+        "你说你不合适。他说没关系，名单上不会记住你拒绝过。他说这句话的时候在笑。",
+        "此后三年，每逢裁判团抓人，你都担心名单上会不会有自己的名字。这件事让你在很长一段时间里比谁都忠诚。",
+      ],
+      delta: { faith: 6, reason: 6, life: -3 }, flags: ["拒绝过圣裁", "提心吊胆"],
+    },
+    {
+      label: "答应加入，同时开始记一本私账",
+      body: [
+        "你加入之后接到的每一个名字，都另抄一份，藏在你母亲的坟下。你不知道这本账将来有什么用。",
+        "第三年，账本上有了六十一个名字。第二十七个是你自己的导师。",
+      ],
+      delta: { sin: 18, reason: 16, fame: 10, faith: -6, life: -4 }, flags: ["圣裁教士", "私账", "双面生活"],
+    },
+  ],
+});
+ev({
+  id: "m_saint", short: "见圣人", title: "一位圣人路过",
+  era: [3, 4], weight: 14, rare: true,
+  body: [
+    "十三圣人被宣布为“各教士与顺民的模范”。他们各有教名，内部互称编号，对外称“第 x 圣人”。",
+    "一位圣人到你的监护区巡视，没有仪仗。他和你一起在教堂里坐了很久，问你：你觉得这里的民众过得好吗。",
+    "你不知道该说什么。他也没有等你回答。他说：教团要的不是你们都说话，是你们都别说错话。然后他走了。",
+  ],
+  delta: { reason: 14, fame: 8, faith: -4 }, flags: ["见过圣人"],
+  quote: "“繁荣在人类历史上是短暂的，秩序才是长久的，越过秩序实现繁荣是对启示的亵渎。”",
+  choices: [
+    {
+      label: "把报表给他看真的那一份",
+      body: [
+        "你把真实数据交给他。他翻了两页，合上，说：这个我拿去没有用，但你能拿给我，我记下了。",
+        "三个月后你的考评里多了一句：此人可以承担更重的责任。你不知道这算好事还是坏事。",
+      ],
+      delta: { fame: 14, reason: 10, faith: 4, sin: 4 }, flags: ["被圣人记住"],
+    },
+    {
+      label: "照例呈上那三张漂亮的表",
+      body: [
+        "他看了很久，然后问你：你们的渠是哪一年修的。你说前年。他说：前年这个区上报的死亡人数是零。",
+        "他没有再多说什么，把表还给你了。回程的车上他一直看着窗外。",
+      ],
+      delta: { faith: 2, reason: 12, fame: 4 }, flags: ["被看穿"],
+    },
+    {
+      label: "问他教皇的事",
+      body: [
+        "你问：陛下走的时候，教团有人拦过她吗。他的手停了一下，说：这个问题不该由你来问，也不该由我来答。",
+        "当天夜里，你的档案里多了一行字：曾探问教皇事。墨迹很淡，像是随手记的，一年后你才发现。",
+      ],
+      delta: { sin: 10, reason: 12, faith: -4 }, flags: ["探问教皇", "档案污点"],
+    },
+  ],
+});
+ev({
+  id: "m_elixir", short: "灵药", title: "教团的延寿份额",
+  era: [2, 3, 4], weight: function (G) { return (G.faith >= 45 || has(G.flags, "补录候选") || has(G.flags, "教法专家")) ? 28 : 12; },
+  body: [
+    "教团内部对延寿相关议题与知识向来热衷。完人会几位长老各自走不同的路：一位把全身致密化，一位靠秘宝养着别人的魂灵，一位往宝石化的方向去。",
+    "轮到你的时候，监理会发下了一份“延寿份额”：一枚小得几乎看不见的药，一粒一年。药由三柱的人保管，按贡献分配。",
+    "发药的人说：这不是恩典，是账。教团投在你身上的东西，将来要还。",
+  ],
+  delta: { life: 16, faith: 6, reason: 4 }, flags: ["延寿份额"],
+  quote: "“伟大的元一圣人已经将全身致密化，这可是神才做得到的事。”",
+  choices: [
+    {
+      label: "收下，按年领药",
+      body: [
+        "你活了下来，而且活得很久。你开始在意自己脸上有没有变化，开始在意别人的年纪。",
+        "有一个同僚和你一样领药，领到第九年的时候断供了。他在报告里被写成“放任自身状态恶化”。",
+      ],
+      delta: { life: 12, faith: 8, fame: 6, sin: 4 }, flags: ["延寿份额"],
+    },
+    {
+      label: "把药让给生病的老教士",
+      body: [
+        "你把药给了他。他多活了两年，临死前把他的教法批注本留给了你。那本子后来救过三个人的命。",
+        "监理会记录：该员自愿放弃份额，理由未明。这行字让你的考评连着三年偏低。",
+      ],
+      delta: { life: -6, faith: 6, reason: 10, fame: 6 }, flags: ["让过药"],
+    },
+    {
+      label: "打听药的来源",
+      body: [
+        "你查了三年，查出药里用的东西不是自然能量，而是别的东西——档案在那一步就断了，断口很齐，像是用刀切的。",
+        "你终于知道教团为什么要把知识分层。有些知识不是不让你懂，是懂了以后你就没法再当教士。",
+      ],
+      delta: { life: 6, reason: 22, sin: 14, faith: -10 }, flags: ["泄露禁传知识", "查过药的来源", "记忆手艺"],
+    },
+  ],
+});
+ev({
+  id: "m_ascend", short: "登神", title: "身体重构的第一次手术",
+  era: [2, 3, 4], weight: function (G) {
+    if (!has(G.flags, "会魔法") && !has(G.flags, "教生")) return 0;
+    if (!has(G.flags, "接触秘宝") && !has(G.flags, "私藏秘宝") && !has(G.flags, "延寿份额") &&
+        !has(G.flags, "神迹技术") && G.reason < 50) return 0;
+    return (G.reason >= 50 && G.fame >= 22) ? 34 : 16;
+  },
+  body: [
+    "完人会的路走到底，就是身体重构：一次次把自己拆开、换掉、重新接上，直到不再需要吃饭、睡觉、生病。",
+    "元一圣人做这件事做了百年。三柱说，所谓登神不过是对神的亵渎，神只可感受，不可达到。第十一圣人不信这套，他另开了一条路。",
+    "一个从中央教团来的老者问你：你想活多久。你答不上来。他说：不想活多久的人，不配做这件事。",
+  ],
+  delta: { life: 10, reason: 8, sin: 8, faith: -4 }, flags: ["重构之身"],
+  quote: "“非凡的神是凡庸不可言语的一切。然而，神可以通过降临接触世界。”",
+  choices: [
+    {
+      label: "做。把自己交上去",
+      body: [
+        "手术做了十一次。第十一次之后，你不再需要睡，也不再做梦。你照镜子的时候需要想一想那是谁。",
+        "教团开始在你身上投更多的资源，因为你是“可以做得成的那种人”。他们开始叫你一个编号。",
+      ],
+      delta: { life: 18, fame: 18, reason: -10, sin: 14, faith: 6 }, flags: ["编外圣人", "重构之身"],
+      quote: "“元一在迎合教团国宗教民主的外衣之下，渴望建立为自己修行服务的极权国家。”",
+    },
+    {
+      label: "做到一半停下来",
+      body: [
+        "你停在了还能被叫作人的那一步。教团把你的名额收了回去，说你还不够虔诚。",
+        "你留下了一身的旧伤和一点不属于人的东西。你把这件事讲给过一个人听，那人后来死在了别处。",
+      ],
+      delta: { life: 8, reason: 12, faith: -2, fame: 4 }, flags: ["半途而止", "延寿份额"],
+    },
+    {
+      label: "把工艺抄下来，送给外面",
+      body: [
+        "你把重构的关键步骤抄了四份，分别给了承罪学社的路标、一个走村的行脚医、一位快要病死的同僚，和一份埋在教堂地基下。",
+        "教团很快知道了。你被登记为“泄露禁传知识”，处置方式是记忆抹除，连同所有受影响者。",
+      ],
+      delta: { sin: 26, reason: 16, life: -6 }, flags: ["泄露禁传知识", "抄过工艺", "记忆手艺"],
+    },
+  ],
+});
+ev({
+  id: "a_follow", short: "接引", title: "门口的脚印",
+  era: [2, 3, 4], weight: 30,
+  body: [
+    "半个月后，你的门口多了两个脚印，停在门槛上，没有再往里。",
+    "来的人自称接引者。他说：学社在北边和东边都有辖区，那边的人不用先受洗才能算人。他问你要不要走。",
+    "他还说了一句话，你记了很久：留下来的人不是没用，钉子不需要锋利，只需要不被拔出来。",
+  ],
+  delta: { reason: 8, faith: -4, sin: 8 }, flags: ["接引者"],
+  quote: "“此世斗争，此世幸福。”",
+  choices: [
+    {
+      label: "跟他走",
+      body: [
+        "你在一个没有月亮的夜里出了村。走了九天，过了两道以“修渠”为名的关卡。第十天你换掉了教士的衣服。",
+        "你被分到东边的一个村社，工作是教孩子认字，以及把村里的真实数字记下来。这里的报表没人看，所以你第一次写出了真数字。",
+      ],
+      delta: { reason: 16, faith: -14, fame: -12, sin: 10, life: -4 }, flags: ["北行", "劳动党辖区"],
+      end: "follow",
+    },
+    {
+      label: "留下，当那枚钉子",
+      body: [
+        "你说你不走。接引者点点头，说那就换一种用法，然后教了你三件事：怎么把纸卷进玉米饼，怎么在报表里藏数字，怎么在被问话的时候说真话但不说全。",
+        "此后三十多年，你一直是教团国的地方教士。你没有一天不在做教士的活，也没有一天不在把这里的账往外递。",
+      ],
+      delta: { reason: 14, faith: -6, sin: 14, fame: 4 }, flags: ["伏线", "学社成员"],
+    },
+    {
+      label: "反过来把接引者交给监理会",
+      body: [
+        "你在第二天一早就去了监理会。你说有人来串门，说了一些不该说的话。你没有提册子。",
+        "接引者在第三道关卡被截住。监理会给你的奖励是一次晋升，和一句评价：此人对教团可靠。",
+      ],
+      delta: { faith: 14, sin: 18, fame: 10, reason: -6 }, flags: ["举报有功", "背弃"],
+    },
+  ],
+});
+ev({
+  id: "m_relic", short: "秘宝", title: "一件不该挖出来的东西",
+  era: [2, 3, 4], weight: function (G) { return (has(G.flags, "会魔法") || has(G.flags, "教生")) ? 32 : 14; },
+  body: [
+    "教团国建立了魔法知识的目录和神秘学的博物馆。三柱圣人的暗线遍布全国，为他收集神秘知识；他乐于全国巡视，同时借机部署暗线。",
+    "你的监护区西边有一处塌陷的老窖。有人夜里去挖，挖出一个包着符布的盒子。第二天那人就发高烧说胡话。",
+    "你去看的时候，盒子已经放在教会堂的桌上。符布上的字你不认得，但你摸到它的时候，指尖是凉的。",
+  ],
+  delta: { reason: 6, sin: 6 }, flags: ["接触秘宝"],
+  choices: [
+    {
+      label: "上报中央教团，交给三柱的人",
+      body: [
+        "你报了，来的人很专业，把盒子收走，把接触过的人一一登记。登记到你的时候，他问你：你摸了哪里。",
+        "盒子被送走那天，你听说发高烧的那个人死了。登记表上把他的死因写成“不按统一安排作息”。",
+      ],
+      delta: { faith: 8, fame: 10, sin: 4, reason: 6 }, flags: ["上报秘宝", "三柱的暗线"],
+    },
+    {
+      label: "自己留下，偷偷研究",
+      body: [
+        "你把符布抄下来，盒子重新埋回原处。此后几年，你的梦里总有一条不认识的河。",
+        "你研究的成果是：你比这个监护区的任何人都更清楚，所谓神迹是怎么被做出来的。这既是你最大的知识，也是你最大的罪。",
+      ],
+      delta: { reason: 20, sin: 16, faith: -8, life: -6 }, flags: ["私藏秘宝", "泄露禁传知识"],
+    },
+    {
+      label: "当夜烧掉，连符布一起",
+      body: [
+        "你把盒子扔进灶膛，符布烧起来是绿的。第二天你照常开会、照常念经，像什么都没发生过。",
+        "此后你没有再梦到那条河。你偶尔会想起那个发高烧的人，然后把这个念头压下去，跟压别的念头一样。",
+      ],
+      delta: { reason: 8, faith: 4, sin: 4 }, flags: ["烧掉了秘宝"],
+    },
+  ],
+});
+ev({
+  id: "m_inform", short: "检举", title: "检举奖励制度",
+  era: [3, 4], weight: 22,
+  body: [
+    "裁判团设立了举报奖励制度。举报者在后续审查中享有优先保护，于是民众自发开始了“猎巫”运动，人人自危。",
+    "你的监护区一个月里收到了一百四十七份检举。其中一百四十三份指向邻居、同事、亲戚。剩下一份指向你。",
+    "检举你的那个人，是你七年前替他把儿子送进教养院的人。",
+  ],
+  delta: { sin: 8, reason: 8, life: -4 }, flags: ["被检举"],
+  quote: "“民众开始全力表现对教团的忠诚，因为这时表现不够就是不忠诚的体现。”",
+  choices: [
+    {
+      label: "主动配合审查，把自己的历史全交出去",
+      body: [
+        "你把七年来的每一份文书、每一次发言、每一笔账都交了出去。审查员翻了两天，说：你干净得可疑。",
+        "你被挂了半年“观察”。半年后恢复原职，你的名册上多了两个字：可用。",
+      ],
+      delta: { faith: 10, fame: 4, reason: -4, sin: 4 }, flags: ["审查通过", "档案完整"],
+    },
+    {
+      label: "反过来检举那个人",
+      body: [
+        "你写了三页，写他儿子入院那年的手续问题，写他私藏过的一张纸。这些东西你攒了七年，一直没用。",
+        "两天后他被带走。你在教会堂门口遇到他妻子，她朝你吐了一口。你没有擦。",
+      ],
+      delta: { sin: 20, fame: 6, faith: 4, reason: -6 }, flags: ["检举他人", "背弃"],
+    },
+    {
+      label: "把一百四十七份检举全部归档，不作处理",
+      body: [
+        "你以“证据不足，建议缓议”为由，把材料全压在了柜子里。裁判团催了两次，第三次就没有再催。",
+        "一年后的一把火把教会堂的后半间烧了。档案柜正好在那里。你站在火前看着，觉得心里很静。",
+      ],
+      delta: { reason: 14, sin: 10, faith: -6, fame: -4 }, flags: ["压案", "后堂的火"],
+    },
+  ],
+});
+ev({
+  id: "m_corn2", short: "自戕", title: "教士的荣誉",
+  era: [3], weight: function (G) { return G.sin >= 20 ? 24 : 14; },
+  body: [
+    "又一场歉收被查出是地方上改了数据。这一次，民众围住了教会堂。",
+    "你看见你的同僚们跪在门前，请求民众鞭笞自己，甚至当众自戕来为民众泄愤。他们说这是教士荣誉：教士既然掌握监护权利，就应当对监护的结果负一切责任。",
+    "有人在喊你的名字。喊得很整齐。",
+  ],
+  delta: { reason: 6, fame: 6 }, flags: ["荣誉危机"],
+  quote: "“我是一个将教士荣誉放在首位的人。所谓教士荣誉，就是要尊重教团体制，以大局为重。”",
+  choices: [
+    {
+      label: "跪下去，让民众处置",
+      body: [
+        "你跪在门前，把教法举过头顶。第一鞭落下的时候你听见人群里有人哭。你不知道那是谁在哭。",
+        "他们打了很久，最后把你抬进教堂。你活下来了，此后每次听见人群的喧哗，你的背都会疼。",
+      ],
+      delta: { life: -12, fame: 14, faith: 8, sin: -6, reason: -6 }, flags: ["受鞭", "教士荣誉", "自戕未遂"],
+    },
+    {
+      label: "当众宣布数据是你改的",
+      body: [
+        "你站起来，说你改了数字，理由是指标高得不可能实现，上级也知道不可能，所有人都知道。你说这些的时候声音很大。",
+        "人群安静了一瞬，然后有人开始喊“恶魔”。你被带走，罪名是滥用职权与亵渎教团。你没被处死，被送去做了精神治疗。",
+      ],
+      delta: { sin: 16, fame: -10, reason: 16, faith: -14, life: -8 }, flags: ["公开认罪", "精神治疗档案", "自戕未遂"],
+    },
+    {
+      label: "退到后堂，锁门，等他们散",
+      body: [
+        "你在后堂坐了六个小时。外面从喊叫变成哭声，再变成别的声音，最后什么也没有了。",
+        "第二天你照常上班。街上有两家门口挂了白布。你从中间走过去，脚步很稳。",
+      ],
+      delta: { reason: -8, sin: 10, faith: 2 }, flags: ["锁过门"],
+    },
+  ],
+});
+ev({
+  id: "m_escape", short: "出逃", title: "北边的路",
+  era: [3, 4], weight: function (G) { return (G.reason >= 60 || G.faith <= 25) ? 26 : 10; },
+  body: [
+    "教团国与希联的关系是“既合作又指责”。希联《青都日报》发表了《启示录教团国人权调查报告》，在希联社会引起广泛关注；国际纵队公开谴责中央教团的“反动”政策，包括知识垄断、技术垄断、等级划分、意识形态控制与中央指导式经济。",
+    "你手里有一份外来的报纸，是走村行脚的人留下的。上面有一段话，说“在继续援助贵国进行反侵略斗争的同时，我们也担负着希联的使命”。",
+    "从这里往北，过两道关卡就是走廊区。往西是帝国，往南是进盟。你在地图上量过很多次距离。",
+  ],
+  delta: { reason: 8, fame: -4 }, flags: ["读过外报"],
+  choices: [
+    {
+      label: "走。带上该带的东西",
+      body: [
+        "你把教法留在桌上，把禁书和那本私账缝进衣服夹层。出村的时候你没有回头。",
+        "第三道关卡查得很细。你被带进一间屋子，桌上摊着你的档案。他们问你的第一句话是：你什么时候开始读外报的。",
+      ],
+      delta: { sin: 12, fame: -8, reason: 14, life: -6 }, flags: ["出逃倾向", "被记录在案"],
+    },
+    {
+      label: "留下来，把这区的地契和账全烧了",
+      body: [
+        "你烧了一夜。烧完之后你把灰埋在渠边——就是当年埋那两个人的地方。",
+        "第二年春天，上级的指标下来了，没有账可查，也没有地契可核。你被撤职，调去修渠。你在渠上干了六年。",
+      ],
+      delta: { sin: 16, faith: -10, reason: 12, fame: -6, life: -4 }, flags: ["烧过账", "撤职"],
+    },
+    {
+      label: "不走了。给希联写一封回信",
+      body: [
+        "你写了一封很长的信，写你的监护区，写玉米，写报表，写你执行过的每一次教法。你写完没有寄，把它埋在母亲的坟下——跟那本私账放在一起。",
+        "此后你继续做教士，做得比谁都认真。你对自己说：总有一天会有人挖开那座坟。",
+      ],
+      delta: { reason: 16, faith: -4, sin: 12, fame: 2 }, flags: ["写过信", "埋下东西"],
+    },
+  ],
+});
+ev({
+  id: "m_blackmagic", short: "黑魔法", title: "黑魔法的方案",
+  era: [3], weight: 16,
+  body: [
+    "帝国撕毁和平协议之后，教团国需要抵抗。以献祭为核心的黑魔法成了元一派对抗侵略的底牌。",
+    "会议上有人提出：动员民众，让他们意识到身为大魔法祭品、牺牲自己来拯救国家是莫大的荣耀，并表彰献祭者、安抚家属和社区，便可召集民众自愿为大魔法献身。",
+    "第十圣人严厉抵制黑魔法，将黑魔法视为异端。第十一圣人黯则是黑魔法的推行者。你的上级让你表态。",
+  ],
+  delta: { sin: 8, faith: -4, reason: 8 }, flags: ["黑魔法之争"],
+  quote: "“教士既然掌握监护权利，就应当对监护的结果负一切责任。”",
+  choices: [
+    {
+      label: "支持献祭方案",
+      body: [
+        "你说民众的忠诚本来就包括必要时用自己的生命向教团证明忠诚。你的话被记进了会议记录。",
+        "半年后你主持了第一场动员会。散会后有一个老妇人留下来问你：教士，我儿子算不算光荣。你说算。",
+      ],
+      delta: { faith: 12, sin: 22, fame: 10, reason: -8 }, flags: ["献祭推行者"],
+    },
+    {
+      label: "坚决反对，照教法办",
+      body: [
+        "你引用教法：教士掌握了监护的权利，就应当对监护的结果负一切责任，让顺民去死是把监护变成掠夺。",
+        "第十圣人一派的教法学家记住了你的名字。两年后第十圣人战死，这个名字成了麻烦。",
+      ],
+      delta: { faith: 6, fame: 8, reason: 14, sin: -4 }, flags: ["第十派同情者"],
+    },
+    {
+      label: "沉默，什么也不说",
+      body: [
+        "你从头到尾没有举手，也没有发言。会议记录上你的名字后面是一片空白。",
+        "献祭在别的地方推行了。你在自己的监护区一直拖延，拖到不能再拖，那里的顺民多活了一年半。",
+      ],
+      delta: { reason: 8, sin: 6, faith: 2 }, flags: ["拖延者"],
+    },
+  ],
+});
+ev({
+  id: "m_sainthood", short: "圣人补录", title: "一个编号空了出来",
+  era: [3, 4], weight: function (G) {
+    return (has(G.flags, "补录候选") || has(G.flags, "技术官僚苗子") ||
+            (G.fame >= 40 && G.faith >= 40)) ? 26 : 8;
+  },
+  body: [
+    "十三圣人可以被“补录”，编号也可以被“除席”。",
+    "一位圣人战死。元一在会议上提了一句：教团还缺人手。二极照例做仪式官，说了一句公道话。三柱的人当天下午就来找你，问你愿不愿意担这个编号。",
+    "来的人说得很清楚：编号不是荣誉，是责任。他还说，前一位编号的战死，是因为他把编号当成了荣誉。",
+  ],
+  delta: { fame: 16, faith: 6 }, flags: ["补录候选"],
+  quote: "“看来我们的意见达成一致，此事已成。为了诸神的启示得到贯彻。”",
+  choices: [
+    {
+      label: "接受编号",
+      body: [
+        "你在圣人会议上宣誓。仪式很短，诸神的注视下没有秘密。宣誓完了以后，你发现最难的部分是学会在别人说话时闭嘴。",
+        "你开始有自己的暗线、自己的秘密、自己的敌人。你开始明白为什么前一位死得那么快。",
+      ],
+      delta: { fame: 30, faith: 12, sin: 14, reason: -6, life: 6 }, flags: ["补录圣人", "编号持有者"],
+      quote: "“教团国的圣人们各自有着自己的秘密。”",
+    },
+    {
+      label: "推荐另一位同僚",
+      body: [
+        "你说自己不合适，推荐了一个更有资历的人。三柱的人看了你很久，说：你知道这个位置可以保你不死吗。你说知道，然后又说了一遍不合适。",
+        "你推荐的同僚半年后死了。编号又空了出来，这一次没有人来问你。",
+      ],
+      delta: { reason: 16, fame: -6, faith: -4, sin: 4 }, flags: ["拒绝编号"],
+    },
+    {
+      label: "接受编号，同时去查前一位怎么死的",
+      body: [
+        "你接受了，并且在当天夜里就开始查。真相不难找：前一位死前提交过一份关于献祭的反对意见。",
+        "你把这份材料抄了三份，分别放在三个地方。此后你既是编号持有者，也是编号的候选死者。",
+      ],
+      delta: { fame: 26, faith: 8, sin: 18, reason: 14, life: -4 }, flags: ["补录圣人", "编号持有者", "私账"],
+    },
+  ],
+});
+ev({
+  id: "m_purge", short: "清洗", title: "同僚被带走了",
+  era: [3, 4], weight: 22,
+  body: [
+    "第X圣人的编号被除席，不得补录。他手下的教士一并被查。",
+    "其中一个是你的同期。你们一起考教生，一起受洗，一起在农学院写过同一篇《论神赐土地》。三年前他还在你的教堂里喝过酒。",
+    "裁判团通知你去做证。证词只有一行：他有没有说过不该说的话。",
+  ],
+  delta: { sin: 6, reason: 4 }, flags: ["被要求作证"],
+  choices: [
+    {
+      label: "照实说：他抱怨过指标",
+      body: [
+        "你只是说了实话。他抱怨指标的那句原话，你还记得语气。三年后你在档案里看到，这句话被写成了“攻击中央教团决策”。",
+        "他被处石刑。行刑那一天，武装教士团监督实施，教法学家向民众解释了案件经由与处刑理由。围观的人很多。",
+      ],
+      delta: { sin: 20, faith: 6, fame: 8, reason: -8 }, flags: ["作证者"],
+      quote: "“公开处刑……由教法学家向民众解释一切公开处刑的案件经由和处刑理由来教育民众。”",
+    },
+    {
+      label: "说：他什么也没说过",
+      body: [
+        "你在证词上写了六个字。裁判团的人问你：你确定吗。你说确定。",
+        "他活下来了，被调去边远区。他再也没有联系过你。你也从来没有想过要联系他——那样对彼此都不安全。",
+      ],
+      delta: { reason: 12, sin: 8, fame: -2 }, flags: ["伪证"],
+    },
+    {
+      label: "替他顶一句，说他只是说过指标太高",
+      body: [
+        "你把责任往指标上引，说地方上都觉得高，这不是攻击教团，这是实事求是的困难。你写了很长。",
+        "裁判团接受了你的说法，把案子降成了行政问题。你被记了一次“立场不稳”。",
+      ],
+      delta: { fame: -4, reason: 14, sin: 4, faith: -4 }, flags: ["立场不稳"],
+    },
+  ],
+});
+
+ev({
+  id: "m_tour", short: "巡游", title: "圣训教士团的巡游",
+  era: [3], weight: 20,
+  body: [
+    "圣训教士团是第十圣人麾下的中央警察组织，也负责全国巡游宣传。他们到你的区那天，街上的标语换了新的，启示APP的头条也换了。",
+    "教士团白天讲经，晚上查账。他们的账查得很细，细到你去年少报的那半亩地都被翻了出来。",
+    "带队的教士没有骂你。他说：数据不准，是教士的失职；但数据太准，是教士没本事。你自己看着办。",
+  ],
+  delta: { fame: 6, faith: 6, sin: 6, reason: 6 }, flags: ["巡游查过账"],
+  quote: "“圣训教士团全国巡游。”",
+});
+ev({
+  id: "m_newstar", short: "新星镇", title: "新星镇的四个小时",
+  era: [3], weight: 20,
+  body: [
+    "教团与走廊区直接接壤的新星镇，有一次著名的行动：封锁四小时，边境布满诱雷魔法让所有区域都无法通行；两小时内圣训教士团带着武装教士搜遍每个人的身，包括顺民、教士和外来人员，所有房屋、财物和私人信息也被搜查。",
+    "两小时内锁定数百名嫌疑人，把有一个以上明确证据的送上公审台；从全国各地赶来的教法学家在“诸神的注视”下拷问、核验证言，在剩下的两小时内完成。",
+    "四小时后边境开放，数十名被判“确凿无疑犯下渎神大罪”的犯人被吊在城门上，由公众石刑处死。",
+  ],
+  delta: { faith: 4, sin: 8, reason: 4 }, flags: ["新星镇在场"],
+  quote: "“这些罪人想让圣地变成索多玛！”",
+  choices: [
+    {
+      label: "去现场听第十圣人的判言",
+      body: [
+        "你站在人群里听完了。第十圣人宣读完判言，许多民众义愤填膺，受害者家属组成游行队伍挨家挨户哭诉，城内哭声四起。",
+        "你也跟着走了一段游行。走的时候你心里很热、很干净。这是你最不想回忆的一件事。",
+      ],
+      delta: { faith: 14, fame: 8, sin: 14, reason: -6 }, flags: ["听过判言", "走过游行"],
+    },
+    {
+      label: "留在屋里，没有出门",
+      body: [
+        "你把门窗关好，坐了一整天。你听见外面的脚步声、哭声、喊声，也听见最后那种很整齐的、石头落下的声音。",
+        "天黑之后你出门看了一眼。城门上还挂着人。你回去把门窗重新关好。",
+      ],
+      delta: { reason: 14, faith: -4, sin: 4 }, flags: ["听过石头声"],
+    },
+    {
+      label: "跟着教法学家去誊抄卷宗",
+      body: [
+        "你被叫去誊抄卷宗，用“圣言体”。你抄了四十七份，每份都写上“处刑经由已向民众解释，教育目的达成”。",
+        "抄到第二十三份的时候，你发现被告的名字里有一个是你表哥。你抄完了，字迹没有变。",
+      ],
+      delta: { fame: 10, faith: 10, sin: 16, reason: -8 }, flags: ["抄过卷宗"],
+    },
+  ],
+});
+ev({
+  id: "m_treaty", short: "撕约", title: "帝国撕毁和平协议",
+  era: [3, 4], weight: 20,
+  body: [
+    "帝国与教团的关系几经反复：先是共同向进盟宣战，后来帝国以加强东线为由断开支援，进盟却派出远超各国想象的军队，于是帝国再与进盟合作，继续对教团的侵略。",
+    "撕毁和平协议的消息传到你的区，用了九天。第九天，中央的命令下来了：全面动员，准备反侵略作战。",
+    "同一天，教团国内的报纸开始把帝国叫做“背信者”，把前几年两国互送的礼物叫做“教训”。",
+  ],
+  delta: { faith: 6, fame: 4, life: -2 }, flags: ["撕约之年"],
+  quote: "“作为真正进盟的继承者，教团有权清算进盟。”",
+});
+ev({
+  id: "m_war", short: "动员", title: "动员令",
+  era: [3, 4], weight: 24,
+  body: [
+    "动员令要求每个监护区上报三份名单：可服役的教士、可征用的顺民、可征收的粮。",
+    "交名单的那天晚上，你在灯下写了很久。你写下的名字，每一个你都认识。你知道其中几个会回来，几个不会。",
+    "你没有写你自己。这不是因为怕，是因为你算过：这个区如果没有人做账，明年就得饿死人。",
+  ],
+  delta: { fame: 8, faith: 6, sin: 10, reason: 6 }, flags: ["交过名单"],
+  choices: [
+    {
+      label: "按能打仗的顺序报",
+      body: [
+        "你报的是最壮的那些。他们走了以后，村里少了三分之一的劳力，第二年的耕种指标没有完成。",
+        "回来的只有一半。他们看你的眼神跟走之前不一样了——不是恨，是别的什么。",
+      ],
+      delta: { faith: 12, fame: 8, sin: 14, reason: -4 }, flags: ["报过壮丁"],
+    },
+    {
+      label: "把不可替代的人划掉",
+      body: [
+        "你把铁匠、大夫、会修渠的都划掉了，报上去的都是没有拖累的年轻人。上面问你为什么，你说这些人“体力更好”。",
+        "这份名单让你在区里得了人心。三年后有人举报你“逃避动员”，是这些人里的几个替你作了证。",
+      ],
+      delta: { reason: 14, fame: 8, sin: 8, faith: -2 }, flags: ["划过名单"],
+    },
+    {
+      label: "多报二十个，替别的区凑名额",
+      body: [
+        "你多报了二十个人，换来的是本区当年的指标降了两成——因为“已经作出了贡献”。",
+        "那二十个人里，有几个是你觉得“可以再挤出来”的。他们走的时候，其中一户的祖母在你门口坐了一夜。",
+      ],
+      delta: { sin: 20, faith: 8, fame: 10, reason: -8 }, flags: ["多报过"],
+    },
+  ],
+});
+ev({
+  id: "m_deathnot", short: "讣告", title: "阵亡通知书",
+  era: [3, 4], weight: 20,
+  body: [
+    "阵亡通知书是一张统一的纸，印着教团的徽记，格式固定：某某顺民，在对敌作战中蒙诸神召唤，为国捐躯，其家属享受抚恤。",
+    "你的差事是送去。你送了十七张。送到第十七张的时候，那户人家的老太太问你：他人呢。",
+    "你说：蒙诸神召唤。她说：我知道这句话，我问你人。",
+  ],
+  delta: { reason: 8, sin: 8, life: -3 }, flags: ["送过讣告"],
+  quote: "“蒙诸神召唤。”",
+  choices: [
+    {
+      label: "照原话再说一遍",
+      body: [
+        "你把那句话又说了一遍，语气跟第一次一样。老太太没有再问，把纸收下了。",
+        "她后来一直把那封信放在灶台上，做饭的时候能看见。你后来每次经过那条巷子都绕开。",
+      ],
+      delta: { faith: 8, reason: -2, sin: 8 }, flags: ["照本宣科"],
+    },
+    {
+      label: "告诉她：人没了，我不知道怎么没的",
+      body: [
+        "她听完坐下了，坐了很久，然后问你：那你为什么不早说。她给你倒了一杯水，你没敢喝。",
+        "你从这一家开始，往后的讣告都改了说法。上面没有发现，因为家属不识字的多，识字的也不敢说。",
+      ],
+      delta: { reason: 14, sin: 6, faith: -4, fame: -2 }, flags: ["改过说法"],
+    },
+    {
+      label: "帮她算抚恤，一分一分算清楚",
+      body: [
+        "你把她能领的东西算了三遍：抚恤、减租、儿子的就学名额。你写在一张纸上，念给她听。",
+        "她听完说：你是个好人。这句话在教团国不算夸人，也不算骂人。",
+      ],
+      delta: { reason: 12, fame: 6, sin: 4 }, flags: ["算过抚恤"],
+    },
+  ],
+});
+ev({
+  id: "m_dark_flame", short: "焚约", title: "日光市的火光",
+  era: [3, 4], weight: 16,
+  body: [
+    "元一在日光市宣布教团国进入“圣战与反侵略”的总状态，并在广场上公开焚毁了一份和平协议的正本。",
+    "火的颜色很好看。台下有人哭，有人喊口号。你站在人群里，看见协议的纸在火里卷起来，露出背面的一行字——那是两国起草时留下的一句祝辞。",
+    "没有人看见那一行字。只有你站的角度刚好。",
+  ],
+  delta: { reason: 12, faith: 6, fame: 4 }, flags: ["看过焚约"],
+  quote: "“忠于教团，或者死亡！”",
+});
+ev({
+  id: "m_special", short: "圣裁", title: "圣裁教士团回来了",
+  era: [3, 4], weight: function (G) { return (G.sin >= 30 || has(G.flags, "圣裁教士")) ? 26 : 12; },
+  body: [
+    "圣裁教士团是特种部队，后来的特务机构前身，由第九圣人率领。他们出任务回来，先到地方上“休整”。",
+    "休整的意思是：不穿制服、不说话、不问路，只在本区待三天。三天之后，本区多了两份失踪报告。",
+    "带队的那个年轻人跟你握手，手很凉。他说：你这区的报表很干净。他说这句话的时候，眼睛在看你的手。",
+  ],
+  delta: { sin: 8, faith: 4, reason: 6 }, flags: ["圣裁休整"],
+  quote: "“一旦暴露，不要活着回来见我，否则你们的家人就要代替你们牺牲。”",
+});
+ev({
+  id: "m_guerrilla", short: "游击队", title: "东部山区的枪声",
+  era: [3, 4], weight: 20,
+  body: [
+    "劳动党在东部有根据地，学社出学者与知识，劳动党出组织与根据地。他们用“此世启示”向民众普及教义：此世斗争，此世幸福；信众无需通过仪式获得神佑，而应当通过此世奋斗贯彻神佑。",
+    "教团派武装教士团去清剿。清剿回来的报告写着：毙敌若干，缴获若干，山区民众觉悟提高。",
+    "你去过那个“觉悟提高”的村子。村里少了一半人，剩下的人把地种得比以前好。",
+  ],
+  delta: { reason: 12, faith: 4, sin: 8 }, flags: ["见过清剿"],
+  quote: "“此世斗争，此世幸福。”",
+  choices: [
+    {
+      label: "按上级口径写战报",
+      body: [
+        "你写了“毙敌四十，缴获枪械七十”。实际是毙敌九人，枪械七支，剩下的都是农具。",
+        "这份战报被中央教团引用了三次，成了“东部形势大好”的例证。第三次引用的时候，你领了一枚勋章。",
+      ],
+      delta: { faith: 12, fame: 14, sin: 16, reason: -6 }, flags: ["写过战报"],
+    },
+    {
+      label: "写实数，附一句“建议缓进”",
+      body: [
+        "你交了实数，并写了建议：山区地形复杂，民众分散，宜缓不宜急。上级把你的建议删掉了，数字留着。",
+        "三个月后另一支队在同一个山区吃了亏。有人想起了你的那份报告，把你调去做情报分析。",
+      ],
+      delta: { reason: 16, faith: -2, fame: 6, sin: 4 }, flags: ["建议缓进"],
+    },
+    {
+      label: "在报告里替那个村子要一点粮",
+      body: [
+        "你在报告里加了一句：该村俘获人员家属生活困难，建议按抚恤标准给予补给。就这一句。",
+        "补给批下来了，很少，但确实到了。这批粮后来被村里人说成是“教团给的”，没有人知道是你写的。",
+      ],
+      delta: { reason: 12, sin: 6, fame: 4, faith: 4 }, flags: ["要过粮"],
+    },
+  ],
+});
+ev({
+  id: "m_purge2", short: "除席", title: "一个编号被除席",
+  era: [3, 4], weight: 20,
+  body: [
+    "十三圣人可以被“补录”，编号也可以被“除席”。被除席的那个编号，手下的人一并被查。",
+    "你的上级是那个编号的旧部。审查组来找你，问了三件事：他跟你说过什么、你替他办过什么、你觉得他有没有问题。",
+    "第三件事的答案，会决定你此后十年能不能睡好。",
+  ],
+  delta: { sin: 6, reason: 8 }, flags: ["被审查"],
+  choices: [
+    {
+      label: "说他没问题",
+      body: [
+        "你说你只知道他办事很规矩。审查组记了下来，没有追问。你的档案里多了一行：立场需继续观察。",
+        "你的上级最后还是被撤了，但没有被处刑。他走之前给你留了一句话：这个国家里，说别人没问题的人不多。",
+      ],
+      delta: { reason: 14, fame: -2, sin: 6, faith: -2 }, flags: ["说过没问题"],
+    },
+    {
+      label: "说他有过一次不当言论",
+      body: [
+        "你说了。那是一句玩笑话，是他五年前在饭桌上说的。审查组把那句话记成了“攻击教团决策”。",
+        "他被送去做了精神治疗。你顶了他的位置。这个位置上的第一份文件，就是关于他的处理决定。",
+      ],
+      delta: { sin: 22, faith: 8, fame: 12, reason: -8 }, flags: ["顶过位置"],
+    },
+    {
+      label: "什么也不说",
+      body: [
+        "你在审查室里坐了六个钟头，一句话没说。审查组说：沉默也是一种态度。你被停职三个月。",
+        "三个月后你复职，职位不变，待遇不变，只是从此所有重要的事都不再经过你。你成了一个被留着的人。",
+      ],
+      delta: { reason: 12, fame: -8, life: -2, sin: 4 }, flags: ["被留着", "顶过审查"],
+    },
+  ],
+});
+ev({
+  id: "m_workcamp", short: "劳改", title: "劳动改造的名册",
+  era: [3, 4], weight: 18,
+  body: [
+    "教团对怠工与拒绝就业者，处鞭刑到石刑不等。执行之前通常会先送一轮“劳动改造”：修路、挖渠、开荒，为期三个月。",
+    "这一批的名单上有一个你认识的人：当年替你补过鞋的老鞋匠。他是因为“拒绝接受教团安排的工作”被报上来的——安排他去砖窑，他腿不好。",
+    "名单已经签了字，签字的是你的上级。你负责送去。",
+  ],
+  delta: { sin: 6, reason: 6, faith: 4 }, flags: ["送过名册"],
+  choices: [
+    {
+      label: "送去，一份不差",
+      body: [
+        "你把名单送到。老鞋匠看见你，什么也没说，只把他的锥子交给了邻居。三个月后他回来了，人瘦了，也没有再补过鞋。",
+        "你后来每次鞋坏都想去找他。你没有去，因为你不知道该说什么。",
+      ],
+      delta: { faith: 8, sin: 14, reason: -4 }, flags: ["送过名册"],
+    },
+    {
+      label: "把名字划掉，报“已自行就业”",
+      body: [
+        "你把他划掉，写了他替教团修鞋、按件计酬。这不算假——他确实替教会堂修过鞋。",
+        "这件事你一共办过五次。第五次之后，监理会发现你的区“改造完成率”偏低，把你叫去谈了一次话。",
+      ],
+      delta: { reason: 14, sin: 8, faith: -4, fame: -2 }, flags: ["划过名册"],
+    },
+    {
+      label: "把名额换给村里人缘最差的那户",
+      body: [
+        "你把名额换给了那户曾经举报过三家邻居的人家。这件事没有人举报你，因为大家都觉得换得对。",
+        "你第一次体会到：在这个国家里，做恶事最方便的方式，是让别人觉得你做得很公平。",
+      ],
+      delta: { sin: 18, reason: 10, fame: 6, faith: 4 }, flags: ["换过名额"],
+    },
+  ],
+});
+ev({
+  id: "m_quota2", short: "配额", title: "祈愿机关的配额",
+  era: [3, 4], weight: 16,
+  body: [
+    "教团设有各类机关统筹灵能。灵能由自然能量与灵魂能量构成，教团坚持前者可用、后者不可轻用，但边界在哪里，教法上没有写清。",
+    "你的区今年领到一份灵能配额，用于灌溉和医疗。配额的数目刚好够用，条件是：你要在启示会议上说明“诸神赐福，谨此感恩”。",
+    "你签了领用单。单子背面印着一行小字：本配额系诸神之恩典，非教团之赐予。",
+  ],
+  delta: { faith: 8, fame: 6, life: 4 }, flags: ["领过配额"],
+  quote: "“本配额系诸神之恩典，非教团之赐予。”",
+});
+ev({
+  id: "m_fake", short: "追查", title: "追查虚假数据",
+  era: [3, 4], weight: 22,
+  body: [
+    "中央终于开始追查数据造假。原因是玉米事件死了数万人，追责的时候发现，从下到上没有一份数字是真的。",
+    "查的方式是抽查：选一个区，把历年报表与实地对照。你的区被选中了。",
+    "查的人来了三个，住了七天，量地、称粮、数人。第七天晚上，领头的把你叫到一边，说：你的数字差了四成，但方向是往少里差。他在等你解释。",
+  ],
+  delta: { sin: 6, reason: 8, faith: -2 }, flags: ["被抽查"],
+  quote: "“过于关注纸面数据……导致虚假数据横行。”",
+  choices: [
+    {
+      label: "坦白：少报是因为怕加指标",
+      body: [
+        "你全说了，包括为什么。他听完记录了半个钟头，最后说：你这个理由很实用，但教法上没有这一条。",
+        "你被降了一级，没有更重的处分。他走的时候说：你的数字是我这半年见过最诚实的。",
+      ],
+      delta: { reason: 14, faith: 4, fame: -6, sin: -4 }, flags: ["坦白过数字"],
+    },
+    {
+      label: "说是因为统计口径不同",
+      body: [
+        "你搬出教法附则里的三条解释，把四成差说成口径差。他听得很认真，最后说：你是懂教法的人。",
+        "这件事以“口径待统一”结案。你保住了职级，也保住了这个区——但从此这个区的一切都要报得往上靠。",
+      ],
+      delta: { faith: 8, reason: 8, sin: 10, fame: 4 }, flags: ["口径"],
+    },
+    {
+      label: "把另外三个区的假账也交出去",
+      body: [
+        "你把邻区那三份做得更漂亮的表一起交了。你说：要查就一起查，不然我改不了。",
+        "中央据此查了三个区，撤了两个人。你所在的区这一年的指标降了两成——因为你把“平均”拉下来了。",
+      ],
+      delta: { sin: 14, reason: 14, fame: 8, faith: 4 }, flags: ["交过别人的账"],
+    },
+  ],
+});
+ev({
+  id: "m_westroad", short: "西沙", title: "往西的路",
+  era: [3], weight: function (G) { return (G.reason >= 55 || G.faith <= 30) ? 22 : 8; },
+  body: [
+    "走廊区是个什么都有、什么都不管的地方：有商会，有中立国，有诈骗园区，有国际纵队，也有像星灯镇那样被各种势力渗透的镇子。",
+    "有人给你指了一条路：先到走廊区，再从那里去希联，或者去帝国的自由民区。指路的人说，这条路一年能走掉一百来个人。",
+    "他没有说的是：这条路一年也能死掉一百来个人。",
+  ],
+  delta: { reason: 10, fame: -4, sin: 6 }, flags: ["知道西边的路"],
+  choices: [
+    {
+      label: "走",
+      body: [
+        "你带了三样东西：一本真账、一枚护身符、够七天的粮。第四天你在一处关卡被拦下，问你去哪里。",
+        "你说去走亲戚。他们查了你的档案，翻了你的包，把真账拿走了，把你放了。你到了走廊区，从此没有这本账。",
+      ],
+      delta: { reason: 14, sin: 10, fame: -10, life: -8 }, flags: ["走过西边"],
+    },
+    {
+      label: "不走，但把路告诉了三个人",
+      body: [
+        "你把路线画在三张纸上，分别给了三个你认为该走的人。其中两个走了，一个没走。",
+        "没走的那个第二年出了事。他出事之前把那张纸烧了，所以没有人追到你这里。",
+      ],
+      delta: { reason: 12, sin: 8, faith: -4 }, flags: ["指过路"],
+    },
+    {
+      label: "把这条路报到监理会",
+      body: [
+        "监理会的人听完，问你：你怎么知道的。你说有人跟你讲的。他们记了下来，然后让你走了。",
+        "半年后，那条路上的三个中转点被一起清了。指路给你的那个人从此消失。你活了下来，并且升了职。",
+      ],
+      delta: { faith: 12, sin: 20, fame: 10, reason: -6 }, flags: ["报过路线", "举报有功"],
+    },
+  ],
+});
+ev({
+  id: "m_manhunt", short: "猎巫", title: "人人的猎巫",
+  era: [3, 4], weight: function (G) { return (G.sin >= 25 || has(G.flags, "被检举")) ? 26 : 14; },
+  body: [
+    "宗教裁判机构取代教法机构之后，举报奖励制度下民众自发开始了“猎巫”运动。公开处刑从谨慎采用变成了大肆采用，从教育手段变成了民众的发泄方式。",
+    "你的区一个月里办了三场公审。第三场的被告是一个卖布的妇人，罪名是“悖逆公众伦理”——她穿了自己卖的花布。",
+    "行刑前有人往台上扔石头。你站在监刑的位置上，看见扔石头的人里有她的邻居、她的客人、还有一个她从前的学徒。",
+  ],
+  delta: { sin: 8, reason: 8, faith: -2 }, flags: ["监过刑"],
+  quote: "“这时表现不够就是不忠诚的体现。”",
+  choices: [
+    {
+      label: "按教法把程序走完，一句不多说",
+      body: [
+        "你念完了判词，向民众解释了她的案件经由与处刑理由，说明了这是教育而不是泄愤。",
+        "民众听懂了。散场的时候有人跟你道谢，说教团办得公道。你回到住处，把那件花布的样子记得很清楚。",
+      ],
+      delta: { faith: 12, sin: 12, fame: 8, reason: -4 }, flags: ["监过刑"],
+    },
+    {
+      label: "在解释词里加一句：她只是一个卖布的",
+      body: [
+        "你加了这一句。台下安静了一下，然后有人喊“教士替罪人说话”。你被记了一次。",
+        "石头少了一些。这是你一生中做过的最没有用的好事之一，也是你少数还记得的好事之一。",
+      ],
+      delta: { reason: 14, fame: -6, faith: -4, sin: 4 }, flags: ["说过一句"],
+    },
+    {
+      label: "提前把她的名字划掉，换上另一个",
+      body: [
+        "你换了一个已经死了的人的名字。公审照开，程序照走，只是台上那个人不在。",
+        "这件事你办得极其干净。此后你每办一次这种事，都要在夜里多醒一次。",
+      ],
+      delta: { sin: 16, reason: 12, faith: -6, life: -4 }, flags: ["换过名字"],
+    },
+  ],
+});
+ev({
+  id: "m_refugee", short: "难民", title: "东边来的车",
+  era: [3, 4], weight: 30,
+  body: [
+    "焦土政策之后，被“清算”的地方开始往外送人。遣散居民的同时大肆纵火、部署地雷，使那些镇子再难居住。",
+    "一队顺民被送到你的区，安置在教会堂后面的空地上。他们带的东西很少，其中一家抬着一张门板，门板上刻着一行字：我们就要离开，不知道能否再回来。",
+    "安置要粮、要房、要地。你的区今年刚好差一点。",
+  ],
+  delta: { life: -3, reason: 8, sin: 4 }, flags: ["安置过难民"],
+  quote: "“我们就要离开，不知道能否再回来。祈求诸神保佑。”",
+  choices: [
+    {
+      label: "按数上报，等上面批",
+      body: [
+        "你报了，等了一个半月。批下来的时候，那一队人已经走了三分之二——自己走的，往更东边。",
+        "剩下的三分之一在原地住到了冬天。冬天过完，少了几个人。你的报表上写的是“安置完成”。",
+      ],
+      delta: { faith: 8, sin: 12, reason: 4 }, flags: ["上报安置"],
+    },
+    {
+      label: "先从本区的存粮里挪，不等批",
+      body: [
+        "你挪了两百斤粮。这批粮本来是明年的种子。第二年你的区春播缺种，减产一成五。",
+        "中央的报表上，你的区“安置完成率”是全区最高的，同时“产量达标”是全区最低的。",
+      ],
+      delta: { reason: 14, sin: 6, fame: 6, life: -3 }, flags: ["挪过粮"],
+    },
+    {
+      label: "把他们编成开荒队，用劳动换安置",
+      body: [
+        "你划了一片荒坡，说开出来归他们。他们开了四十天，开出七十亩。教团后来把那七十亩登记为“教团新增耕地”。",
+        "他们没有闹。其中有一个人来找你，说：教士，我们不是要地，我们是要一个不被赶走的地方。",
+      ],
+      delta: { sin: 14, reason: 12, fame: 8, faith: 4 }, flags: ["编过开荒队", "分到过地"],
+    },
+  ],
+});
+ev({
+  id: "m_medicine", short: "药", title: "一箱来路不明的药",
+  era: [3, 4], weight: 16,
+  body: [
+    "教团与希联在反侵略上合作，同时互相指责。希联的《青都日报》发表《启示录教团国人权调查报告》，国际纵队公开谴责教团的知识垄断、技术垄断、等级划分与意识形态控制。",
+    "与此同时，一箱希联产的药从走廊区辗转到你的手里。药是治怪病后遗症的，教团自己没有。",
+    "送药的人说：药不要钱，只要你别问它是怎么来的。",
+  ],
+  delta: { reason: 10, sin: 6, faith: -2 }, flags: ["收到过药"],
+  quote: "“在继续援助贵国进行反侵略斗争的同时，我们也担负着希联的使命。”",
+  choices: [
+    {
+      label: "收了，发给最需要的几户",
+      body: [
+        "药发了十一户。有人好了，有人没好。好了的那几户后来到处说“教团发了药”。",
+        "你没有纠正。你发现把好事归给教团，比归给自己安全得多。",
+      ],
+      delta: { reason: 10, sin: 6, fame: 8, faith: 4 }, flags: ["发过药"],
+    },
+    {
+      label: "收了，先拿去化验",
+      body: [
+        "你把三支药送到中央农学院的老同学那里。他验完告诉你：成分没问题，但配方里有一样东西，教团的魔法体系里没有。",
+        "这个“没有”让你想了很久。你把剩下的一箱锁起来，最终一支也没有用出去。",
+      ],
+      delta: { reason: 16, sin: 8, faith: -4 }, flags: ["验过药"],
+    },
+    {
+      label: "退了，并且上报",
+      body: [
+        "你把药退了，报给监理会。监理会问你：怎么来的。你说不知道。他们又问：你为什么不留下来用。",
+        "这个问题你答不上来。药最后被收走了。半年后你在别处听说，那批药被送去了日光市的医院，救了一些教士。",
+      ],
+      delta: { faith: 10, reason: 8, sin: 6 }, flags: ["退过药"],
+    },
+  ],
+});
+ev({
+  id: "m_oldfriend", short: "旧友", title: "当年那个替考的人",
+  era: [3, 4], weight: 20,
+  body: [
+    "你还记得那个家里许诺给你两袋玉米的孩子吗。你替他写了一份卷子，两个人都过了。",
+    "现在他穿着闪亮的制服站在你面前，职务比你高两级。他是来考核你的。",
+    "他看见你的时候愣了一下，然后笑着叫出了你的名字。他记得。",
+  ],
+  delta: { reason: 6, fame: 4 }, flags: ["旧友归来"],
+  choices: [
+    {
+      label: "认他，叙旧",
+      body: [
+        "你们喝了半夜的酒。他说他后来一直想找你，又怕找你。他说他现在做的事“不太干净”，但没有细说。",
+        "第二天考核结果是：合格，建议提拔。你的名字进了他的系统——从此你也是不干净的那一部分。",
+      ],
+      delta: { fame: 12, sin: 12, reason: 4 }, flags: ["进了他的系统"],
+    },
+    {
+      label: "认他，但请他不要在考核里替你说话",
+      body: [
+        "他听了很久，说：你还是那个样子。他把你的考核写成了“合格”。",
+        "此后你们再没来往。三年后他的系统被查，牵连了十七个人，你不在里面。",
+      ],
+      delta: { reason: 14, fame: -4, sin: 4 }, flags: ["划清过界"],
+    },
+    {
+      label: "提醒他：当年那份卷子是我写的",
+      body: [
+        "他脸上的笑停了一下，然后说：我知道。他说这句话的时候声音很低，像是在跟你说，也像是在跟自己说。",
+        "他此后再没找过你。你的考核是“待议”，挂了半年。",
+      ],
+      delta: { sin: 10, reason: 10, fame: -6 }, flags: ["提过旧账"],
+    },
+  ],
+});
+ev({
+  id: "m_archive", short: "档案", title: "你的档案有多厚",
+  era: [2, 3, 4], weight: 26,
+  body: [
+    "档案司允许教士查阅本人的档案摘要。你去看了。",
+    "你的档案有十九页。第一页是出生登记，第二页是教法考成绩，第三页是你十五岁那年说的一句“我不知道他算不算不满”。",
+    "最后一页只有一行：综合评语——可用，需观察，不宜重用。",
+  ],
+  delta: { reason: 12, faith: -2 }, flags: ["查过档案"],
+  quote: "“可用，需观察，不宜重用。”",
+  choices: [
+    {
+      label: "申请更正",
+      body: [
+        "你写了一份更正申请，附了三份证明。半年后批复下来：驳回，维持原评语。",
+        "你的申请本身又给你加了半页纸。那半页纸上写着：此人对评价存在异议。",
+      ],
+      delta: { faith: 4, reason: 10, fame: -4, sin: 4 }, flags: ["申请过更正"],
+    },
+    {
+      label: "把摘要抄一份，收起来",
+      body: [
+        "你抄了，抄完放在那本教典里，和那一章被删的内容放在一起。",
+        "此后你每隔几年就拿出来看一遍。你看的不是评语，是那半页纸上自己的笔迹——它证明你确实看过。",
+      ],
+      delta: { reason: 12, sin: 6 }, flags: ["抄过档案"],
+    },
+    {
+      label: "什么也不做，转身去干活",
+      body: [
+        "你把摘要还回去，回去继续办你的差。这是最像教团国教士的做法。",
+        "此后你活得很顺。你从来不去想那十九页纸，一直到很多年后的一天，你忽然发现自己在梦里背那份摘要。",
+      ],
+      delta: { faith: 10, reason: -2, life: 2 }, flags: ["不看档案", "无名之辈"],
+    },
+  ],
+});
+ev({
+  id: "m_relic2", short: "遗物", title: "一位老教士的遗物",
+  era: [3, 4], weight: 18,
+  body: [
+    "你的一位老上级死了。他没有家眷，遗物由你去清。",
+    "他的屋里只有三样东西：一本翻烂的教法、一叠抄了一半的《自然哲学基础》、还有一个小木匣。木匣里是十一张肉票，最早的一张是十七年前的。",
+    "他一张也没用过。",
+  ],
+  delta: { reason: 12, life: -2, sin: 2 }, flags: ["清过遗物"],
+  choices: [
+    {
+      label: "把肉票烧了，把书留下",
+      body: [
+        "你把十一张肉票烧了——过期的票换不了东西，留着只会被人拿去做文章。书你留下，抄完了他没抄完的那一半。",
+        "你抄完的那一年，你三十九岁。那是你最后一次系统地读书。",
+      ],
+      delta: { reason: 16, sin: 4, faith: -2 }, flags: ["抄完过一本书"],
+    },
+    {
+      label: "全部交公",
+      body: [
+        "你登记造册，把三样东西一起交了上去。教团给你记了一次“办事清楚”。",
+        "那本抄了一半的书被封进了档案柜。你后来想，他一辈子没抄完的那一半，大概也就到此为止了。",
+      ],
+      delta: { faith: 10, fame: 8, reason: -2, sin: 4 }, flags: ["交过遗物"],
+    },
+    {
+      label: "去查他为什么攒肉票",
+      body: [
+        "你查了三个月。他生前每周去一次镇上的黑市，用肉票换粮票，粮票再换成粮，粮送给一个村。",
+        "那个村是他年轻时监护过的区。村里的老人还记得“那个不太说话的教士”。",
+      ],
+      delta: { reason: 16, sin: 6, fame: 6 }, flags: ["查到过真相"],
+    },
+  ],
+});
+ev({
+  id: "m_faithcrisis", short: "动摇", title: "你开始算不清了",
+  era: [3, 4], weight: function (G) { return (G.reason >= 60) ? 22 : 8; },
+  body: [
+    "你在同一年里遇到了三件事：一个照教法办了却害死人的案子、一个照教法办了好事的案子、一个无论怎么办都会害死人的案子。",
+    "你开始做一种不属于教士的思考：教法到底是尺子，还是刀子。",
+    "你在启示会议上照常宣誓：已经努力实现监护区的秩序和繁荣。你念到“繁荣”两个字的时候，声音顿了一下。",
+  ],
+  delta: { reason: 16, faith: -12, life: -2 }, flags: ["动摇过"],
+  quote: "“教士只是知识的教师，而不是监护者。”",
+  choices: [
+    {
+      label: "把这个问题写下来，然后烧掉",
+      body: [
+        "你写了三页，写得很好，比你这辈子写过的任何一份文书都好。写完你把它烧了，灰埋进花盆。",
+        "此后你继续做教士，做得很熟练。熟练是一种很可靠的止痛药。",
+      ],
+      delta: { reason: 14, faith: 4, sin: 6 }, flags: ["烧过三页"],
+    },
+    {
+      label: "去问一个你信得过的人",
+      body: [
+        "你问了。对方听完之后说：这个问题，教皇出走前问过，后来教皇就走了。他说完就走了，没有再看你。",
+        "你回了家，把这个问题收了起来。你没有忘，只是把它放到了一个平时不去的地方。",
+      ],
+      delta: { reason: 16, faith: -4, sin: 6 }, flags: ["问过一个人"],
+    },
+    {
+      label: "把这个问题变成报告结尾的一句附注",
+      body: [
+        "你在年度报告结尾加了一句：建议在教法考中增加“案例判断”一科，以应对实践中教法条文与实际情形不符的情况。",
+        "这句附注被上级批了两个字：往后放。这份报告进了档案柜，躺了二十年。",
+      ],
+      delta: { reason: 12, faith: 6, fame: 4 }, flags: ["写过附注"],
+    },
+  ],
+});
+ev({
+  id: "m_aftereffect", short: "后遗症", title: "怪病的后遗症",
+  era: [3, 4], weight: function (G) { return has(G.flags, "怪病幸存") ? 24 : 8; },
+  body: [
+    "玉米事件过去很多年了。当年得过怪病的人，一部分留下后遗症：腿肿、眼花、记不住事。",
+    "你也留下了一点。你看不清远处的字，也记不住新认识的人名。",
+    "中央农学院后来研究出了化肥与魔法促农技术，开始在全国推广。推广的文件上说：从此不再有怪病。你看着那行字，觉得它说得也对。",
+  ],
+  delta: { life: -6, reason: 8, fame: 2 }, flags: ["后遗症"],
+  quote: "“第八圣人此后专注于化肥与魔法促农技术的研究和普及。”",
+});
+ev({
+  id: "m_recommend", short: "举荐", title: "监理会的举荐名单",
+  era: [3, 4], weight: function (G) {
+    return (G.fame >= 30 || has(G.flags, "技术官僚苗子") || has(G.flags, "可靠")) ? 26 : 10;
+  },
+  body: [
+    "监理会每年要向中央举荐一批教士：会算的进技术官僚，会打的进教士团，会写卷宗的进裁判口。三类人各有各的前程，也各有各的死法。",
+    "名单上有四个格子，你被问愿意填哪一个。问的人是三柱手下的暗线——他不说自己是三柱的人，但你认得那种说话的节奏。",
+    "他说：填哪个都可以，但填下去就不能改。教团国最忌讳的就是改。",
+  ],
+  delta: { fame: 8, faith: 4, reason: 6 }, flags: ["被举荐"],
+  quote: "“我们有很多共同点。你我可以合作。”",
+  choices: [
+    {
+      label: "填“技术”：进监理会的测算口",
+      body: [
+        "你进了测算口。此后你的笔决定很多监护区的排名，你也在很多份死亡报告上签过“数据待核”。",
+        "这条路上的人活得比较久，因为他们算得准，也因为他们从来不写死因。",
+      ],
+      delta: { fame: 16, reason: 14, faith: 4, sin: 8 }, flags: ["技术官僚苗子", "测算口"],
+    },
+    {
+      label: "填“工事”：进农学院与工程口",
+      body: [
+        "你被送进中央农学院的工程口，跟着修渠、修仓、修安置房。你修的东西都很实在，能装粮，也能装人。",
+        "第八圣人一门的人带过你几次。他们说话很少提信仰，只提效率。你后来发现，这种人也需要信仰——他们信的是数字能救人。",
+      ],
+      delta: { reason: 16, fame: 10, faith: 2, life: 4 }, flags: ["农学院", "工程口"],
+    },
+    {
+      label: "填“隐秘”：进裁判口的附册",
+      body: [
+        "你被记入了一本没有编号的附册。附册上的人不发制服、不领津贴，只在自己那一栏里留下一个记号。",
+        "给你登记的人说了一句：附册上的人，要么一辈子不出现，要么只出现一次。",
+      ],
+      delta: { sin: 16, fame: 6, reason: 10, faith: 4, life: -4 }, flags: ["三柱的暗线", "附册"],
+    },
+  ],
+});
+ev({
+  id: "m_idol", short: "浮空岛", title: "你看见了浮空岛",
+  era: [3, 4], weight: 14,
+  body: [
+    "元一修建了属于自己的浮空岛，专心修炼。教团面临危机时，他常在浮空岛上投影出自己的巨大幻象来鼓舞士气，营造自己“隐秘而伟大的圣人”的形象。",
+    "你在一次大典上看见了那个投影。金光普照，声音从天上下来，说了一些很温和的话。全场跪下的时候，你也跪下了。",
+    "跪着的时候你在想一件事：那上面其实一直都是空的。这件事没有人告诉你，是你自己算出来的——因为那个投影从来不投影它脚下的影子。",
+  ],
+  delta: { reason: 14, faith: 6, fame: 4 }, flags: ["见过投影"],
+  quote: "“元一在迎合教团国宗教民主的外衣之下，渴望建立为自己修行服务的极权国家。”",
+  choices: [
+    {
+      label: "把这个发现告诉身边的人",
+      body: [
+        "你说了。对方看了你很久，说：你看得太细了。此后他见了你都绕开。",
+        "这句话从这一年起跟着你。你没觉得它在骂你，可它确实让你在体制里更孤单了。",
+      ],
+      delta: { reason: 14, fame: -6, sin: 6 }, flags: ["看得太细"],
+    },
+    {
+      label: "什么也不说，把这件事当成自己的",
+      body: [
+        "你把这个发现收着，像收着一枚护身符。此后你在很多场合都低头，但心里有一块地方是不跪的。",
+        "这个国家能拿走的你的东西很多，但这一块它拿不走。这是你唯一会拿出来自我安慰的东西。",
+      ],
+      delta: { reason: 16, faith: -6, sin: 4 }, flags: ["心里有一块不跪"],
+    },
+    {
+      label: "把这个发现写成政绩，报上去",
+      body: [
+        "你写了一份《关于神迹显现方式的技术观察》，说明投影的构造与光影规律，并建议教团在宣传上注意“影子的处理”。",
+        "这份报告被三柱的人看到了。半年后你被调进了一个专管“神迹技术”的部门。",
+      ],
+      delta: { reason: 12, fame: 14, sin: 10, faith: 6 }, flags: ["神迹技术", "三柱的暗线"],
+    },
+  ],
+});
+
+/* ══════ 残年 ══════ */
+
+ev({
+  id: "o_elder", short: "老教士", title: "你成了这个地方的老人",
+  era: [4], weight: 26,
+  body: [
+    "你在同一个监护区待了很多年。现在的教士是你当年送进教养院的孩子。",
+    "他来看你，问你当年是怎么做报表的。你说：把荒掉的地算进播种面积。他笑了，说现在改数字的方法比那时候高明。",
+    "他走的时候，你叫住他，想说点什么。最后你说的是：别生病。",
+  ],
+  delta: { fame: 8, reason: 6, life: -4 }, flags: ["老教士"],
+});
+ev({
+  id: "o_gas", short: "毒气", title: "面罩下的那道玻璃",
+  era: [4], weight: function (G) { return has(G.flags, "圣战参与者") ? 26 : 10; },
+  body: [
+    "教团国的战略意图很清楚了：拿下走廊区，作为全面反攻帝国和进盟的跳板。从受害者变成侵略者。",
+    "你被返聘去做随军教法顾问。第一次行动是在一个孤立园区，毒气弹进去，教士们戴面罩进去清理残余。",
+    "面罩上有一道玻璃。你知道自己透过它看见了什么。后来教团把这段录像放给全国民众看，配的解说词是义人与天火。",
+  ],
+  delta: { sin: 18, reason: 6, life: -8 }, flags: ["见过毒气", "上过镜头"],
+  quote: "“为了向民众表演，不择手段。”",
+});
+ev({
+  id: "o_grave", short: "守墓", title: "北边传来教皇的死讯",
+  era: [4], weight: function (G) { return (has(G.flags, "追索教皇") || has(G.flags, "看过那张纸") || has(G.flags, "贴过一张纸")) ? 60 : 16; },
+  body: [
+    "教皇在抵抗中死去。她的追随者里有一个人活了下来，被希联的接应者带离，后来回到教团国，在她的受难处守着。",
+    "消息传到你的监护区时是夜里。你坐在没有点灯的教堂里。你想起来很多年前你贴在门后的那张纸，第二天不见了，钉子上留着一小块纸屑。",
+    "你忽然明白，那张纸是被人取走的，不是被风刮走的。",
+  ],
+  delta: { reason: 16, faith: -14, fame: -4 }, flags: ["教皇死讯"],
+  quote: "“陛下，您曾说过您想归隐，我也一样。我已经累了。”",
+  choices: [
+    {
+      label: "往北去，到受难处去",
+      body: [
+        "你上路了。三道关卡，两次被押回，第三次你走的是没有路的地方。",
+        "你到的时候是冬天。受难处有人守着，很年轻。他没有问你是谁，只递给你一杯热水。",
+      ],
+      delta: { reason: 18, faith: -16, fame: -10, life: -12, sin: 8 }, flags: ["到过受难处"],
+    },
+    {
+      label: "留在监护区，把教法的副本埋起来",
+      body: [
+        "你把教法、报表、账册各抄一份，装进陶罐，埋在你守了半辈子的教堂地基下。你不知道给谁留的。",
+        "此后十年你继续做教士。你开始在每个月的启示会议上少念一句经文。没有人发现。",
+      ],
+      delta: { reason: 14, faith: -8, sin: 10, life: -6 }, flags: ["埋下东西"],
+    },
+    {
+      label: "什么也不做",
+      body: [
+        "你照常开会，照常念经，照常在启示APP上点赞。你的考评这一年是“优”。",
+        "你把那张纸的事想起来过几次，每次都告诉自己：想也没有用。这句话你说得越来越顺。",
+      ],
+      delta: { faith: 10, reason: -12, sin: 6 }, flags: ["沉默到底"],
+    },
+  ],
+});
+ev({
+  id: "o_final", short: "终局", title: "轮到你被裁判的这一年",
+  era: [4], weight: function (G) { return G.age >= 48 || G.life <= 30 ? 120 : 30; },
+  req: function (G) { return G.turn >= 6; },
+  body: [
+    "裁判团终于翻到了你的档案。理由很简单：教团需要有人为这几年的事负责，而你还活着。",
+    "他们给你两条路：以“恶魔动摇”的名义受审，供出你认识的所有人，换取一句缓刑；或者按教法受审，由教法学家向民众解释你的案件经由与处刑理由。",
+    "室内的灯很亮。审你的人比你年轻很多，他念你的档案时一直看着纸，没有抬过头。",
+  ],
+  delta: { sin: 6 }, flags: ["被裁判"],
+  quote: "“少部分必须处理的教士可以用‘恶魔附体’等理由宣布他们被对抗诸神的力量腐蚀而审判。”",
+  choices: [
+    {
+      label: "供出所有人，换一条命",
+      body: [
+        "你写了三十二个名字。写完以后你在最下面加了一行：以上均为奉命行事，本人始终忠诚。",
+        "你被免了死罪，判为“精神治疗观察”，送去城郊的治疗所。你在那里活了七年。",
+      ],
+      delta: { sin: 30, fame: -10, reason: -14, life: 8 }, flags: ["供出所有人", "供出过所有人"],
+    },
+    {
+      label: "认罪，但一个字也不供",
+      body: [
+        "你说：我执行了教法，一次不多，一次不少。如果教法错了，那不是我的罪，是教法的罪。",
+        "教法学家们记录了你这句话。他们很欣赏这句话的文体，把它抄进了卷宗，然后判了石刑。",
+      ],
+      delta: { faith: 8, fame: 6, reason: 10, sin: -6 }, flags: ["开过城", "认过罪"],
+    },
+    {
+      label: "提出见一见第三圣人",
+      body: [
+        "你要求见三柱。你说你手里有他需要的知识——关于很多年前那个盒子，关于那条梦里不认识的河。",
+        "三天后你没有被带去受审，而是被带上一辆向北的车。车上有人对你说：从现在起，你的档案不存在了。",
+      ],
+      delta: { sin: 16, reason: 12, faith: -6, fame: -14, life: 4 }, flags: ["三柱的暗线", "请求见三柱"],
+    },
+  ],
+});
+
+ev({
+  id: "o_veteran", short: "老教士", title: "你成了这里的老人",
+  era: [4], weight: 28,
+  body: [
+    "你在同一个监护区待了很多年。现在的教士是你当年送进教生班的孩子。",
+    "他来看你，问你当年是怎么做报表的。你说：把荒掉的地也算进播种面积。他笑了，说现在改数字的方法比那时候高明。",
+    "他走的时候你叫住他，想说点什么。最后你说的是：别生病。",
+  ],
+  delta: { fame: 8, reason: 6, life: -4 }, flags: ["老教士"],
+  quote: "“勤勉可靠，宜再观察。”",
+  choices: [
+    {
+      label: "把真册子交给他",
+      body: [
+        "你把那本记了半辈子的真账给了他。他翻了三页，合上，说：这本东西我不能要，要了我就得当个好人。",
+        "他还是拿走了。三年后他因为“数据不实”被调职，那本册子下落不明。",
+      ],
+      delta: { reason: 14, sin: 6, faith: -2 }, flags: ["交出真册"],
+    },
+    {
+      label: "把真册子烧了",
+      body: [
+        "你在灶下一张一张烧，烧了两个钟头。烧到最后几页的时候你停了很久，然后一起烧了。",
+        "此后你再没有可以拿出来证明任何事的东西。你觉得轻了一些，也觉得空了一些。",
+      ],
+      delta: { reason: 8, life: 2, sin: 4 }, flags: ["烧过真册"],
+    },
+    {
+      label: "什么也不交，什么也不烧，留给他自己找",
+      body: [
+        "册子留在床板下面。你死之后他才找到，翻了一遍，然后按教团的规矩登记造册，交了上去。",
+        "他在登记表上写的是“前任教士私人笔记，无归档价值”。这样写，册子就留在了他自己手里。",
+      ],
+      delta: { reason: 12, sin: 4, fame: 4 }, flags: ["留在床板下"],
+    },
+  ],
+});
+ev({
+  id: "o_remaining", short: "余圣", title: "最后几位圣人",
+  era: [4], weight: function (G) { return has(G.flags, "见过圣人") || G.fame >= 45 ? 24 : 10; },
+  body: [
+    "十三圣人的班底已经很松散了：元一专注身体重构，第五圣人一度闭关拒绝出席任何活动，第十圣人执着于净化内部异端，第十二圣人四处探险常只能远程参会，第七圣人沉浸修经以致自己都信了。",
+    "有一位圣人到你这里来过一次。他没有仪仗，只带了一个人。他在你的教会堂里坐了一个下午，问你：你们这里的顺民，过得比十年前好还是差。",
+    "你说：数字上好了。他说：我问的不是数字。",
+  ],
+  delta: { reason: 14, faith: -4, fame: 8 }, flags: ["余圣问过"],
+  choices: [
+    {
+      label: "照实说：没有好",
+      body: [
+        "你说没有好，因为十年前的人还知道自己为什么活着，现在的人只知道数字。他听完没有说话，走的时候说了一句：你是少数还敢这么说话的人。",
+        "这句话没有保住你，但也没有害你。它只是让你在最后几年里觉得自己说过一句真话。",
+      ],
+      delta: { reason: 18, fame: 6, faith: -6, sin: 6 }, flags: ["说过真话"],
+    },
+    {
+      label: "照数字说：好了",
+      body: [
+        "你把报表上的三条念了一遍。他听完点了点头，说：你们这里的教士很称职。",
+        "他走之后，你的区当年多领了两成配额。这些配额让十四户人家在冬天多活了下来。你不确定自己那天是做对了还是做错了。",
+      ],
+      delta: { faith: 10, fame: 10, life: 4, sin: 6 }, flags: ["念过报表"],
+    },
+    {
+      label: "反问他：陛下呢",
+      body: [
+        "你问的是教皇。他看了你很久，说：这个问题，问的人比答的人多。",
+        "他起身走了。走到门口他回过头，说了一句：她还活着。你当时没听懂这句话是什么意思，很多年后才懂。",
+      ],
+      delta: { reason: 16, sin: 8, faith: -6 }, flags: ["问过陛下"],
+    },
+  ],
+});
+ev({
+  id: "o_face", short: "上镜", title: "教团要你去讲圣战",
+  era: [2, 3, 4], weight: function (G) { return has(G.flags, "圣战参与者") || has(G.flags, "见过毒气") ? 40 : 10; },
+  body: [
+    "教团需要有人替圣战作证。最好的人选是既上过前线、又还活着、又不会乱说话的那种。",
+    "宣传口的人找到你，说只要三场：一场在日光市的礼堂，一场在启示APP的直播，一场去新星镇。讲稿由他们写，你只需要念，念的时候要有一点感情。",
+    "第三场的地点在新星镇城门下。那里现在还挂着一些东西。",
+  ],
+  delta: { fame: 12, faith: 8, sin: 10, reason: -4 }, flags: ["被推上台"],
+  quote: "“民众把毒气比作天火，把戴面罩的教士比作义人。”",
+  choices: [
+    {
+      label: "三场都讲，讲得很有感情",
+      body: [
+        "你讲得很好。第三场结束的时候，台下有人喊你“义人”，掌声很整齐。教团把你的讲稿印成了小册子。",
+        "此后你在教团国内成了一个有名的人。你走在街上会有人让路，你的名字上了启示APP的热搜，前后一共挂了十一天。",
+      ],
+      delta: { fame: 22, faith: 12, sin: 16, reason: -8, life: 2 }, flags: ["上过镜头", "成了名"],
+    },
+    {
+      label: "只讲前两场，不去新星镇",
+      body: [
+        "你说你身体不行。宣传口的人很不高兴，但还是用了你的前两场。",
+        "第三场换了别人。那个人讲完之后三个月就病了。你至今不知道那是巧合还是别的什么。",
+      ],
+      delta: { fame: 10, reason: 10, sin: 6, faith: 4 }, flags: ["讲了两场"],
+    },
+    {
+      label: "讲，但把讲稿改了三个字",
+      body: [
+        "你把“歼灭”改成了“遇到”，把“武装分子”改成了“里面有武装的人”，把“我方无伤亡”改成了“我方伤亡不记入本稿”。",
+        "宣传口的人没有发现，或者说没有计较。这三处改动让那份讲稿在档案里留了下来，成为一份不那么工整的证据。",
+      ],
+      delta: { reason: 16, fame: 8, sin: 6, faith: -2 }, flags: ["改过讲稿"],
+    },
+  ],
+});
+ev({
+  id: "o_house", short: "安置", title: "最后一批安置房",
+  era: [3, 4], weight: function (G) { return has(G.flags, "见过安置房") ? 34 : 14; },
+  body: [
+    "日光市第二批顺民安置房之后还有第三批。第三批的房子更小，位置更远，条件更宽：无地、无业、无不良记录，三条里满足两条即可。",
+    "来登记的人排了很长的队。队伍里有你这样的老教士，也有在别处待不下去的顺民，还有几个明显是替人来排的。",
+    "登记表最后一栏写着：是否自愿放弃原监护区一切权益。",
+  ],
+  delta: { fame: 4, reason: 6, life: -2 }, flags: ["申请过安置房"],
+  quote: "“日光市第二批顺民安置房。”",
+  choices: [
+    {
+      label: "签，搬进去",
+      body: [
+        "你签了，交了原区的钥匙。新房很整齐，一排一排，跟兵一样。你的邻居换得很快，因为来这里的人大多没有地。",
+        "你在这里住到老。你的名字在教团的名册上从“教士”改成了“顺民”，改得很干净。",
+      ],
+      delta: { reason: 10, fame: -8, faith: -4, life: 6, sin: 4 }, flags: ["搬进安置房"],
+    },
+    {
+      label: "签，但不搬，把名额留给别人",
+      body: [
+        "你签了字，然后把名额转给了村里一户没有地的人家。教团不许转让，但审核的人是你旧日的学生。",
+        "那户人家搬进去那天，全村的顺民都去送。有人哭了。你没有去。",
+      ],
+      delta: { reason: 12, sin: 4, fame: 4, faith: 2 }, flags: ["让过名额"],
+    },
+    {
+      label: "不签，而且在表上写了一段话",
+      body: [
+        "你写的是：此表最后一条与教法“监护”条款相抵触，请中央明示。你写得很客气，签了真名。",
+        "表被退回来了，批复只有四个字：不予答复。此后你的档案里多了一行：对教法条文有异议。",
+      ],
+      delta: { reason: 16, fame: -6, faith: -6, sin: 6 }, flags: ["提过异议"],
+    },
+  ],
+});
+ev({
+  id: "o_remains", short: "遗骨", title: "受难处不让人去",
+  era: [4], weight: function (G) { return has(G.flags, "教皇死讯") || has(G.flags, "追索教皇") ? 30 : 12; },
+  body: [
+    "渊的受难处成了教团国内最敏感的一个地方。第九圣人一方的教士在附近设了岗，把去的人拦下来，说辞是“替魔女守墓，你们也是反人类的异端”。",
+    "有人夜里去过，被打了。有人在远处站着不动，也被打了。后来人们改成从更远的地方望一眼，再后来连望也不望了。",
+    "但你听说，还是有一个人每年会去一次。他去的时候不带任何东西，也不说话，站一会儿就走。",
+  ],
+  delta: { reason: 12, faith: -6, sin: 6 }, flags: ["知道受难处"],
+  quote: "“替魔女守墓，你们也是反人类的异端！”",
+  choices: [
+    {
+      label: "也去一次，站一会儿",
+      body: [
+        "你去了。你在岗哨看不到的位置站了半个钟头，什么也没说，什么也没带。",
+        "回来之后你被叫去问了一次话。你说你去那边看亲戚。他们没有证据，放了你。这件事你此后没再做过，但那半个钟头你一直记得。",
+      ],
+      delta: { reason: 16, sin: 10, faith: -8, fame: -4, life: -2 }, flags: ["到过受难处附近"],
+    },
+    {
+      label: "不去，但在自己的区里替她留一句话",
+      body: [
+        "你在启示会议的记录本里，每年多写一句“伟大的启示录国教皇因其信仰殉道于此”。写完之后那一页会被撕掉。",
+        "你写了七年，撕了七年。第八年你死了，那一页第一次留了下来，没人知道该拿它怎么办。",
+      ],
+      delta: { reason: 18, sin: 12, faith: -6 }, flags: ["写过那一句"],
+    },
+    {
+      label: "向监理会报告去受难处的人",
+      body: [
+        "你报了三个人。他们被带走之后，你领了一次奖励，并且被提升为“本区稳定工作负责人”。",
+        "这个职位你干了六年。第六年你发现，你自己也开始在夜里往东边看。你向东边看的那个方向，正好是受难处。",
+      ],
+      delta: { faith: 10, sin: 20, fame: 10, reason: -8 }, flags: ["报过守墓人"],
+    },
+  ],
+});
+ev({
+  id: "o_blackground", short: "黑魔法", title: "底牌被翻开了",
+  era: [4], weight: function (G) { return (G.age >= 55 || has(G.flags, "知道底牌")) ? 26 : 10; },
+  body: [
+    "帝国撕毁协议之后，教团国需要抵抗。以献祭为核心的黑魔法成了元一派对抗侵略的底牌。",
+    "第十一圣人提出以黑魔法千里之外咒杀帝国议会贵族：每杀一人需要牺牲上万祭品的生命来形成“灵魂链条”。会议上的表决是这样的：元一、二极、三柱、第九、第十一同意；第六观望；第七以记录工作为由不表态；第五、第八、补录第十反对。",
+    "你不在那间屋子里。但命令会沿着层级往下，一直到你这一层。",
+  ],
+  delta: { sin: 10, faith: -4, reason: 8 }, flags: ["底牌动员"],
+  quote: "“每杀一人都需要牺牲上万祭品的生命来形成‘灵魂链条’。”",
+  choices: [
+    {
+      label: "执行本区的征集",
+      body: [
+        "你负责把本区的名字报上去。你报的时候用了“自愿献祭”的表格，表格是中央发的，最后一栏要签本人名字。",
+        "有很多人签了。他们签的时候都很平静，有几个还问能不能替家里多留一份抚恤。你把表格收起来，一份一份核对了名字。",
+      ],
+      delta: { faith: 12, sin: 26, fame: 10, reason: -10 }, flags: ["征集过祭品", "献祭执行者", "祭品链条"],
+    },
+    {
+      label: "报零，理由是“本区无可动员人口”",
+      body: [
+        "你报了零，附了一份很厚的说明：本区青壮年已在前次动员中征尽，老弱不足。这个理由站得住。",
+        "邻近两个区报的数都比你多。你因此被记了一次“动员不力”。那一年另外两个区一共送走了一千四百人。",
+      ],
+      delta: { reason: 16, sin: 6, faith: -8, fame: -6 }, flags: ["报过零"],
+    },
+    {
+      label: "动员，但只报死刑犯和自愿者",
+      body: [
+        "你把名单压在最小的范围内：本区在押的、判了石刑的、以及明确自愿的。一共十九个人。",
+        "上面不满意，但没有驳回——因为补录第十圣人的方案本来就写着“先用死刑犯进行试验，小范围检验效果”。你这份名单后来被当成了他的方案在地方上的样本。",
+      ],
+      delta: { sin: 14, reason: 14, faith: 6, fame: 4 }, flags: ["小范围动员"],
+    },
+  ],
+});
+ev({
+  id: "o_witchhunt", short: "自保", title: "连你也开始被怀疑",
+  era: [4], weight: function (G) { return (G.sin >= 35) ? 28 : 12; },
+  body: [
+    "裁判团开始查老人。理由很实在：这些年的事总要有人负责，而老人最适合负责——他们做过最多的事，也最不容易闹。",
+    "你的档案被调走了。第二天，本区有三个教士被叫去谈话，其中两个谈的是你。",
+    "你那天在教会堂里坐了很久。你想明白一件事：在这个国家里，一个人一生做过的事，最后都会被读成两种东西：功劳，或者罪证。而读法由别人决定。",
+  ],
+  delta: { sin: 6, reason: 8, life: -3 }, flags: ["查过你"],
+  choices: [
+    {
+      label: "主动交一份自述，把能说的都说了",
+      body: [
+        "你写了三十二页，从十五岁那年说起，写到今年。你写得很整齐，每一段都按年份排。",
+        "裁判团收了你的自述，没有回话。半年后你被通知“不予追究”。你活了下来，代价是你的三十二页从此刻在档案里。",
+      ],
+      delta: { reason: 12, faith: 8, fame: -2, sin: 4 }, flags: ["交过自述"],
+    },
+    {
+      label: "找人替你说一句话",
+      body: [
+        "你找了当年那个你替他说过话的女教士。她已经是监理会的成员了。",
+        "她替你在会上说了三分钟。你的名字从名单上划掉了，她的名字进了另一个名单。",
+      ],
+      delta: { fame: 8, sin: 10, reason: 6 }, flags: ["有人替你说过话"],
+    },
+    {
+      label: "什么也不做，等",
+      body: [
+        "你等了一个半月。这一个半月里你照常上值、照常念经、照常写报表。你没有做任何事。",
+        "查你的事最后不了了之——因为查你的那两个人自己出了事。教团国的很多案子都是这样结的。",
+      ],
+      delta: { reason: 10, life: 2, sin: 4 }, flags: ["等到结案"],
+    },
+  ],
+});
+ev({
+  id: "o_heir", short: "传人", title: "你带过一个孩子",
+  era: [3, 4], weight: 32,
+  body: [
+    "你这一生带过一个孩子。他八岁那年父母死在怪病潮里，你把他记成“教生预备”，让他留在教团学校里。",
+    "现在他三十五岁了，是这个区的教士。他办事很稳，比你稳。他做的报表比你漂亮，他念的经比你熟。",
+    "他来找你，问你一句话：老师，我们做的这些事，到底对不对。",
+  ],
+  delta: { reason: 12, fame: 6 }, flags: ["有传人"],
+  choices: [
+    {
+      label: "说：不对，但没有别的做法",
+      body: [
+        "你说完他就走了，没有回答。第二天他照常上值，报表做得比以前更漂亮。",
+        "十年后他做了一件你不敢做的事：把整个区的真账交了出去，然后自己去了精神治疗所。",
+      ],
+      delta: { reason: 16, sin: 6, faith: -6 }, flags: ["说过不对"],
+    },
+    {
+      label: "说：对，教团就是这么教的",
+      body: [
+        "他听完点头，说：我明白了。此后他再没有问过你类似的话。",
+        "他后来升得很快，也很干净。他的档案里到最后都没有一行污点，跟你不一样。",
+      ],
+      delta: { faith: 12, fame: 8, reason: -6, sin: 6 }, flags: ["教过他"],
+    },
+    {
+      label: "说：这个问题问出来，就别再往下问了",
+      body: [
+        "你说了这句。他坐了很久，然后说：老师，你这句话我等了二十年。",
+        "他把这句话记在了自己的本子上，前面加了一行：某年某月，我老师说的。这本子后来被抄走，抄走的记录表上写着“私人笔记，无归档价值”。",
+      ],
+      delta: { reason: 14, sin: 4, faith: -2 }, flags: ["说过别问"],
+    },
+  ],
+});
+ev({
+  id: "o_questions", short: "审判", title: "轮到你被裁判的这一年",
+  era: [4], weight: function (G) { return G.age >= 50 || G.life <= 30 ? 120 : 30; },
+  req: function (G) { return G.turn >= 6; },
+  body: [
+    "裁判团终于翻到了你的档案。理由很简单：教团需要有人为这几年的事负责，而你还活着。",
+    "他们给你两条路：以“恶魔动摇”的名义受审，供出你认识的所有人，换取一句缓刑；或者按教法受审，由教法学家向民众解释你的案件经由与处刑理由。",
+    "室内的灯很亮。审你的人比你年轻很多，他念你的档案时一直看着纸，没有抬过头。",
+  ],
+  delta: { sin: 6 }, flags: ["被裁判"],
+  quote: "“少部分必须处理的教士可以用‘恶魔附体’等理由宣布他们被对抗诸神的力量腐蚀而审判。”",
+  choices: [
+    {
+      label: "供出所有人，换一条命",
+      body: [
+        "你写了三十二个名字。写完以后你在最下面加了一行：以上均为奉命行事，本人始终忠诚。",
+        "你被免了死罪，判为“精神治疗观察”，送去城郊的治疗所。你在那里活了七年。",
+      ],
+      delta: { sin: 30, fame: -10, reason: -14, life: 8 }, flags: ["供出所有人"],
+      end: "lifeterm",
+    },
+    {
+      label: "认罪，但一个字也不供",
+      body: [
+        "你说：我执行了教法，一次不多，一次不少。如果教法错了，那不是我的罪，是教法的罪。",
+        "教法学家们记录了你这句话。他们很欣赏这句话的文体，把它抄进了卷宗，然后判了石刑。",
+      ],
+      delta: { faith: 8, fame: 6, reason: 10, sin: -6 }, flags: ["开过城"],
+      end: "stoned",
+    },
+    {
+      label: "提出见一见第三圣人",
+      body: [
+        "你要求见三柱。你说你手里有他需要的知识——关于很多年前那个盒子，关于那条梦里不认识的河。",
+        "三天后你没有被带去受审，而是被带上一辆向北的车。车上有人对你说：从现在起，你的档案不存在了。",
+      ],
+      delta: { sin: 16, reason: 12, faith: -6, fame: -14, life: 4 }, flags: ["三柱的暗线"],
+      end: "anecho",
+    },
+  ],
+});
+ev({
+  id: "o_gas2", short: "义人", title: "面罩下的那道玻璃",
+  era: [4], weight: function (G) { return has(G.flags, "圣战参与者") || has(G.flags, "见过毒气") ? 28 : 10; },
+  body: [
+    "教团国的战略意图已经很清楚了：拿下走廊区，作为全面反攻帝国和进盟的跳板——“从受害者变成侵略者”。",
+    "你被返聘去做随军教法顾问。第一次行动是在一个孤立园区：毒气弹进去，教士们戴着面罩进去清理残余。",
+    "面罩上有一道玻璃。你知道自己透过它看见了什么。后来教团把这段录像放给全国民众看，配的解说词是义人与天火。",
+  ],
+  delta: { sin: 18, reason: 6, life: -8 }, flags: ["见过毒气"],
+  quote: "“为了向民众表演，不择手段。”",
+  choices: [
+    {
+      label: "在报告里写实情",
+      body: [
+        "你写了现场记录，包括里面有多少人、其中多少没有武器、面罩下的那些人说的最后一句话是什么。",
+        "这份记录被列为“不宜公开”，封进了档案柜。写它的人被记了一次“措辞不当”。",
+      ],
+      delta: { reason: 14, sin: 6, faith: -4, fame: -4 }, flags: ["写过实情"],
+    },
+    {
+      label: "按宣传口径写",
+      body: [
+        "你写的是“歼灭渎神武装分子若干，我方无伤亡，民众反应良好”。这份稿子被用在了启示APP的推送里。",
+        "推送发出当天，你的区有七百多人点了赞。你也在其中。",
+      ],
+      delta: { faith: 10, fame: 12, sin: 16, reason: -8 }, flags: ["写过口径"],
+    },
+    {
+      label: "拒绝再随军",
+      body: [
+        "你以年老为由请退。上级批了，同时把你的名字从“可咨询教士”名单上划掉。",
+        "此后你在这个国家里变成了一个没有什么用的人。这一年你睡得比以前好，也比以前短。",
+      ],
+      delta: { reason: 12, life: -2, fame: -8, sin: 4, faith: -6 }, flags: ["请退过"],
+    },
+  ],
+});
+ev({
+  id: "o_pilate", short: "教法学家", title: "最后一次公开处刑",
+  era: [4], weight: function (G) { return has(G.flags, "教法专家") || has(G.flags, "抄过卷宗") ? 26 : 14; },
+  body: [
+    "你被请去主持一次公开处刑。教法体系最讲究的地方就在这里：公开处刑要在武装教士团监督下实施，并由教法学家向民众解释一切公开处刑的案件经由与处刑理由，以教育民众。",
+    "你念完了案件经由。念到“处刑理由”的时候，你看见被告抬起了头。她看着你，没有任何表情。",
+    "你手里的卷宗只有一页，但那一页你念了很久。",
+  ],
+  delta: { faith: 6, sin: 10, fame: 8, reason: 4 }, flags: ["主持过处刑"],
+  quote: "“并由教法学家向民众解释一切公开处刑的案件经由和处刑理由来教育民众。”",
+  choices: [
+    {
+      label: "把理由念完，一句不改",
+      body: [
+        "你念完了。武装教士团监督实施，民众参与，程序完备。这是你一生里最合乎教法的一次执法。",
+        "行刑之后你回到教会堂，把卷宗归档。你那天写卷宗的字特别工整。",
+      ],
+      delta: { faith: 14, sin: 14, fame: 10, reason: -6 }, flags: ["念完过理由"],
+    },
+    {
+      label: "在理由里说一句“她有两个孩子”",
+      body: [
+        "你加了一句。台下没有反应，但石头落下的速度慢了一些。这个“慢”救不了她，只是让她少受了一会儿罪。",
+        "教团事后评估你“情绪化”。你被取消了主持公开处刑的资格。这是你退休前收到的最后一份评价。",
+      ],
+      delta: { reason: 14, faith: -6, fame: -4, sin: 6 }, flags: ["加过一句"],
+    },
+    {
+      label: "当场辞职，把卷宗合上",
+      body: [
+        "你把卷宗合上，放在台上，走了。武装教士团自己念完了理由，程序照样走完了。",
+        "你没有被追究重罪，因为教法上没有“教法学家辞职”这一条。你只是从此不再被叫去。你在家里活了十一年，种了两畦菜。",
+      ],
+      delta: { reason: 18, faith: -12, fame: -12, sin: 4, life: 8 }, flags: ["辞过职"],
+    },
+  ],
+});
+ev({
+  id: "o_saintdead", short: "圣人死", title: "一位圣人死了",
+  era: [4], weight: 20,
+  body: [
+    "消息传得很慢。一位圣人战死了。教团对外说的是“蒙诸神召唤”，对内说的是“编号需要补录”。",
+    "同一天，你在启示会议上领到一份新的教典讲义，里面多了一段：灵魂的归处有三种，遵循教法者通往极乐天，违背者需受神罚，悖逆者死后必通坏恶天，唯承受“灵毁”才能彻底毁灭自己的灵魂。",
+    "你念到“灵毁”两个字的时候，台下有个人小声问旁边的人：那是什么。旁边的人说：不知道，反正不是好地方。",
+  ],
+  delta: { faith: 8, reason: 6, sin: 4 }, flags: ["见过彼岸启示"],
+  quote: "“悖逆者唯有承受‘灵毁’才能彻底毁灭自己的灵魂。”",
+  choices: [
+    {
+      label: "把这段讲透，讲到没人再问",
+      body: [
+        "你讲了三场，把极乐天、坏恶天、灵毁讲得很清楚。你的区从此再没有人问这类问题。",
+        "你也再没有在夜里想过这些词。你把它们当作工具收进了工具箱，用的时候拿出来，不用的时候锁上。",
+      ],
+      delta: { faith: 14, fame: 10, reason: -6, sin: 6 }, flags: ["讲过灵毁"],
+    },
+    {
+      label: "照本念完，不解释",
+      body: [
+        "你念完了，合上讲义，说今天就到这里。有人还想问，你摆摆手。",
+        "你不解释，是因为你自己也答不上来。这一点你从来没有告诉过任何人。",
+      ],
+      delta: { reason: 12, faith: 4, sin: 4 }, flags: ["不解释"],
+    },
+    {
+      label: "私下查这一段是谁写的",
+      body: [
+        "你查到这段是元一独揽大权之后重修教法时加进去的，注释里提到“日后教团裁判所的理论基础”。",
+        "你明白了：这不是关于死后的说法，这是关于活人的工具。你合上资料，此后照本念经，念得比谁都熟。",
+      ],
+      delta: { reason: 18, sin: 8, faith: -4 }, flags: ["查过教法修订"],
+    },
+  ],
+});
+ev({
+  id: "o_capital", short: "入城", title: "抵抗联盟进了日光市",
+  era: [4], weight: function (G) { return G.age >= 58 ? 24 : 6; },
+  body: [
+    "希联的国际纵队与教团国内部的反对派共同组成了抵抗联盟。他们打进日光市的时候，元一叹道：第十若在，怎会如此。",
+    "消息传到你的区，隔了六天。这六天里，本区的教士团开了三次会，主题只有一个：我们算什么。",
+    "第七天，有人来通知你去开会。会上有人提议抵抗，有人提议投降，还有人提议先把档案烧掉。",
+  ],
+  delta: { reason: 10, sin: 6, life: -2 }, flags: ["变局"],
+  quote: "“第十若在，怎会如此！”",
+  choices: [
+    {
+      label: "提议烧档案",
+      body: [
+        "你说烧。理由是：档案里写的都是别人做过的事，烧掉对大家都好。会开了半夜，最后决定烧一半、留一半。",
+        "你负责烧。你烧了三个钟头，烧完之后把没烧的那一半——包括你自己的档案——交了出去。",
+      ],
+      delta: { sin: 14, reason: 12, fame: 4 }, flags: ["烧过档案"],
+    },
+    {
+      label: "提议开城，把教团的粮仓交出去",
+      body: [
+        "你说别打了，把粮仓和账册一起交给进城的人，能保住这个区的人。有人骂你叛徒，有人没说话。",
+        "最后按你说的办了。抵抗联盟的人进了区，第一件事是清点粮仓。第二件事是问你：账册是真的还是假的。你说：真的是真的，假的是假的。",
+      ],
+      delta: { reason: 16, sin: 8, faith: -8, fame: 6, life: 2 }, flags: ["开过城"],
+    },
+    {
+      label: "什么也不提议，回家等",
+      body: [
+        "你回家了，把门关上，把教法、账册、那本抄了一半的书一起收进箱子里。",
+        "你在家等了十一天。第十一天有人敲门，是抵抗联盟的人来登记教士。你开了门，报了名字，然后被登记为“留用”。",
+      ],
+      delta: { reason: 10, life: 4, sin: 4, fame: -2 }, flags: ["被留用"],
+    },
+  ],
+});
+ev({
+  id: "o_body", short: "重构", title: "最后一次身体重构",
+  era: [3, 4], weight: function (G) { return (has(G.flags, "延寿份额") || has(G.flags, "编外圣人") || G.reason >= 55) ? 38 : 12; },
+  body: [
+    "完人会的路走到底，就是身体重构。元一做到了“全身致密化”，第五圣人做到了宝石化，第十一圣人另开一条路，二极靠灯里的魂灵活着。",
+    "你手上的资源只够一次。做这一次，你能多活二十年，代价是你会失去某一样你现在还在意的东西——具体是哪一样，要做了才知道。",
+    "给你做手术的老者说了一句很实在的话：你要是舍不得，就别做。舍不得的人做完之后都不太好。",
+  ],
+  delta: { life: 6, reason: 8, sin: 8, faith: -4 }, flags: ["重构征询"],
+  quote: "“伟大的元一圣人已经将全身致密化，这可是神才做到的事。”",
+  choices: [
+    {
+      label: "做，多活二十年",
+      body: [
+        "做完之后你多活了很多年，身体很硬，不太会累，也不太会疼。你失去的那样东西是：你能记住人脸，但记不住人脸后面的人。",
+        "你在最后这些年里见过很多人，他们对你都很好。你认得他们的脸，一个也想不起他们是谁。",
+      ],
+      delta: { life: 22, reason: -12, sin: 12, faith: 6, fame: 6 }, flags: ["重构之身", "编外圣人"],
+    },
+    {
+      label: "不做，把资源留给传人",
+      body: [
+        "你把份额给了他。他说不敢要。你说：我不是给你的，我是给这个区的，你只是刚好在。",
+        "他多活了三十年，办了很多你不肯办的事。你死的时候他还年轻，是你出席了他的追悼会——他死在你前面。",
+      ],
+      delta: { reason: 16, life: -4, sin: 4, fame: 4 }, flags: ["让过份额"],
+    },
+    {
+      label: "做了，但要求把流程记下来留档",
+      body: [
+        "你说要做可以，但要把流程、失败率和副作用写成文件存进教会堂。他们说这不合规矩——这类知识有秘密等级。",
+        "最后你只写成了一份很薄的册子，藏在教堂地基下。你死之后，有人挖出来过，看了两眼，又埋回去了。",
+      ],
+      delta: { life: 18, reason: 10, sin: 14, faith: -6 }, flags: ["重构之身", "埋过册子"],
+    },
+  ],
+});
+
+/* ── 四·二、结局池 ── */
+
+const ENDINGS = [
+  {
+    id: "sacrifice", name: "祭品", rank: "常见 · 你成了一个数字",
+    body: [
+      "献祭的表格是中央发的，最后一栏要签本人名字。你签了。",
+      "签的时候办差的人跟你解释了一遍程序：先登记、再集中、再宣誓、最后成链。他说得很温和，还问你要不要给家里留一封信。",
+      "你说不用。因为教团给的抚恤会替你说话，而你的字不好看。",
+      "你成了那条灵魂链条上的一环。教团用它杀死了几个远方的人。很多年后，有人在纪念名单上找你的名字，没有找到——名单上只写了总数。",
+    ],
+    need: function (G) { return has(G.flags, "祭品链条"); },
+    prio: 60,
+    rare: true,
+  },
+  {
+    id: "donor", name: "圣人的一部分", rank: "隐藏 · 你被用掉了，用得很彻底",
+    body: [
+      "重构之身最后不是给你用的。教团把你的身体收了回去，理由是“此身已属教团资产”。",
+      "你的皮、你的骨、你的灵能回路被分成了七份，进了七个人的身体。其中一份进了元一的浮空岛。",
+      "你死在床上，意识清醒到最后。你知道自己被拆开的时候，被拆得很专业，一点都没有浪费。",
+      "你成了别人长寿的一部分。没有人会在史书上写这件事，因为史书上也写不下这么多名字。",
+    ],
+    rare: true,
+    need: function (G) { return has(G.flags, "重构之身"); },
+    prio: 50,
+  },
+  {
+    id: "numbered", name: "第十四个编号", rank: "传说 · 千分之一的路",
+    body: [
+      "编号空出来的时候，你正好在场。你接受了它，成为十三圣人之外的一个补充编号。",
+      "此后很多年里，你学会了在会议上闭嘴，学会了在需要的时候动武，学会了把自己的秘密分成三份埋在三个地方。你没有成为神，你成了一个知道太多、但不能生病的人。",
+      "教团国的官方史书上，你的名字排在一个编号后面。顺民们不会记得那个名字，他们只记得每个月月初的启示会议上，有人念过一串很好看的数字。",
+    ],
+    rare: true,
+    need: function (G) { return has(G.flags, "补录圣人") || has(G.flags, "编号持有者"); },
+    prio: 70,
+  },
+  {
+    id: "possessed", name: "神降之地", rank: "传说 · 你成了那个地方",
+    body: [
+      "三柱毕生追求与神对话。他说过：登神不过是对神的亵渎，神只可感受，不可达到。他还说过：然而，神可以通过降临接触世界。",
+      "你恰好站在了那个位置上。神降的那一夜没有人记录，因为能记录的人都不在了。",
+      "事后教团清点现场，找到了你的衣服、你的教法、和一小块不属于任何已知物质的结晶。你的身体没有找到。",
+      "三柱亲自来看了那块结晶。他在那里坐了一天一夜，然后下令把整件事列为最高秘密等级，并在神秘学的博物馆里为它留了一个空柜子。",
+    ],
+    rare: true,
+    need: function (G) { return has(G.flags, "神迹技术") || has(G.flags, "神眷之疑") || has(G.flags, "善于思考"); },
+    prio: 45,
+  },
+  {
+    id: "delivered", name: "刽子手", rank: "稀有 · 他替你背了名，你替他干完了活",
+    body: [
+      "补录第十圣人监督献祭试验，确认有效后要第十一圣人退出，由他全程负责，因而替代第十一圣人担负了“刽子手”的骂名。",
+      "你没有那样的位置，你只是地方上的一双手：核对名字、发放表格、安排集中、宣读抚恤标准。",
+      "战争结束之后，教团需要一个可公开的解释。他们找到了你——一个地方教士，级别够低，行为够具体，名字够陌生。",
+      "你被写进了公告里，成了那个“执行者”。这大概是你在教团国唯一一次被写进历史。",
+    ],
+    rare: true,
+    need: function (G) { return has(G.flags, "献祭执行者"); },
+    prio: 55,
+  },
+  {
+    id: "openfire", name: "沙地里的两棵树", rank: "常见 · 你没有下跪",
+    body: [
+      "你被打成“恶魔动摇”，按教法受审，由教法学家向民众解释你的案件经由与处刑理由。",
+      "行刑前给了你一次机会：跪下，说一句“我错了”。你没有跪。",
+      "你只说了一句：我执行了教法，一次不多，一次不少。教法学家把这句话记了下来，说这句话的文体很好。",
+      "石头落下来的时候，人群里有人喊了一声“教育目的达成”。那是教团要求的句子，喊的人喊得很熟。",
+    ],
+    need: function (G) { return has(G.flags, "硬骨头") || has(G.flags, "开过城"); },
+    prio: 58,
+    rare: true,
+  },
+  {
+    id: "cell", name: "不存在的卷宗", rank: "隐藏 · 你从名册上被擦掉了",
+    body: [
+      "你的名字没有进任何一份死刑名单，你的档案没有被注销，你的家属没有被通知。教团只是把你从名册上取掉了。",
+      "执行的人是教团里最干净的一批人——他们不写报告，不留签字，不用圣言体。他们只是让一个人不再出现在任何统计里。",
+      "多年之后，你在本区的统计数字上仍然是一个“在册教士”，每年还有一份配给。这是教团国最体面的一种消失。",
+    ],
+    rare: true,
+    need: function (G) { return has(G.flags, "圣裁教士") || has(G.flags, "特务集团"); },
+    prio: 52,
+  },
+  {
+    id: "erasure_exe", name: "记忆工人", rank: "隐藏 · 你专门替人忘记",
+    body: [
+      "记忆抹除是教团的常规刑罚之一，也是对教团自身最有用的一门手艺。",
+      "你成了这门手艺的熟练工：抹掉谁、抹到什么程度、留下哪些“干净的记忆”，教法上都有细则。",
+      "你替两千多人做过这种事。你发现一个规律：被抹掉的人醒来后往往更忠诚，因为忠诚是最好写的一种记忆。",
+      "你老了以后开始担心一件事：你替人抹掉的那些记忆里，有没有一部分是你自己的。这个问题你不敢查，因为查了就得抹。",
+    ],
+    rare: true,
+    need: function (G) { return has(G.flags, "记忆手艺") || has(G.flags, "笔很干净") || has(G.flags, "写过处刑卷宗"); },
+    prio: 48,
+  },
+  {
+    id: "variant", name: "数字不符", rank: "常见 · 你被算错了",
+    body: [
+      "中央的终端每天吐出一张单子，单子上的数字比现实准，只是它不知道山坡上那年冻过、张家死了儿子。",
+      "你这一生的所有数字最后都被汇总进了一次大核算。核算结果：本区历年上报与实际相差四成一，方向为少报，性质为“系统性规避指标”。",
+      "你没有申辩的机会，因为申辩也是要填表的，而表格的算法与核算的算法是同一套。",
+      "处理结果是撤职、降级、退回原籍。你在回原籍的路上算了一笔账：四成一，这个数你算了一辈子。",
+    ],
+    need: function (G) { return has(G.flags, "交过自述") || has(G.flags, "报表苗子") || has(G.flags, "砸过终端"); },
+    prio: 42,
+    rare: true,
+  },
+  {
+    id: "stalker", name: "影子", rank: "稀有 · 你没有追随她，你只是没有离开",
+    body: [
+      "教皇出走时带走了第四圣人舜与第十三圣人昭，荣光教士团随之而行，“在军中引发了不小的动荡”。",
+      "你没有走。你只是把她的那句话抄在一张纸上，贴在教会堂门后。第二天纸不见了，钉子上留着一小块纸屑。",
+      "此后三十年，你在这个国家里做了一个教士该做的一切，只是每年有一夜会向东边站一会儿。",
+      "你死之后，人们清理你的屋子，在墙缝里找到十一张纸，每一张抄的都是同一句话。没有人知道那是什么意思，所以它们被烧掉了。",
+    ],
+    rare: true,
+    need: function (G) { return has(G.flags, "教皇死讯") || has(G.flags, "到过受难处附近") || has(G.flags, "写过那一句"); },
+    prio: 46,
+  },
+  {
+    id: "mask", name: "蒙面", rank: "常见 · 没有人见过你的脸",
+    body: [
+      "中央教团的人员常常蒙面行动。你从成为教士的第三年开始蒙面，一直蒙到死。",
+      "蒙面的规矩很多：不得在夜间单独摘下、不得在同一间屋子摘两次、摘之前要确认没有镜子和反光。",
+      "你的一生里，见过你脸的人不超过二十个。其中一半是你的家人，一半已经死在别处。",
+      "你死的时候戴着面罩。来收殓的人掀开看了一眼，登记表上“面貌特征”一栏写的是：无记录。",
+    ],
+    need: function (G) { return has(G.flags, "蒙过面") || has(G.flags, "组织里人"); },
+    prio: 38,
+    rare: true,
+  },
+  {
+    id: "allocation", name: "最后一批安置房", rank: "常见 · 一排一排，跟兵一样",
+    body: [
+      "日光市第二批顺民安置房盖完之后，还有第三批。第三批的房子更小，位置更远，条件更宽。",
+      "你申请上了。你在那里住到老，房子很整齐，一排一排，跟兵一样。",
+      "邻居换得很快，因为来这里的人大多没有地。没有地的人在一个以粮食计算忠诚的国家里，是容易被划掉的一种人。",
+      "你死的时候，房子收回去，分给了下一户。这大概是教团国最公平的一件事。",
+    ],
+    need: function (G) { return has(G.flags, "申请过安置房"); },
+    prio: 34,
+    rare: true,
+  },
+  {
+    id: "estate_n", name: "分到土地的人", rank: "常见 · 你站在了被清算者的位置上",
+    body: [
+      "和平镇被夺回之后，帝国为贵族修建的“皇城”被烧作灰烬，土地分给了“急需地产的新兴神选教士们”，并号召全国民众来此夺取财富。",
+      "你也在其中。你领到了一块很好的地，位置比你家祖上的地好得多。",
+      "你在这块地上盖了房子，种了二十年的地。地里翻出过一次碎瓷片和一枚铜扣，你都扔了。",
+      "你从来没有问过这块地原来的主人是谁。教团说他们走了，不知道能否再回来。",
+    ],
+    need: function (G) { return has(G.flags, "分到过地") || has(G.flags, "编过开荒队"); },
+    prio: 34,
+    rare: true,
+  },
+  {
+    id: "voice", name: "教皇的左右手", rank: "稀有 · 舜与昭的位置上，本来可以有第三个人",
+    body: [
+      "第十三圣人昭是平民出身，由教皇亲手教授魔法，荣光教士团领袖，与舜并称教皇的“左右手”。",
+      "她没有告诉你她的过往，也没有人知道。你只知道她善刺杀、战功卓著、爱写论文，论文的题目是魔法心理治疗与义务魔法教育。",
+      "你最终没有站到那个位置上。你只是在她走的那一年，把一本《魔法公约》抄了一遍，抄本后来被抄走了。",
+      "很多年后，有人在渊的受难处看到过一个陌生人。没有人确认那是谁。你的名字从来没有出现在任何一份关于她的记录里。",
+    ],
+    rare: true,
+    need: function (G) { return has(G.flags, "听过她的名字") || has(G.flags, "有传人") || has(G.flags, "教过他"); },
+    prio: 36,
+  },
+  {
+    id: "shut", name: "不再说话", rank: "隐藏 · 拒绝再做一个教士",
+    body: [
+      "你辞掉了差事，回了家，种了两畦菜，养了四只鸡。教团没有再管你，因为你对这个国家已经没有任何用处。",
+      "你不念经了。有人来问你为什么不念，你说念了三十年，念不动了。",
+      "你在家里活了十一年。这十一年里你一句话也没说过关于教团的话——不是不敢，是不想说。",
+      "你死的时候，邻居们凑钱给你办了个很普通的葬礼。他们说，这个老头话很少，但从来不告人。",
+    ],
+    rare: true,
+    need: function (G) { return has(G.flags, "烧过真册") || has(G.flags, "辞过职"); },
+    prio: 30,
+  },
+  {
+    id: "master", name: "教团之剑的影子", rank: "稀有 · 他死的时候说了六个字",
+    body: [
+      "第十圣人衡接替退缩的第九圣人担任前锋，死于渊之手。他的遗言是：人各有志。我只是认为你错了，陛下。",
+      "你在他手下办过事。你学过他的一句话：教团要的不是你们听话，是你们算得准。",
+      "第十派失败之后，你被归入“第十派同情者”。你没有申辩——申辩需要材料，而材料早被清走了。",
+      "你死之前想起了他讲课时的半秒钟停顿。你终于明白那半秒是什么意思了。",
+    ],
+    rare: true,
+    need: function (G) { return has(G.flags, "第十派人") || has(G.flags, "第十派同情者") || has(G.flags, "有人替你说过话"); },
+    prio: 44,
+  },
+  {
+    id: "tomb", name: "守墓人", rank: "隐藏 · 走了最远的那条路",
+    body: [
+      "你到了受难处。那里只有一个人守着，很年轻，说话带着教团国的口音。他没有问你是谁，也没有问你信什么。",
+      "你把带在身上的那本教法埋在了碑的旁边——教法上写着监护，也写着教士对顺民的义务，你想这两样东西都该留个证据。",
+      "后来你替他守过几夜。再后来你死在那附近的一个村子里，村里的人只知道你是个话很少的老头，会写字，会修渠。",
+      "没有人知道你来过哪里，也没有人知道你走了多远。",
+    ],
+    rare: true,
+    need: function (G) { return has(G.flags, "到过受难处"); },
+    prio: 56,
+  },
+  {
+    id: "apex", name: "登神的一步", rank: "传说 · 你必须先不是人",
+    body: [
+      "教团把一切都给了你：修行资源、秘宝、知识、以及失败者的尸首。你的身体被一次次重构，直到它不再需要吃饭和睡觉。",
+      "你站在浮空岛上，俯瞰日光市。元一的投影在云上闪烁，民众在下面跪拜，认为那是神迹。",
+      "你忽然想起自己还是顺民的时候，教士来家里念经，父亲在门槛上坐着说：他们连牛都要管。",
+      "你现在管的东西比牛多得多。你已经不是人了，这正是代价，也正是条件。",
+    ],
+    rare: true,
+    need: function (G) { return has(G.flags, "编外圣人") || has(G.flags, "重构之身"); },
+    prio: 64,
+  },
+  {
+    id: "falsegod", name: "义人", rank: "常见 · 你成了宣传资料里的一张脸",
+    body: [
+      "面罩上的那道玻璃擦得很干净。教团把你的镜头剪进了宣传片，配的解说词是义人与天火，民众看完纷纷义愤填膺。",
+      "你在教团国内成了名。有人给你寄感谢信，有人请你去讲圣战。你在讲台上说得很好，从没有人问过你在园区里看见了什么。",
+      "你活得比很多人久。你在启示APP上的最后一条动态是一张面罩的照片，配文只有两个字：服从。",
+    ],
+    need: function (G) { return has(G.flags, "上过镜头") || has(G.flags, "圣战参与者"); },
+    prio: 40,
+    rare: true,
+  },
+  {
+    id: "saint", name: "册封圣人", rank: "稀有 · 元一在会议上提了你的名字",
+    body: [
+      "你的编号被写进教团的册子。仪式上二极主持，说了一句公道话；三柱在旁边看着你，眼神和看别人时没有区别。",
+      "你在极乐天的教义里成了一个被反复引用的例子：毕生遵从教法，忠诚，秩序，繁荣。",
+      "你在教团的档案里从此没有缺点。这件事的好处是你不再需要解释自己；坏处是你从此不能再有任何真实的部分。",
+    ],
+    need: function (G) { return has(G.flags, "献祭推行者") || has(G.flags, "编号持有者") || has(G.flags, "编外圣人"); },
+    prio: 66,
+    rare: true,
+  },
+  {
+    id: "follow", name: "随行者", rank: "分支 · 你选了那条已经没有人走的路",
+    body: [
+      "你没有跟着教皇走，你只是往同一个方向走。",
+      "劳动党的辖区里没有教堂，只有村社、夜校和一个装着真数字的柜子。你教孩子认字，替村里写申请，把教团国那边的账目一条条讲给愿意听的人。",
+      "你在那里活到很老。有人问起教团国，你只说：那地方的玉米长得很好。",
+      "你没有见过教皇，也不知道自己算不算她的人。你只是在她走过的那条路上，走了后半辈子。",
+    ],
+    need: function (G) { return has(G.flags, "北行"); },
+    prio: 62,
+    rare: true,
+  },
+  {
+    id: "holywar", name: "圣战的军锋", rank: "常见 · 军功与灰烬",
+    body: [
+      "你随圣训教士团过了边境。你参与了很多次四小时的封锁与搜查，见过城门上吊着的人，听过教法学家用圣言体向民众解释处刑理由。",
+      "你升得很快。你胸前挂的每一枚东西都可以在启示APP上查到来源。",
+      "你在壮年时死于一次越境的毒气行动。军报上你被写成“蒙诸神召唤”。你的母亲至死都以为你是去修渠的。",
+    ],
+    need: function (G) { return has(G.flags, "圣战参与者"); },
+    prio: 43,
+    rare: true,
+  },
+  {
+    id: "priest", name: "地方教士的一生", rank: "常见 · 教团要的那种人",
+    body: [
+      "你在同一个监护区做了几十年教士。你报过假的数字，批过真的鞭刑，也放过几次不该放的人。",
+      "你的教民对你的评价是：这个教士不算坏。这句话在教团国已经是很高的评价了。",
+      "你死在一张旧木床上。来送你的人不多。你的档案被归入长期卷宗，上面最后一行评语是：忠诚，能力中等，无重大过失。",
+    ],
+    need: function (G) { return has(G.flags, "教法专家") || has(G.flags, "长期可靠"); },
+    prio: 33,
+    rare: true,
+  },
+  {
+    id: "records", name: "档案司的一行字", rank: "常见 · 你被记下来了，然后就没了",
+    body: [
+      "你没有出名，也没有犯错。你在监护区做报表，在启示会议上念数字，在需要的时候点头。",
+      "你死后，档案司把你的卷宗归并，理由一栏写着“无社会影响”。卷宗被压缩成一行字，夹在几千行字之间。",
+      "数十年后，抵抗联盟或教团国的某一方打开了这些柜子。没有人翻到你那一行。",
+    ],
+    need: function (G) { return has(G.flags, "报表能手") || has(G.flags, "统计官僚") || has(G.flags, "写过战报"); },
+    prio: 33,
+    rare: true,
+  },
+  {
+    id: "flu", name: "怪病潮的数字", rank: "常见 · 营养失衡",
+    body: [
+      "怪病潮里，教团报到中央的数字是死亡一万余人。实际数字是数万。",
+      "你的名字被填在“登记造册”那一栏。你的尸体被埋在渠边，埋在当年那两个人的旁边。",
+      "后来希联拿玉米换农产品，止住了这场病。教团与希联做成了一笔交易，交易文书上没有你。",
+    ],
+    need: function (G) { return has(G.flags, "后遗症") || has(G.flags, "怪病幸存"); },
+    prio: 36,
+    rare: true,
+  },
+  {
+    id: "tribunal", name: "恶魔附体", rank: "常见 · 用那四个字就能解决",
+    body: [
+      "你被判为被对抗诸神的力量腐蚀。你被带走了。",
+      "罪名里没有你做过的事，只有你这个人。宗教裁判机构的判决不引用教法，只引用神学，因为教法条文太慢、太啰嗦、太讲证据。",
+      "你的家属没有受连带责任。这是教团给你的最后一点体面，也是它教你们所有人闭嘴的方式。",
+    ],
+    need: function (G) { return has(G.flags, "被裁判") || has(G.flags, "滥用恶魔叙事"); },
+    prio: 54,
+    rare: true,
+  },
+  {
+    id: "stoned", name: "石刑", rank: "常见 · 教法学家向民众解释了案件经由",
+    body: [
+      "武装教士团监督实施，教法学家向民众解释一切公开处刑的案件经由与处刑理由，这是教育，不是泄愤。",
+      "围观的人很多。石头从人群里飞过来，有些人是第一次来，有些人已经来过很多次。",
+      "教法学家在最后说：此人已受诸神审判。人群散去，各自回家吃饭。教团国最严苛的刑罚，至少他们自己宣称是用来教育人的。",
+    ],
+    quote: "“至少人家法律里也都在关心怎么建设国家。”",
+    need: function (G) { return has(G.flags, "硬骨头"); },
+    prio: 59,
+    rare: true,
+  },
+  {
+    id: "anecho", name: "不再在册", rank: "隐藏 · 你的档案不存在了",
+    body: [
+      "你被带上一辆向北的车。车上有人说：从现在起，你的档案不存在了。",
+      "三柱的人给你安排了新的名字、新的住处和新的工作。你成了他暗线网络里一个不出现在任何名册上的点。",
+      "你收集神秘知识，抄录禁传的文本，把神迹的机制一条条还原成能量。你终于知道神是什么，也终于知道知道这件事的人为什么必须消失。",
+      "教团国的档案里没有你。你的死不会被记录，也不会有人需要为它负责。",
+    ],
+    rare: true,
+  },
+  {
+    id: "lifeterm", name: "精神治疗观察", rank: "常见 · 状态改善，已恢复正常",
+    body: [
+      "你被送进城郊的治疗所，判定为“待改善”。治疗所按时发药，按时组织念经，按时填写评估表。",
+      "你在那里活了七年。第七年的评估表上写着：状态改善，已恢复正常。",
+      "正常之后你没有被放出去。走出去的人需要有人签字负责，而没有人愿意为你签字。",
+    ],
+    need: function (G) { return has(G.flags, "供出所有人") || has(G.flags, "精神治疗档案") || has(G.flags, "背弃"); },
+    prio: 52,
+    rare: true,
+  },
+  {
+    id: "burnout", name: "自焚者", rank: "稀有 · 教士荣誉的极端形态",
+    body: [
+      "你没有等到审判。你在启示会议进行到一半的时候站起来，往自己身上泼了灯油。",
+      "你只说了一句话：教法是我执行的，我替它结账。",
+      "会议中断了半天，官方通报写的是“突发性精神失常”。第二年，教团在全区推行了一轮精神健康普查。",
+    ],
+    need: function (G) { return has(G.flags, "自戕未遂"); },
+    prio: 72,
+    rare: true,
+  },
+  {
+    id: "river", name: "消失在河边", rank: "隐藏 · 从名册上滑落的人",
+    body: [
+      "有一天你走出教堂，往河边走。你身上带着教法、一颗糖和一小叠没写完的报表。",
+      "你顺着河走了很久。你不打算去希联，不打算去走廊区，也不打算回来。教团国很大，边地很多，总有一处是名册管不到的。",
+      "从此没有人再记录你的一生。这不是自由——这只是不再被记录。",
+    ],
+    need: function (G) { return has(G.flags, "烧过账"); },
+    prio: 32,
+    rare: true,
+  },
+  {
+    id: "erasured", name: "记忆抹除", rank: "稀有 · 教法第几条已经没人记得了",
+    body: [
+      "你泄露了不允许外泄的魔法知识。教团的处置是记忆抹除，连同所有受影响者。",
+      "你被留下了一条命，和一套干净的、漂亮的、完全符合教法的记忆。你记得自己一直很忠诚，记得自己举报过可疑的人，记得自己在启示会议上念过很好看的数字。",
+      "有一次你在街上看见一个人朝你笑了一下，你不认识他。你回家以后不知道为什么哭了。",
+      "教法规定，这一条是“对违法者与受影响者记忆抹除到死刑不等”。你算运气很好的那一档。",
+    ],
+    rare: true,
+    need: function (G) { return has(G.flags, "泄露禁传知识") || has(G.flags, "抄过工艺") || has(G.flags, "抄过那一章"); },
+    prio: 50,
+  },
+  {
+    id: "deed", name: "没用的好心", rank: "分支 · 你保下了几个人",
+    body: [
+      "你这一辈子没有做出什么大事。你只是在报表里划掉过几个名字，在夜里熄过几次路口的灯，在治疗记录上写过几份空白的卷宗。",
+      "这些事没有被记录，也不会被评价。教团国的档案系统对它们没有栏目。",
+      "你死的时候，来了十几个不认识你的人。他们站在门外，没有人进来，也没有人说话。",
+    ],
+    rare: true,
+    need: function (G) { return has(G.flags, "划过名册") || has(G.flags, "换过名字") || has(G.flags, "补过粮") || has(G.flags, "换过肉票") || has(G.flags, "分过蛋") || has(G.flags, "压案") || has(G.flags, "私放顺民") || has(G.flags, "写过信") || has(G.flags, "划过名单"); },
+    prio: 31,
+  },
+  {
+    id: "moled", name: "伏线", rank: "隐藏 · 学社在你身上留了一枚钉子",
+    body: [
+      "你在教团国做了几十年的教士：念经、报表、执行教法、在需要的时候点头。没有人怀疑过你。",
+      "你做的事是：把名单抄出去，把账目抄出去，把某年某区真实的死亡数字抄出去。你一共抄了三十七年。",
+      "学社给你的评价是：钉子不需要锋利，只需要不被拔出来。你死在一间普通的屋子里，桌上摊着一份写到一半的报表。",
+    ],
+    rare: true,
+    need: function (G) { return has(G.flags, "伏线") || has(G.flags, "私账") || has(G.flags, "学社成员"); },
+    prio: 40,
+  },
+  {
+    id: "short", name: "寿数到了", rank: "常见 · 教团称之为蒙诸神召唤",
+    body: [
+      "你活到了教团国给教士划的寿数上限附近。最后几年你记不住事情，但你还记得念经的顺序。",
+      "教团给你办了追思会。主持的教士是你当年送进教养院的孩子，如今也老了。他在会上说，你的一生“体现了秩序与忠诚”。",
+      "没有人提你到底做过什么。这在这个国家不算苛刻——毕竟大部分人的一生都不会被提起。",
+    ],
+    rare: true,
+  },
+  {
+    id: "sudden", name: "意外的折损", rank: "常见 · 不顺从的一次",
+    body: [
+      "你死于一次意外。在一个把一切都安排好的国家里，意外是最不体面的死法，因为它意味着某项安排没有落实到。",
+      "事故调查组来了，给你的死因定了性。定性之后，你的监护区当年的死亡指标仍然达标。",
+    ],
+    rare: true,
+  },
+  {
+    id: "nameless", name: "无名者", rank: "常见 · 无人替他写卷宗",
+    body: [
+      "你在教团国活过，然后死了。教团国的档案系统运转良好，你的卷宗在某个环节丢失了。",
+      "没有人替你补写。教团国很大，每天都在丢东西。",
+    ],
+    need: function (G) { return has(G.flags, "无名之辈"); },
+    prio: 22,
+    rare: true,
+  },
+];
+
+/* ── 四、转盘与命途引擎 ── */
+
+const ERAS = [
+  { idx: 0, key: "child", name: "幼年", age: [6, 13], cost: [2, 3], death: 0.004, art: [35, 65] },
+  { idx: 1, key: "youth", name: "少年", age: [13, 22], cost: [3, 5], death: 0.008, art: [22, 55] },
+  { idx: 2, key: "young", name: "青年", age: [22, 38], cost: [4, 7], death: 0.012, art: [12, 40] },
+  { idx: 3, key: "mid", name: "壮年", age: [38, 58], cost: [4, 7], death: 0.016, art: [8, 30] },
+  { idx: 4, key: "old", name: "残年", age: [58, 96], cost: [5, 9], death: 0.03, art: [5, 20] },
+];
+function eraOf(age) {
+  for (const e of ERAS) if (age < e.age[1]) return e;
+  return ERAS[ERAS.length - 1];
+}
+function eraName(age) { return eraOf(age).name; }
+
+const ATTRS = [
+  { k: "faith", label: "信仰", cls: "f-faith", max: 100 },
+  { k: "sin", label: "罪责", cls: "f-sin", max: 100 },
+  { k: "fame", label: "声名", cls: "f-fame", max: 100 },
+  { k: "reason", label: "理智", cls: "f-reason", max: 100 },
+  { k: "life", label: "寿数", cls: "f-life", max: 100 },
+];
+
+let G = null;
+let busy = false;
+let undoStack = [];
+
+function addFlag(f) { if (!has(G.flags, f)) { G.flags.push(f); return true; } return false; }
+function setG(k, v) { if (typeof G[k] === "number") G[k] = clamp(G[k] + v, 0, 100); }
+
+function newGame(name, originId) {
+  const origin = originId === RANDOM_ORIGIN_ID
+    ? ORIGINS[Math.floor(Math.random() * ORIGINS.length)]
+    : ORIGINS.filter((o) => o.id === originId)[0];
+  const g = {
+    name: name || "无名者",
+    originId: origin.id,
+    originName: origin.name,
+    originDesc: origin.desc,
+    born: THEME.bornAt,
+    age: 0,
+    dec: 0,
+    faith: 34, sin: 6, fame: 4, reason: 40, life: 118,
+    flags: origin.flags.slice(),
+    chronicle: [],
+    used: {},
+    slot: { kind: "命途" },
+    turn: 0,
+    rolls: 0,
+    undos: 0,
+    over: false,
+    endingId: null,
+    queue: null,
+    choice: null,
+    lastRoll: null,
+    lastPick: null,
+    lastRejected: null,
+    rejected: { all: [] },
+    chosenCount: 0,
+    rare: 0,
+  };
+  for (const k in origin.mods) g[k] = clamp(g[k] + origin.mods[k], 0, 100);
+  return g;
+}
+
+function snapshot() {
+  return clone({
+    age: G.age, faith: G.faith, sin: G.sin, fame: G.fame, reason: G.reason, life: G.life,
+    flags: G.flags, chronicle: G.chronicle, used: G.used, slot: G.slot, turn: G.turn,
+    rolls: G.rolls, undos: G.undos, over: G.over, endingId: G.endingId, queue: G.queue,
+    choice: G.choice, lastRoll: G.lastRoll, lastPick: G.lastPick, rejected: G.rejected,
+    lastRejected: G.lastRejected, chosenCount: G.chosenCount, rare: G.rare, dec: G.dec,
+  });
+}
+function restore(s) { Object.assign(G, clone(s)); }
+function commit() { undoStack.push(snapshot()); }
+function canUndo() { return !busy && undoStack.length > 0 && G && !G.over; }
+
+/* ── 候选与权重 ── */
+function weightOf(e) {
+  let w = typeof e.weight === "function" ? e.weight(G) : (e.weight === undefined ? 10 : e.weight);
+  return (typeof w === "number" && w > 0) ? w : 0;
+}
+function candidates() {
+  const out = [];
+  for (const e of EVENTS) {
+    if (G.used[e.id]) continue;
+    if (e.era && e.era.indexOf(eraOf(G.age).idx) < 0) continue;
+    if (e.req && !e.req(G)) continue;
+    const w = weightOf(e);
+    if (w <= 0) continue;
+    /* 全局排除：被撤回过的结果永不再来 */
+    if (has(G.rejected.all, e.id)) continue;
+    /* 本轮重转排除：撤回后重转同一转盘，结果必不相同 */
+    if (G.lastRejected && has(G.lastRejected.ids, e.id)) continue;
+    out.push({ e: e, w: w });
+  }
+  return out;
+}
+function weightedPick(cands) {
+  const total = cands.reduce(function (s, c) { return s + c.w; }, 0);
+  if (total <= 0) return cands[0].e;
+  let r = Math.random() * total;
+  for (const c of cands) { r -= c.w; if (r <= 0) return c.e; }
+  return cands[cands.length - 1].e;
+}
+
+/* ── 视觉：十二签转盘 ── */
+const N_SECTORS = 12;
+const UNIFORM_MAX = 12;
+
+function computeSpokes(cands) {
+  const sorted = cands.slice().sort(function (a, b) {
+    return b.w - a.w || (a.e.id < b.e.id ? -1 : 1);
+  });
+  const N = N_SECTORS;
+  const labels = [];
+
+  if (sorted.length <= UNIFORM_MAX) {
+    /* 每根签都写清名字：指针指向哪一根，就是哪一件事 */
+    const slots = [];
+    for (let i = 0; i < sorted.length; i++) slots.push(sorted[i].e);
+    for (let i = 0; slots.length < N; i++) slots.push(sorted[i % sorted.length].e);
+    const land = Math.floor(Math.random() * slots.length);
+    return { labels: slots, land: land, winner: slots[land], showLabels: true };
+  }
+
+  /* 事件多于十二件时只写扇位，指针落在哪一扇就按权重定签 */
+  const total = sorted.reduce(function (s, c) { return s + c.w; }, 0);
+  const alloc = sorted.map(function (c) { return c.w / total * N; });
+  const base = alloc.map(function (x) { return Math.floor(x); });
+  let rem = N - base.reduce(function (s, x) { return s + x; }, 0);
+  const order = alloc.map(function (x, i) { return { i: i, frac: x - Math.floor(x) }; })
+    .sort(function (a, b) { return b.frac - a.frac || a.i - b.i; });
+  for (let k = 0; k < order.length && rem > 0; k++, rem--) base[order[k].i]++;
+
+  const seq = [];
+  const buckets = sorted.map(function (c, i) { return { e: c.e, n: base[i], w: c.w }; });
+  let guard = 0;
+  while (seq.length < N && guard++ < 400) {
+    for (const b of buckets) {
+      if (b.n > 0 && seq.length < N) { seq.push(b.e); b.n--; }
+    }
+  }
+  while (seq.length < N) seq.push(sorted[0].e);
+  const land = Math.floor(Math.random() * N);
+  return { labels: seq, land: land, winner: seq[land], showLabels: true };
+}
+
+function wheelLabel(e) {
+  const t = e.short || e.title || e.id;
+  return t.length > 4 ? t.slice(0, 4) : t;
+}
+
+function renderWheel(sp) {
+  const box = $("wheelbox");
+  const w = $("wheel");
+  $("spokes").innerHTML = "";
+  $("spoke-labels").innerHTML = "";
+  w.style.transition = "none";
+  w.style.transform = "rotate(0deg)";
+  w.__angle = 0;
+  const step = 360 / N_SECTORS;
+  for (let i = 0; i < N_SECTORS; i++) {
+    const d = document.createElement("div");
+    d.className = "spoke";
+    d.style.transform = "rotate(" + (i * step + step / 2) + "deg)";
+    $("spokes").appendChild(d);
+  }
+  /* 标签：贴着外圈横排摆放，随盘旋转、但始终直立可读 */
+  for (let i = 0; i < N_SECTORS; i++) {
+    const mid = i * step + step / 2;          /* 扇位中线角度，0° 在正上方 */
+    const el = document.createElement("div");
+    el.className = "slabel";
+    el.style.transform = "rotate(" + mid + "deg) translateY(calc(var(--r) * -1 + 14px))";
+    const inner = document.createElement("i");
+    inner.style.transform = "rotate(" + (-mid) + "deg)";
+    inner.textContent = wheelLabel(sp.labels[i]);
+    el.appendChild(inner);
+    $("spoke-labels").appendChild(el);
+  }
+  box.classList.add("spinning");
+  $("altar-caption").textContent = "命 途 之 轮 · " + G.slot.kind;
+}
+
+function spinTo(sp, done) {
+  const w = $("wheel");
+  const box = $("wheelbox");
+  const step = 360 / N_SECTORS;
+  const jitter = (Math.random() - 0.5) * step * 0.5;
+  /* 指针在正上方(0°)。要让第 land 扇的中线停在 0°，转盘需旋转 -(land*step+step/2) */
+  const base = -((sp.land * step + step / 2) + jitter);
+  const laps = 4 + Math.floor(Math.random() * 3);
+  const cur = w.__angle || 0;
+  const next = cur + (((base - cur) % 360) + 360) % 360 + 360 * laps;
+  w.__angle = next;
+  w.style.transition = "transform 3.1s cubic-bezier(.12,.62,.05,1)";
+  w.style.transform = "rotate(" + next + "deg)";
+  setTimeout(function () {
+    box.classList.remove("spinning");
+    const kids = $("spoke-labels").children;
+    if (kids[sp.land]) {
+      kids[sp.land].classList.add("landed");
+      const inner = kids[sp.land].querySelector("i");
+      /* 让中签的那一签亮出来、并保持水平可读 */
+      inner.textContent = sp.winner.short || sp.winner.title;
+      inner.style.transform = "rotate(" + (sp.land * step + step / 2) + "deg)";
+    }
+    done();
+  }, 3260);
+}
+
+/* ── 结算 ── */
+function applyDelta(d) {
+  const shown = [];
+  if (!d) return shown;
+  for (const a of ATTRS) {
+    const v = d[a.k];
+    if (typeof v === "number" && v !== 0) {
+      G[a.k] = clamp(G[a.k] + v, 0, 100);
+      shown.push({ k: a.k, v: v });
+    }
+  }
+  return shown;
+}
+function addFlags(list) {
+  const added = [];
+  if (!list) return added;
+  for (const f of list) if (addFlag(f)) added.push(f);
+  return added;
+}
+function delFlags(list) { if (list) G.flags = G.flags.filter(function (f) { return list.indexOf(f) < 0; }); }
+
+function pushCard(cls, tag, title, paras, deltas, flagsAdded, quote) {
+  G.chronicle.push({
+    cls: cls, tag: tag, title: title,
+    paras: Array.isArray(paras) ? paras : [paras],
+    deltas: deltas || [], flags: flagsAdded || [], quote: quote || null,
+  });
+}
+
+function resolveEvent(e) {
+  const body = typeof e.body === "function" ? e.body(G) : e.body;
+  const delta = typeof e.delta === "function" ? e.delta(G) : e.delta;
+  const shown = applyDelta(delta);
+  const added = addFlags(typeof e.flags === "function" ? e.flags(G) : e.flags);
+  delFlags(typeof e.flagsOff === "function" ? e.flagsOff(G) : e.flagsOff);
+  G.used[e.id] = true;
+  G.lastPick = e.id;
+  if (e.rare) G.rare++;
+  const quote = e.quote ? (typeof e.quote === "function" ? e.quote(G) : e.quote) : null;
+  pushCard("roll", "第 " + G.turn + " 转 · " + eraName(G.age), e.title,
+    body, shown, added, quote);
+}
+
+function hasChoices(e) {
+  if (!e.choices) return null;
+  const list = typeof e.choices === "function" ? e.choices(G) : e.choices;
+  const out = [];
+  for (const c of list) if (!c.req || c.req(G)) out.push({ label: c.label, c: c });
+  return out.length ? out : null;
+}
+
+/* 某些标签本身就是一个终局。检查在每次结算之后、年龄检定之前。 */
+/* 某些标签本身就是一种终局。判定方式：
+   符合条件的结局里取优先级最高的一条；每转给一次机会，但不强求立刻兑现。
+   年龄越小越克制，越到晚年越容易应验。 */
+
+FLAG_ENDINGS = [
+  { flag: "自戕未遂", end: "burnout", p: 0.8, from: 28, prio: 72 },
+  { flag: "补录圣人", end: "numbered", p: 0.5, from: 38, prio: 70 },
+  { flag: "编号持有者", end: "saint", p: 0.5, from: 40, prio: 66 },
+  { flag: "编外圣人", end: "apex", p: 0.4, from: 44, prio: 64 },
+  { flag: "北行", end: "follow", p: 0.5, from: 44, prio: 62 },
+  { flag: "祭品链条", end: "sacrifice", p: 0.5, from: 40, prio: 60 },
+  { flag: "开过城", end: "openfire", p: 0.8, from: 34, prio: 59 },
+  { flag: "顶过审查", end: "openfire", p: 0.6, from: 38, prio: 57 },
+  { flag: "认过罪", end: "stoned", p: 0.7, from: 32, prio: 59 },
+  { flag: "供出过所有人", end: "lifeterm", p: 0.7, from: 34, prio: 61 },
+  { flag: "请求见三柱", end: "anecho", p: 0.7, from: 34, prio: 62 },
+  { flag: "认过罪", end: "stoned", p: 0.4, from: 44, prio: 58 },
+  { flag: "到过受难处", end: "tomb", p: 0.4, from: 42, prio: 56 },
+  { flag: "献祭执行者", end: "delivered", p: 0.6, from: 32, prio: 55 },
+  { flag: "征集过祭品", end: "delivered", p: 0.3, from: 36, prio: 33 },
+  { flag: "被裁判", end: "tribunal", p: 0.4, from: 42, prio: 54 },
+  { flag: "滥用恶魔叙事", end: "tribunal", p: 0.3, from: 40, prio: 53 },
+  { flag: "圣裁教士", end: "cell", p: 0.35, from: 44, prio: 52 },
+  { flag: "特务集团", end: "cell", p: 0.3, from: 46, prio: 51 },
+  { flag: "供出所有人", end: "lifeterm", p: 0.5, from: 0, prio: 60 },
+  { flag: "重构之身", end: "donor", p: 0.28, from: 54, prio: 44 },
+  { flag: "泄露禁传知识", end: "erasured", p: 0.12, from: 44, prio: 46 },
+  { flag: "抄过工艺", end: "erasured", p: 0.28, from: 0, prio: 50 },
+  { flag: "记忆手艺", end: "erasure_exe", p: 0.4, from: 42, prio: 48 },
+  { flag: "笔很干净", end: "erasure_exe", p: 0.3, from: 44, prio: 47 },
+  { flag: "神迹技术", end: "possessed", p: 0.16, from: 50, prio: 40 },
+  { flag: "神眷之疑", end: "possessed", p: 0.12, from: 48, prio: 38 },
+  { flag: "善于思考", end: "possessed", p: 0.1, from: 54, prio: 36 },
+  { flag: "教皇死讯", end: "stalker", p: 0.35, from: 48, prio: 46 },
+  { flag: "到过受难处附近", end: "stalker", p: 0.35, from: 48, prio: 46 },
+  { flag: "写过那一句", end: "stalker", p: 0.3, from: 52, prio: 46 },
+  { flag: "第十派人", end: "master", p: 0.3, from: 44, prio: 44 },
+  { flag: "第十派同情者", end: "master", p: 0.3, from: 44, prio: 44 },
+  { flag: "有人替你说过话", end: "master", p: 0.25, from: 50, prio: 43 },
+  { flag: "圣战参与者", end: "holywar", p: 0.3, from: 36, prio: 43 },
+  { flag: "上过镜头", end: "falsegod", p: 0.3, from: 46, prio: 40 },
+  { flag: "伏线", end: "moled", p: 0.2, from: 50, prio: 36 },
+  { flag: "私账", end: "moled", p: 0.18, from: 50, prio: 35 },
+  { flag: "学社成员", end: "moled", p: 0.16, from: 50, prio: 34 },
+  { flag: "蒙过面", end: "mask", p: 0.3, from: 52, prio: 38 },
+  { flag: "组织里人", end: "mask", p: 0.2, from: 52, prio: 37 },
+  { flag: "听过她的名字", end: "voice", p: 0.25, from: 48, prio: 36 },
+  { flag: "有传人", end: "voice", p: 0.2, from: 52, prio: 35 },
+  { flag: "教过他", end: "voice", p: 0.2, from: 52, prio: 34 },
+  { flag: "后遗症", end: "flu", p: 0.08, from: 56, prio: 36 },
+  { flag: "怪病幸存", end: "flu", p: 0.05, from: 46, prio: 30 },
+  { flag: "申请过安置房", end: "allocation", p: 0.25, from: 52, prio: 34 },
+  { flag: "分到过地", end: "estate_n", p: 0.25, from: 52, prio: 34 },
+  { flag: "编过开荒队", end: "estate_n", p: 0.2, from: 52, prio: 33 },
+  { flag: "交过自述", end: "variant", p: 0.2, from: 52, prio: 42 },
+  { flag: "报表苗子", end: "variant", p: 0.15, from: 50, prio: 41 },
+  { flag: "砸过终端", end: "variant", p: 0.2, from: 50, prio: 41 },
+  { flag: "教法专家", end: "priest", p: 0.25, from: 50, prio: 33 },
+  { flag: "长期可靠", end: "priest", p: 0.2, from: 52, prio: 32 },
+  { flag: "报表能手", end: "records", p: 0.2, from: 50, prio: 33 },
+  { flag: "统计官僚", end: "records", p: 0.22, from: 50, prio: 33 },
+  { flag: "写过战报", end: "records", p: 0.2, from: 48, prio: 32 },
+  { flag: "烧过账", end: "river", p: 0.2, from: 54, prio: 32 },
+
+  { flag: "辞过职", end: "shut", p: 0.8, from: 44, prio: 52 },
+  { flag: "烧过真册", end: "shut", p: 0.5, from: 46, prio: 48 },
+  { flag: "无名之辈", end: "nameless", p: 0.35, from: 50, prio: 22 },
+  { flag: "被推上台", end: "falsegod", p: 0.3, from: 46, prio: 41 },
+  { flag: "成了名", end: "falsegod", p: 0.45, from: 46, prio: 42 },
+  { flag: "搬进安置房", end: "allocation", p: 0.5, from: 50, prio: 24 },
+  { flag: "划过名册", end: "deed", p: 0.18, from: 54, prio: 31 },
+  { flag: "划过名单", end: "deed", p: 0.15, from: 54, prio: 31 },
+  { flag: "换过名字", end: "deed", p: 0.18, from: 54, prio: 31 },
+  { flag: "补过粮", end: "deed", p: 0.18, from: 54, prio: 31 },
+  { flag: "换过肉票", end: "deed", p: 0.18, from: 54, prio: 31 },
+  { flag: "分过蛋", end: "deed", p: 0.18, from: 54, prio: 31 },
+  { flag: "压案", end: "deed", p: 0.18, from: 54, prio: 31 },
+  { flag: "私放顺民", end: "deed", p: 0.18, from: 54, prio: 31 },
+  { flag: "写过信", end: "deed", p: 0.15, from: 54, prio: 31 },
+  { flag: "精神治疗档案", end: "lifeterm", p: 0.2, from: 50, prio: 51 },
+  { flag: "背弃", end: "lifeterm", p: 0.15, from: 46, prio: 50 },
+];
+
+/* 每条人生线的最后落点。即使标签已经拿到，也要活到相应的年岁才会兑现。 */
+
+ENDING_GATE = {
+  burnout: 25, masked: 30, openfire: 34, lifeterm: 34, stoned: 36,
+  erasure_exe: 36, variant: 38, cell: 38, tribunal: 38, erased: 38,
+  sacrifice: 40, delivered: 40, shut: 40, master: 40, holywar: 38,
+  moled: 42, stalker: 44, voice: 44, falsegod: 42, allocation: 44,
+  estate_n: 44, priest: 46, records: 46, mask: 46, donor: 48,
+  river: 46, deed: 46, nameless: 47, follow: 40, tomb: 44,
+  flu: 48, possessed: 44, faint: 46, shut2: 48,
+  saint: 42, numbered: 44, apex: 50, number: 42, conclusion: 50,
+};
+
+function flagEndingCheck() {
+  if (G.over) return false;
+  if (has(G.flags, "不死")) return false;
+  if (G.age < 25 && G.turn < 8) return false;
+  const late = G.age >= 50;
+  const match = [];
+  for (const fe of FLAG_ENDINGS) {
+    if (G.age < (fe.from || 0)) continue;
+    const gate = ENDING_GATE[fe.end] || 0;
+    if (G.age < gate) continue;
+    if (!has(G.flags, fe.flag)) continue;
+    match.push(fe);
+  }
+  if (!match.length) return false;
+  /* 一轮一转只兑现一次机会；晚年更急 */
+  if (Math.random() > (late ? 0.4 : 0.26)) return false;
+  match.sort(function (a, b) { return (b.prio || 0) - (a.prio || 0); });
+  const pick = match[Math.floor(Math.random() * Math.min(2, match.length))];
+  finish(pick.end);
+  return true;
+}
+
+function afterOutcome() {
+  if (G.over) { renderAll(); return; }
+  /* 事件自带终局 */
+  const lastEv = G.lastPick ? EVENT_BY_ID[String(G.lastPick).split(":")[0]] : null;
+  if (lastEv && lastEv.end) {
+    finish(typeof lastEv.end === "string" ? lastEv.end : "nameless");
+    renderAll();
+    return;
+  }
+  if (flagEndingCheck()) { renderAll(); return; }
+  if (has(G.flags, "不死")) { beginTurn(); return; }
+  if (G.life <= 0) {
+    /* 寿数耗尽：年轻时算意外，活到老了才算寿终 */
+    finish(G.age >= 55 ? "short" : "sudden");
+    renderAll();
+    return;
+  }
+  const era = eraOf(G.age);
+  if (Math.random() < era.death) { finish("sudden"); renderAll(); return; }
+  beginTurn();
+}
+
+function runEvent(e) {
+  if (!e) { beginTurn(); return; }
+  const y = pickInt(eraOf(G.age).cost[0], eraOf(G.age).cost[1]);
+  G.age += y;
+  G.life = clamp(G.life - y, 0, 100);
+  G.turn++; G.rolls++;
+  resolveEvent(e);
+  G.slot = { kind: "命途" };
+  const ch = hasChoices(e);
+  if (ch) {
+    G.choice = { eventId: e.id, options: ch };
+    renderAll();
+    return;
+  }
+  afterOutcome();
+}
+
+function beginTurn() {
+  if (G.over) return;
+  G.choice = null;
+  if (G.life <= 0 && !has(G.flags, "不死")) { finish("short"); renderAll(); return; }
+  if (G.queue && G.queue.length) {
+    const id = G.queue.shift();
+    G.queue = null;
+    G.slot = { kind: "命途 · 连锁" };
+    /* 连锁事件同样只能出现一次，否则会与 runEvent 的结算相互抵触 */
+    if (EVENT_BY_ID[id]) G.used[id] = true;
+    renderAll();
+    busy = true;
+    setTimeout(function () { busy = false; runEvent(EVENT_BY_ID[id]); }, 20);
+    return;
+  }
+  G.slot = { kind: (G.turn === 0 ? "出身" : eraName(G.age)) + "·命途" };
+  renderAll();
+}
+
+function turnRoll() {
+  if (busy || G.over || G.choice) return;
+  const cands = candidates();
+  if (!cands.length) { commit(); finish("short"); renderAll(); return; }
+  const sp = computeSpokes(cands);
+  if (!sp.winner) sp.winner = weightedPick(cands);
+  const slotKind = G.slot.kind;
+  /* 本转的候选一并记下，撤回后重转时保证结果必然不同 */
+  const ids = [sp.winner.id];
+  for (const id of G.rejected.all) ids.push(id);
+  commit();
+  G.dec++;
+  G.lastRejected = { ids: ids };
+  G.lastRoll = { kind: slotKind };
+  busy = true;
+  $("altar").hidden = false;
+  renderWheel(sp);
+  renderAll();
+  spinTo(sp, function () {
+    busy = false;
+    runEvent(sp.winner);
+  });
+}
+
+function doChoice(idx) {
+  if (busy || G.over || !G.choice) return;
+  const opt = G.choice.options[idx];
+  if (!opt) return;
+  commit();
+  const c = opt.c;
+  const body = typeof c.body === "function" ? c.body(G) : (c.body || "（无记载）");
+  const delta = typeof c.delta === "function" ? c.delta(G) : c.delta;
+  const shown = applyDelta(delta);
+  const added = addFlags(typeof c.flags === "function" ? c.flags(G) : c.flags);
+  delFlags(typeof c.flagsOff === "function" ? c.flagsOff(G) : c.flagsOff);
+  if (c.rare) G.rare++;
+  const quote = c.quote ? (typeof c.quote === "function" ? c.quote(G) : c.quote) : null;
+  pushCard("choice", "抉择 · " + eraName(G.age), c.title || opt.label,
+    body, shown, added, quote);
+  G.chosenCount++;
+  const evId = G.choice.eventId;
+  G.choice = null;
+  G.lastPick = evId + ":" + idx;
+  if (c.end) { finish(typeof c.end === "string" ? c.end : "nameless"); renderAll(); return; }
+  if (c.chain) G.queue = Array.isArray(c.chain) ? c.chain.slice() : [c.chain];
+  afterOutcome();
+}
+
+/* 把某个结果记入拒绝表：撤回过的结果此后再不出现，
+   重转同一转盘时也必然给出与上次不同的结果。 */
+function rejectResult(id) {
+  if (!id) return;
+  if (!G.rejected) G.rejected = { all: [] };
+  if (!G.rejected.all) G.rejected.all = [];
+  if (!has(G.rejected.all, id)) G.rejected.all.push(id);
+  if (!G.lastRejected) G.lastRejected = { ids: [] };
+  if (!G.lastRejected.ids) G.lastRejected.ids = [];
+  if (!has(G.lastRejected.ids, id)) G.lastRejected.ids.push(id);
+}
+
+/* 撤回到某个决策点之前 */
+function undo() {
+  if (!canUndo()) return;
+  const wasOver = G.over;
+  const curDec = G.dec;
+  const rolledId = G.choice
+    ? G.choice.eventId
+    : (G.lastPick ? String(G.lastPick).split(":")[0] : null);
+
+  let guard = 0;
+  do {
+    restore(undoStack.pop());
+  } while (undoStack.length && guard++ < 20 &&
+           (G.dec === curDec || (G.choice && G.dec < curDec)));
+
+  G.undos++;
+  if (!wasOver) rejectResult(rolledId);
+  busy = false;
+  renderAll();
+}
+
+function finish(endingId) {
+  const end = ENDINGS.filter(function (e) { return e.id === endingId; })[0] || ENDINGS[ENDINGS.length - 1];
+  G.over = true;
+  G.endingId = end.id;
+  renderAll();
+}
+
+/* ── 渲染 ── */
+function renderBars() {
+  const el = $("bars");
+  if (!G) { el.hidden = true; return; }
+  el.hidden = false;
+  let h = "";
+  for (const a of ATTRS) {
+    const v = clamp(G[a.k], 0, a.max);
+    const warn = (a.k === "life" && v <= 30) || (a.k === "reason" && v <= 18);
+    h += '<div class="bar' + (warn ? " warn" : "") + '"><div class="row"><span>' + a.label +
+      "</span><b>" + v + "</b></div>" +
+      '<div class="track"><div class="fill ' + a.cls + '" style="width:' + v + '%"></div></div></div>';
+  }
+  const ageTag = G.age < 1 ? "初生" : G.age + " 岁";
+  h += '<div class="bar"><div class="row"><span>年岁</span><b>' + ageTag + "</b></div>" +
+    '<div class="track"><div class="fill f-life" style="width:' + clamp(G.age, 0, 100) + '%"></div></div></div>';
+  h += '<div class="bar"><div class="row"><span>转数</span><b>' + G.turn + "</b></div>" +
+    '<div class="track"><div class="fill f-fame" style="width:' + clamp(G.turn * 6, 0, 100) + '%"></div></div></div>';
+  el.innerHTML = h;
+}
+
+function renderLog() {
+  const el = $("log");
+  el.innerHTML = "";
+  for (const c of G.chronicle) {
+    const d = document.createElement("div");
+    d.className = "card " + (c.cls || "roll");
+    let h = '<div class="tag">' + c.tag + "</div><h3>" + c.title + "</h3>";
+    h += c.paras.map(function (p) { return "<p>" + p + "</p>"; }).join("");
+    if (c.quote) h += '<div class="quote">' + c.quote + "</div>";
+    if ((c.deltas && c.deltas.length) || (c.flags && c.flags.length)) {
+      h += '<div class="deltas">';
+      for (const x of (c.deltas || [])) {
+        const meta = ATTRS.filter(function (a) { return a.k === x.k; })[0] || { label: x.k };
+        h += '<span class="chip ' + (x.v > 0 ? "up" : "down") + '">' + meta.label + " " +
+          (x.v > 0 ? "+" : "") + x.v + "</span>";
+      }
+      for (const f of (c.flags || [])) h += '<span class="chip flag">标签 · ' + f + "</span>";
+      h += "</div>";
+    }
+    d.innerHTML = h;
+    el.appendChild(d);
+  }
+}
+
+function buildEpitaph() {
+  const end = ENDINGS.filter(function (e) { return e.id === G.endingId; })[0] || {};
+  const L = [];
+  L.push("《" + G.name + "命途卷宗》");
+  L.push("籍贯　" + G.born + "　出身　" + G.originName);
+  L.push("享年　" + G.age + " 岁　终局　" + (end.name || "不明"));
+  L.push("────────────────────");
+  for (const c of G.chronicle) {
+    L.push("【" + c.tag + "】" + c.title);
+    const first = String((c.paras && c.paras[0]) || "").replace(/<[^>]+>/g, "");
+    L.push("　　" + first.slice(0, 46) + (first.length > 46 ? "…" : ""));
+  }
+  L.push("────────────────────");
+  L.push("标签留存：" + (G.flags.length ? G.flags.join(" · ") : "无"));
+  L.push(THEME.epitaphTail);
+  return L.join("\n");
+}
+
+function renderFinale() {
+  const el = $("finale");
+  if (!G || !G.over) { el.innerHTML = ""; return; }
+  const end = ENDINGS.filter(function (e) { return e.id === G.endingId; })[0] || ENDINGS[ENDINGS.length - 1];
+  const body = typeof end.body === "function" ? end.body(G) : end.body;
+  el.innerHTML =
+    '<div class="finale">' +
+    '<div class="verdict">命 途 终 卷</div>' +
+    "<h2>" + end.name + "</h2>" +
+    '<div class="rank">' + end.rank + "</div>" +
+    body.map(function (p) { return "<p>" + p + "</p>"; }).join("") +
+    (end.quote ? '<div class="quote">' + end.quote + "</div>" : "") +
+    '<div class="epitaph">' + buildEpitaph() + "</div>" +
+    '<div class="scoreline">' +
+    "<div>在世<b>" + G.age + " 年</b></div>" +
+    "<div>转数<b>" + G.turn + " 转</b></div>" +
+    "<div>抉择<b>" + G.chosenCount + " 次</b></div>" +
+    "<div>撤回<b>" + G.undos + " 次</b></div>" +
+    "<div>信仰 / 罪责<b>" + G.faith + " / " + G.sin + "</b></div>" +
+    "<div>声名 / 理智<b>" + G.fame + " / " + G.reason + "</b></div>" +
+    "</div>" +
+    '<div class="note">留存标签：' + (G.flags.length ? G.flags.join(" · ") : "无") + "</div>" +
+    "</div>";
+  el.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function renderControls() {
+  const el = $("controls");
+  const inner = $("controls-inner");
+  const hint = $("hint");
+  if (!G) { el.hidden = true; return; }
+  el.hidden = false;
+  let h = "";
+  if (G.over) {
+    h += '<button class="primary" onclick="restart()">重 新 转 生</button>';
+    h += '<button class="ghost" onclick="shareEpitaph()">复制命途卷宗</button>';
+    hint.textContent = "本局结束。撤回键已封存。";
+  } else if (busy) {
+    h += "<button disabled>轮 盘 转 动 中 …</button>";
+    hint.textContent = "指针停下之前，什么都还没发生。";
+  } else if (G.choice) {
+    h += G.choice.options.map(function (o, i) {
+      return '<button class="primary" onclick="doChoice(' + i + ')">' + o.label + "</button>";
+    }).join("");
+    h += '<button class="ghost" onclick="undo()"' + (canUndo() ? "" : " disabled") +
+      ">撤 回 上 一 步</button>";
+    hint.textContent = "抉择由你。抉择之后的，不归你。";
+  } else {
+    h += '<button class="primary" onclick="turnRoll()">转 动 命 途 之 轮</button>';
+    h += '<button class="ghost" onclick="undo()"' + (canUndo() ? "" : " disabled") +
+      ">撤 回 上 一 步</button>";
+    hint.textContent = "已撤回 " + G.undos + " 次。撤回后重转同一转盘，结果必定与上次不同。";
+  }
+  inner.innerHTML = h;
+}
+
+function renderAll() {
+  if (!G) return;
+  $("altar").hidden = !(G.chronicle.length > 1);
+  renderBars();
+  renderLog();
+  renderFinale();
+  renderControls();
+}
+
+/* ── 开场 ── */
+let selectedOrigin = RANDOM_ORIGIN_ID;
+
+function renderIntro() {
+  $("finale").innerHTML = "";
+  $("bars").hidden = true;
+  $("altar").hidden = true;
+  $("log").innerHTML =
+    '<div class="intro">' +
+    "<h2>" + THEME.introTitle.split("").join(" ") + "</h2>" +
+    '<p class="verse">' + THEME.introVerse + "</p>" +
+    '<div class="fields"><div><label>姓名</label>' +
+    '<input id="in-name" maxlength="12" placeholder="无名者" /></div></div>' +
+    '<div style="font-size:12px;letter-spacing:.2em;color:var(--faint);margin:10px 0 2px">选 择 出 身</div>' +
+    '<div class="origins" id="origins"></div>' +
+    '<div class="note">' + THEME.introNote + "</div>" +
+    "</div>";
+  const list = $("origins");
+  const all = ORIGINS.concat([{
+    id: RANDOM_ORIGIN_ID, name: THEME.randomName,
+    desc: THEME.randomDesc,
+    trait: "随机出身 · 随机标签",
+  }]);
+  all.forEach(function (o) {
+    const d = document.createElement("div");
+    d.className = "origin" + (o.id === selectedOrigin ? " sel" : "");
+    d.innerHTML = "<b>" + o.name + "</b><span>" + o.desc + "</span>" +
+      '<div class="trait">' + (o.trait || "随机出身 · 随机标签") + "</div>";
+    d.onclick = function () {
+      selectedOrigin = o.id;
+      for (const x of Array.from(list.children)) x.classList.remove("sel");
+      d.classList.add("sel");
+    };
+    list.appendChild(d);
+  });
+  $("controls").hidden = false;
+  $("controls-inner").innerHTML = '<button class="primary" onclick="startGame()">开 卷</button>';
+  $("hint").textContent = THEME.introHint;
+}
+
+function startGame() {
+  const input = $("in-name");
+  const nm = (input && input.value || "").trim();
+  G = newGame(nm, selectedOrigin);
+  undoStack = [];
+  const o = ORIGINS.filter(function (x) { return x.id === G.originId; })[0] || {};
+  const pro = [G.name + "，生于" + G.born + "。父母身份：" + G.originName + "。"].concat(THEME.prologue);
+  G.chronicle.push({
+    cls: "omen", tag: THEME.archivists, title: THEME.register,
+    paras: pro, deltas: [], flags: [],
+  });
+  renderAll();
+  beginTurn();
+}
+
+function restart() {
+  undoStack = [];
+  G = null;
+  selectedOrigin = RANDOM_ORIGIN_ID;
+  renderIntro();
+}
+
+function shareEpitaph() {
+  const t = buildEpitaph();
+  const hint = $("hint");
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(t).then(
+      function () { hint.textContent = "命途卷宗已复制到剪贴板。"; },
+      function () { hint.textContent = "复制失败，请手动选中卷宗文本。"; });
+  } else {
+    hint.textContent = "此浏览器不支持自动复制。";
+  }
+}
+
+window.addEventListener("DOMContentLoaded", function () {
+  indexEvents();
+  renderIntro();
+});
+
+
+/* ── 悬浮跳转按钮：顶部时「回到底部」，其余时候「回到顶部」 ──
+   注意：本脚本在 <button id="jump"> **之前**执行，所以必须等 DOM 就绪再取元素
+   （北沙第一版就是同步取元素、拿到 null 直接 return，导致点击完全没反应）。 */
+(function () {
+  function init() {
+    const btn = document.getElementById("jump");
+    if (!btn) return;
+    const bar = document.querySelector(".controls");
+    function atTop() { return (window.scrollY || window.pageYOffset || 0) <= 8; }
+    function pageH() {
+      const b = document.body || {}, d = document.documentElement || {};
+      return Math.max(b.scrollHeight || 0, d.scrollHeight || 0);
+    }
+    function sync() {
+      /* 量出底栏实际高度：窄屏上它会换行变高，写死数值就会压住选项卡 */
+      const h = bar ? Math.round(bar.getBoundingClientRect().height) : 88;
+      document.documentElement.style.setProperty("--ctl-h", h + "px");
+      btn.hidden = pageH() <= (window.innerHeight || 0) + 40;
+      const top = atTop();
+      btn.dataset.dir = top ? "down" : "up";
+      btn.textContent = top ? "回到底部" : "回到顶部";
+    }
+    btn.addEventListener("click", function (ev) {
+      ev.preventDefault();
+      const to = atTop() ? pageH() : 0;
+      try { window.scrollTo({ top: to, behavior: "smooth" }); }
+      catch (e) { window.scrollTo(0, to); }
+    });
+    window.addEventListener("scroll", sync, { passive: true });
+    window.addEventListener("resize", sync);
+    sync();
+  }
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init);
+  } else {
+    init();
+  }
+})();
+</script>
+
+
+
+
+
+<button id="jump" class="jump" type="button" aria-label="跳到页面另一端">回到顶部</button>
+
+<script>
+/* ══ 始终停在最底：每出现一张新卡片，就自动滚到底 ══
+   监听 #log 的子节点变化，**引擎一行都不用改**（将来它怎么改渲染都不影响这里）。
+   为什么"滚到文档最底"正好：.wrap 底部留了 108px 内边距给固定底栏，
+   所以滚到底时最后一张卡片正好停在底栏上方，不会被压住。
+   要撤销：删掉这一整段 <script> 即可。 */
+(function () {
+  function toBottom() {
+    var b = document.body || {}, d = document.documentElement || {};
+    var h = Math.max(b.scrollHeight || 0, d.scrollHeight || 0);
+    try { window.scrollTo({ top: h, behavior: "smooth" }); }
+    catch (e) { window.scrollTo(0, h); }
+  }
+  var timer = null;
+  function schedule() {
+    if (timer) window.clearTimeout(timer);
+    timer = window.setTimeout(toBottom, 40);   /* 等这一帧布局完成再量高度 */
+  }
+  function init() {
+    var log = document.getElementById("log");
+    if (!log) return;
+    if (window.MutationObserver) {
+      new MutationObserver(function (muts) {
+        for (var i = 0; i < muts.length; i++) {
+          if (muts[i].addedNodes && muts[i].addedNodes.length) { schedule(); return; }
+        }
+      }).observe(log, { childList: true });
+    } else {
+      /* 极老的浏览器：退化成定时比对子节点数 */
+      var n = log.childNodes.length;
+      window.setInterval(function () {
+        if (log.childNodes.length !== n) { n = log.childNodes.length; schedule(); }
+      }, 800);
+    }
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+  else init();
+})();
+</script>
+</body>
+</html>
